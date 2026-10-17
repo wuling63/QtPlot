@@ -17,8 +17,8 @@ QTPLOT_RECIPE("互動", "命中與提示", "游標提示",
     for (double x : xs) ys.append(x * 0.6 + 10);
     ys = gen::addNoise(ys, 8);
 
-    plot.addScatter(xs, ys)->legendText = QStringLiteral("量測點");
-    plot.addAnnotation(QStringLiteral("把游標移到點上試試"), Qt::AlignLeft | Qt::AlignTop);
+    plot.addScatter(xs, ys)->legendText = RT("量測點");
+    plot.addAnnotation(RT("把游標移到點上試試"), Qt::AlignLeft | Qt::AlignTop);
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignRight | Qt::AlignBottom;
 }
@@ -26,9 +26,9 @@ QTPLOT_RECIPE("互動", "命中與提示", "游標提示",
 QTPLOT_RECIPE("互動", "命中與提示", "大量資料的命中",
               "Signal 的 X 是算出來的，所以命中測試直接反推索引，不必掃過全部點 —— "
               "一百萬點照樣即時。SignalXY 則是用二分搜尋找附近再比較左右兩點。") {
-    plot.addSignal(gen::randomWalk(1'000'000), 1.0)->legendText = QStringLiteral("一百萬點");
+    plot.addSignal(gen::randomWalk(1'000'000), 1.0)->legendText = RT("一百萬點");
     plot.legend.isVisible = true;
-    plot.addAnnotation(QStringLiteral("縮放進去再把游標移到線上"), Qt::AlignLeft | Qt::AlignTop);
+    plot.addAnnotation(RT("縮放進去再把游標移到線上"), Qt::AlignLeft | Qt::AlignTop);
 }
 
 QTPLOT_RECIPE("互動", "拖曳", "可拖曳的參考線與區間",
@@ -40,20 +40,20 @@ QTPLOT_RECIPE("互動", "拖曳", "可拖曳的參考線與區間",
     auto* upper = plot.addHorizontalLine(25, QColor(214, 39, 40));
     upper->draggable = true;
     upper->line.pattern = LinePattern::Dashed;
-    upper->text.text = QStringLiteral("上限（可拖）");
+    upper->text.text = RT("上限（可拖）");
     upper->text.font.color = QColor(214, 39, 40);
 
     auto* lower = plot.addHorizontalLine(-25, QColor(44, 160, 44));
     lower->draggable = true;
     lower->line.pattern = LinePattern::Dashed;
-    lower->text.text = QStringLiteral("下限（可拖）");
+    lower->text.text = RT("下限（可拖）");
     lower->text.font.color = QColor(44, 160, 44);
 
     auto* span = plot.addVerticalSpan(100, 160, QColor(80, 140, 220));
     span->draggable = true;
-    span->legendText = QStringLiteral("關注區間（可拖）");
+    span->legendText = RT("關注區間（可拖）");
 
-    auto* note = plot.addText(QStringLiteral("這個標註也可以拖"), 200, 30);
+    auto* note = plot.addText(RT("這個標註也可以拖"), 200, 30);
     note->draggable = true;
     note->background = FillStyle(QColor(255, 255, 220));
     note->border = LineStyle(QColor(150, 150, 100), 1.0);
@@ -72,7 +72,7 @@ QTPLOT_RECIPE("互動", "刻度", "共同倍率",
 
     auto* left = plot.addScatter(xs, ys, QColor(31, 119, 180));
     left->marker = MarkerStyle::none();
-    left->legendText = QStringLiteral("左軸：關掉倍率");
+    left->legendText = RT("左軸：關掉倍率");
     if (auto* g = dynamic_cast<AutomaticTickGenerator*>(plot.leftAxis()->tickGenerator.get()))
         g->allowMultiplier = false;
 
@@ -83,7 +83,7 @@ QTPLOT_RECIPE("互動", "刻度", "共同倍率",
     right->yAxis = rightAxis;
     right->marker = MarkerStyle::none();
     right->line.pattern = LinePattern::Dashed;
-    right->legendText = QStringLiteral("右軸：開著倍率");
+    right->legendText = RT("右軸：開著倍率");
 
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignHCenter | Qt::AlignBottom;

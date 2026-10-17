@@ -90,14 +90,14 @@ QTPLOT_RECIPE("入門", "圖元管理", "移除某個圖元",
     auto* a = plot.addScatter(xs, gen::sin(100, 1.0, 1.0));
     auto* b = plot.addScatter(xs, gen::sin(100, 1.0, 2.0));
     auto* c = plot.addScatter(xs, gen::sin(100, 1.0, 3.0));
-    a->legendText = QStringLiteral("1 個週期");
-    b->legendText = QStringLiteral("2 個週期（會被移除）");
-    c->legendText = QStringLiteral("3 個週期");
+    a->legendText = RT("1 個週期");
+    b->legendText = RT("2 個週期（會被移除）");
+    c->legendText = RT("3 個週期");
     for (Scatter* s : {a, b, c}) s->marker = MarkerStyle::none();
 
     plot.remove(b);  // b 從這裡開始是懸空指標
     plot.legend.isVisible = true;
-    plot.title.text = QStringLiteral("剩下 %1 個圖元").arg(plot.plottableCount());
+    plot.title.text = RT("剩下 %1 個圖元").arg(plot.plottableCount());
 }
 
 QTPLOT_RECIPE("入門", "圖元管理", "移除某一類的全部圖元",
@@ -115,7 +115,7 @@ QTPLOT_RECIPE("入門", "圖元管理", "移除某一類的全部圖元",
             ++removed;
         }
     }
-    plot.title.text = QStringLiteral("原本 %1 個圖元，移除 %2 條參考線")
+    plot.title.text = RT("原本 %1 個圖元，移除 %2 條參考線")
                           .arg(before)
                           .arg(removed);
 }
@@ -125,8 +125,8 @@ QTPLOT_RECIPE("入門", "圖元管理", "隱藏而不移除",
               "改回 true 就回來了。隱藏的圖元不參與自動範圍，"
               "圖例預設仍會列出它（畫成灰色），在 Cookbook 裡點那一列就能切回來。") {
     const QVector<double> xs = gen::consecutive(80);
-    const QStringList names{QStringLiteral("北區"), QStringLiteral("中區"),
-                            QStringLiteral("南區"), QStringLiteral("東區")};
+    const QStringList names{RT("北區"), RT("中區"),
+                            RT("南區"), RT("東區")};
     for (int i = 0; i < names.size(); ++i) {
         auto* s = plot.addScatter(xs, gen::sin(80, 1.0 + i * 0.3, 1.5, i * 0.6, i * 0.5));
         s->marker = MarkerStyle::none();
@@ -135,7 +135,7 @@ QTPLOT_RECIPE("入門", "圖元管理", "隱藏而不移除",
         if (i == 1 || i == 3) s->isVisible = false;
     }
     plot.legend.isVisible = true;
-    plot.title.text = QStringLiteral("中區與東區被隱藏（圖例裡是灰的）");
+    plot.title.text = RT("中區與東區被隱藏（圖例裡是灰的）");
 }
 
 // ═══════════════════════════ 直方圖 ═══════════════════════════
@@ -149,7 +149,7 @@ QTPLOT_RECIPE("統計", "直方圖", "機率密度加常態曲線",
     auto* bars = plot.addBars(toBars(h.binCenters, h.densities(), h.binWidth,
                                      QColor(100, 150, 210)));
     bars->borderLine = LineStyle(QColor(255, 255, 255), 1.0);
-    bars->legendText = QStringLiteral("樣本（n = 1000）");
+    bars->legendText = RT("樣本（n = 1000）");
 
     const double m = meanOf(data);
     const double s = sdOf(data);
@@ -159,8 +159,8 @@ QTPLOT_RECIPE("統計", "直方圖", "機率密度加常態曲線",
     curve->legendText = QStringLiteral("N(%1, %2²)").arg(m, 0, 'f', 1).arg(s, 0, 'f', 1);
 
     plot.legend.isVisible = true;
-    plot.bottomAxis()->label.text = QStringLiteral("數值");
-    plot.leftAxis()->label.text = QStringLiteral("機率密度");
+    plot.bottomAxis()->label.text = RT("數值");
+    plot.leftAxis()->label.text = RT("機率密度");
 }
 
 QTPLOT_RECIPE("統計", "直方圖", "累積機率直方圖",
@@ -176,7 +176,7 @@ QTPLOT_RECIPE("統計", "直方圖", "累積機率直方圖",
     }
     auto* bars = plot.addBars(toBars(h.binCenters, cum, h.binWidth, QColor(150, 190, 120)));
     bars->borderLine = LineStyle(QColor(255, 255, 255), 1.0);
-    bars->legendText = QStringLiteral("累積比例");
+    bars->legendText = RT("累積比例");
 
     auto* cdf = plot.addFunction([](double x) { return normalCdf(x); }, QColor(30, 30, 30));
     cdf->line.width = 2;
@@ -186,7 +186,7 @@ QTPLOT_RECIPE("統計", "直方圖", "累積機率直方圖",
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignLeft | Qt::AlignTop;
     plot.setAxisLimits(-3.5, 3.5, 0, 1.05);
-    plot.leftAxis()->label.text = QStringLiteral("累積機率");
+    plot.leftAxis()->label.text = RT("累積機率");
 }
 
 QTPLOT_RECIPE("統計", "直方圖", "兩組直方圖重疊",
@@ -199,13 +199,13 @@ QTPLOT_RECIPE("統計", "直方圖", "兩組直方圖重疊",
     const FixedBins hb = binFixed(b, 0, 100, 25);
 
     auto* pa = plot.addBars(toBars(ha.centers, ha.counts, ha.width, QColor(31, 119, 180, 130)));
-    pa->legendText = QStringLiteral("對照組");
+    pa->legendText = RT("對照組");
     auto* pb = plot.addBars(toBars(hb.centers, hb.counts, hb.width, QColor(255, 127, 14, 130)));
-    pb->legendText = QStringLiteral("實驗組");
+    pb->legendText = RT("實驗組");
 
     plot.legend.isVisible = true;
-    plot.bottomAxis()->label.text = QStringLiteral("分數");
-    plot.leftAxis()->label.text = QStringLiteral("人數");
+    plot.bottomAxis()->label.text = RT("分數");
+    plot.leftAxis()->label.text = RT("人數");
 }
 
 QTPLOT_RECIPE("統計", "直方圖", "次數與機率密度雙軸",
@@ -216,7 +216,7 @@ QTPLOT_RECIPE("統計", "直方圖", "次數與機率密度雙軸",
     const Histogram h = Histogram::fromValues(data, 20);
     auto* bars = plot.addBars(toBars(h.binCenters, h.counts, h.binWidth, QColor(120, 120, 200)));
     bars->borderLine = LineStyle(QColor(255, 255, 255), 1.0);
-    bars->legendText = QStringLiteral("次數（左軸）");
+    bars->legendText = RT("次數（左軸）");
 
     double maxCount = 0;
     for (double c : h.counts) maxCount = std::max(maxCount, c);
@@ -224,11 +224,11 @@ QTPLOT_RECIPE("統計", "直方圖", "次數與機率密度雙軸",
     const double scale = data.size() * h.binWidth;  // 次數 = 密度 × n × 箱寬
 
     plot.leftAxis()->setRange(0, top);
-    plot.leftAxis()->label.text = QStringLiteral("次數");
+    plot.leftAxis()->label.text = RT("次數");
 
     auto* right = plot.addAxis(Edge::Right);
     right->setRange(0, top / scale);
-    right->label.text = QStringLiteral("機率密度");
+    right->label.text = RT("機率密度");
 
     const double m = meanOf(data);
     const double s = sdOf(data);
@@ -236,10 +236,10 @@ QTPLOT_RECIPE("統計", "直方圖", "次數與機率密度雙軸",
                                    QColor(214, 39, 40));
     curve->yAxis = right;
     curve->line.width = 2.5;
-    curve->legendText = QStringLiteral("常態密度（右軸）");
+    curve->legendText = RT("常態密度（右軸）");
 
     plot.legend.isVisible = true;
-    plot.bottomAxis()->label.text = QStringLiteral("身高 (cm)");
+    plot.bottomAxis()->label.text = RT("身高 (cm)");
 }
 
 // ═══════════════════════════ 核密度與常態分布 ═══════════════════════════
@@ -262,7 +262,7 @@ QTPLOT_RECIPE("統計", "箱型與分布", "核密度的頻寬",
         auto* s = plot.addScatter(xs, kernelDensity(data, xs, bw * v.factor), v.color);
         s->marker = MarkerStyle::none();
         s->line.width = 2;
-        s->legendText = QStringLiteral("%1× 頻寬（h = %2）")
+        s->legendText = RT("%1× 頻寬（h = %2）")
                             .arg(v.factor, 0, 'g', 2)
                             .arg(bw * v.factor, 0, 'f', 2);
     }
@@ -272,7 +272,7 @@ QTPLOT_RECIPE("統計", "箱型與分布", "核密度的頻寬",
     rug->marker = MarkerStyle(MarkerShape::VerticalBar, 10, QColor(0, 0, 0, 120));
 
     plot.legend.isVisible = true;
-    plot.leftAxis()->label.text = QStringLiteral("密度");
+    plot.leftAxis()->label.text = RT("密度");
 }
 
 QTPLOT_RECIPE("統計", "常態分布", "常態分布的尾端面積",
@@ -294,13 +294,13 @@ QTPLOT_RECIPE("統計", "常態分布", "常態分布的尾端面積",
 
     const QColor tail(214, 39, 40, 110);
     auto* right = plot.addFillY(tx, zeros, ty, tail);
-    right->legendText = QStringLiteral("拒絕域");
+    right->legendText = RT("拒絕域");
     plot.addFillY(lx, zeros, ly, tail);
 
     auto* curve = plot.addScatter(xs, ys, QColor(30, 30, 30));
     curve->marker = MarkerStyle::none();
     curve->line.width = 2;
-    curve->legendText = QStringLiteral("標準常態 φ(x)");
+    curve->legendText = RT("標準常態 φ(x)");
 
     for (double at : {-z, z}) {
         auto* l = plot.addVerticalLine(at, QColor(214, 39, 40));
@@ -309,7 +309,7 @@ QTPLOT_RECIPE("統計", "常態分布", "常態分布的尾端面積",
 
     const double exact = 2 * (1 - normalCdf(z));
     const double numeric = 2 * trapezoidArea(tx, ty);
-    plot.addAnnotation(QStringLiteral("z = %1\n解析：2·(1 − Φ(z)) = %2\n數值積分（至 |x| = 4）= %3")
+    plot.addAnnotation(RT("z = %1\n解析：2·(1 − Φ(z)) = %2\n數值積分（至 |x| = 4）= %3")
                            .arg(z, 0, 'f', 3)
                            .arg(exact, 0, 'f', 5)
                            .arg(numeric, 0, 'f', 5),
@@ -339,21 +339,21 @@ QTPLOT_RECIPE("圖種", "長條與統計", "浮動長條（範圍圖）",
         b.fillColor = cmap.lookup((lows[i] + highs[i]) / 2, 14, 30);
         bars.append(b);
         pos.append(i + 1);
-        names.append(QStringLiteral("%1月").arg(i + 1));
+        names.append(RT("%1月").arg(i + 1));
     }
     auto* bp = plot.addBars(bars);
     bp->includeZero = false;
     setCategoryTicks(plot.bottomAxis(), pos, names);
-    plot.leftAxis()->label.text = QStringLiteral("氣溫 (°C)");
-    plot.title.text = QStringLiteral("每月最低～最高氣溫");
+    plot.leftAxis()->label.text = RT("氣溫 (°C)");
+    plot.title.text = RT("每月最低～最高氣溫");
 }
 
 QTPLOT_RECIPE("圖種", "長條與統計", "橫向浮動長條",
               "horizontal = true 時長條朝右，valueBase／value 變成左右兩端。"
               "類別名稱長的時候橫向比較好讀，文字不必轉角度。") {
-    const QStringList products{QStringLiteral("入門款筆電"), QStringLiteral("輕薄筆電"),
-                               QStringLiteral("電競筆電"), QStringLiteral("工作站"),
-                               QStringLiteral("平板")};
+    const QStringList products{RT("入門款筆電"), RT("輕薄筆電"),
+                               RT("電競筆電"), RT("工作站"),
+                               RT("平板")};
     const double lo[] = {15, 28, 35, 60, 8};
     const double hi[] = {25, 52, 80, 150, 38};
     QVector<Bar> bars;
@@ -372,7 +372,7 @@ QTPLOT_RECIPE("圖種", "長條與統計", "橫向浮動長條",
     bp->horizontal = true;
     bp->includeZero = false;
     setCategoryTicks(plot.leftAxis(), pos, products);
-    plot.bottomAxis()->label.text = QStringLiteral("售價區間（千元）");
+    plot.bottomAxis()->label.text = RT("售價區間（千元）");
 }
 
 // ═══════════════════════════ 熱圖 ═══════════════════════════
@@ -425,9 +425,9 @@ QTPLOT_RECIPE("場", "熱圖", "手動指定色階範圍",
     right->extent = CoordinateRect(14, 26, 0, 12);
     right->colorRange = CoordinateRange(0, 1);
 
-    auto* lt = plot.addText(QStringLiteral("自動（0.2–0.6）"), 6, 12.4);
+    auto* lt = plot.addText(RT("自動（0.2–0.6）"), 6, 12.4);
     lt->alignment = Qt::AlignHCenter | Qt::AlignBottom;
-    auto* rt = plot.addText(QStringLiteral("固定 colorRange = 0–1"), 20, 12.4);
+    auto* rt = plot.addText(RT("固定 colorRange = 0–1"), 20, 12.4);
     rt->alignment = Qt::AlignHCenter | Qt::AlignBottom;
 
     plot.addColorbar(*right);
@@ -455,7 +455,7 @@ QTPLOT_RECIPE("圖種", "散點與線", "訊號的位移與縮放",
         pos.append(-ch * 3.0);
     }
     setCategoryTicks(plot.leftAxis(), pos, names);
-    plot.bottomAxis()->label.text = QStringLiteral("時間 (s)");
+    plot.bottomAxis()->label.text = RT("時間 (s)");
 }
 
 QTPLOT_RECIPE("圖種", "散點與線", "函數只畫一段",
@@ -463,11 +463,11 @@ QTPLOT_RECIPE("圖種", "散點與線", "函數只畫一段",
               "分段函數就是幾個 FunctionPlot 各管一段。平移到範圍外，曲線不會跟著延伸。") {
     auto* a = plot.addFunction([](double x) { return -x; }, QColor(31, 119, 180));
     a->xLimits = CoordinateRange(-6, 0);
-    a->legendText = QStringLiteral("x < 0：−x");
+    a->legendText = RT("x < 0：−x");
     auto* b = plot.addFunction([](double x) { return 2 * std::sin(x * 1.5); },
                                QColor(214, 39, 40));
     b->xLimits = CoordinateRange(0, 6);
-    b->legendText = QStringLiteral("x ≥ 0：2·sin(1.5x)");
+    b->legendText = RT("x ≥ 0：2·sin(1.5x)");
     for (FunctionPlot* f : {a, b}) f->line.width = 2.5;
 
     plot.legend.isVisible = true;
@@ -480,19 +480,19 @@ QTPLOT_RECIPE("圖種", "參考線與區間", "參考線進圖例、不撐開範
               "AxisLine 設了 legendText 就會進圖例。includeInAxisLimits = false 的線"
               "不參與自動範圍 —— 遠方的設計極限（y = 80）不會把視野拉過去，"
               "資料才不會被壓成一條扁線。縮小視野就看得到它。") {
-    plot.addSignal(gen::randomWalk(300))->legendText = QStringLiteral("量測值");
+    plot.addSignal(gen::randomWalk(300))->legendText = RT("量測值");
 
     auto* mean = plot.addHorizontalLine(0, QColor(80, 80, 80));
     mean->line.pattern = LinePattern::Dashed;
-    mean->legendText = QStringLiteral("基準");
+    mean->legendText = RT("基準");
 
     auto* warn = plot.addHorizontalLine(15, QColor(255, 140, 0));
-    warn->legendText = QStringLiteral("警戒（撐開範圍）");
+    warn->legendText = RT("警戒（撐開範圍）");
 
     auto* limit = plot.addHorizontalLine(80, QColor(214, 39, 40));
     limit->line.width = 2;
     limit->includeInAxisLimits = false;
-    limit->legendText = QStringLiteral("設計極限（不撐開範圍）");
+    limit->legendText = RT("設計極限（不撐開範圍）");
 
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignLeft | Qt::AlignBottom;
@@ -509,9 +509,9 @@ QTPLOT_RECIPE_LIVE("即時", "累積記錄", "DataLogger：一次加一批",
         log->period = 0.001;
         log->view = LiveView::Slide;
         log->viewWidth = 2.0;
-        log->legendText = QStringLiteral("1 kHz，每批 20 筆");
+        log->legendText = RT("1 kHz，每批 20 筆");
         plot.legend.isVisible = true;
-        plot.bottomAxis()->label.text = QStringLiteral("時間 (s)");
+        plot.bottomAxis()->label.text = RT("時間 (s)");
         return;
     }
     if (auto* log = firstOf<DataLogger>(plot)) {
@@ -541,13 +541,13 @@ QTPLOT_RECIPE("場", "頻譜", "窗函數的形狀",
         auto* s = plot.addScatter(xs, windowValues(all[i], n));
         s->marker = MarkerStyle::none();
         s->line.width = 2;
-        s->legendText = QStringLiteral("%1（%2）")
+        s->legendText = RT("%1（%2）")
                             .arg(names.value(i))
                             .arg(windowCoherentGain(all[i], n), 0, 'f', 3);
     }
     plot.legend.isVisible = true;
-    plot.bottomAxis()->label.text = QStringLiteral("窗內位置（0–1）");
-    plot.leftAxis()->label.text = QStringLiteral("係數");
+    plot.bottomAxis()->label.text = RT("窗內位置（0–1）");
+    plot.leftAxis()->label.text = RT("係數");
 }
 
 // ═══════════════════════════ 子圖 ═══════════════════════════
@@ -557,14 +557,14 @@ QTPLOT_RECIPE_MULTI("版面", "子圖", "上下堆疊共用 X 軸",
                     "中間那格的氣壓計只記錄了 100–400 分鐘，各自縮放的話它的 X 軸會被拉滿，"
                     "同一個時間點在三格裡就不在同一條垂直線上。") {
     mp.resize(3, 1);
-    mp.title.text = QStringLiteral("氣象站記錄");
+    mp.title.text = RT("氣象站記錄");
     mp.title.font.size = 13;
     mp.title.font.bold = true;
 
     Plot* temp = mp.at(0, 0);
     auto* t = temp->addSignal(gen::addNoise(gen::sin(500, 4, 2, 0, 22), 0.4));
     t->line.color = QColor(214, 39, 40);
-    temp->leftAxis()->label.text = QStringLiteral("溫度 (°C)");
+    temp->leftAxis()->label.text = RT("溫度 (°C)");
 
     Plot* press = mp.at(1, 0);
     QVector<double> px, py;
@@ -574,13 +574,13 @@ QTPLOT_RECIPE_MULTI("版面", "子圖", "上下堆疊共用 X 軸",
     }
     auto* p = press->addScatter(px, py, QColor(31, 119, 180));
     p->marker = MarkerStyle::none();
-    press->leftAxis()->label.text = QStringLiteral("氣壓 (hPa)");
+    press->leftAxis()->label.text = RT("氣壓 (hPa)");
 
     Plot* hum = mp.at(2, 0);
     auto* h = hum->addSignal(gen::addNoise(gen::cos(500, 15, 2, 0, 60), 1.5));
     h->line.color = QColor(44, 160, 44);
-    hum->leftAxis()->label.text = QStringLiteral("濕度 (%)");
-    hum->bottomAxis()->label.text = QStringLiteral("時間 (分鐘)");
+    hum->leftAxis()->label.text = RT("濕度 (%)");
+    hum->bottomAxis()->label.text = RT("時間 (分鐘)");
 
     mp.shareXAll();
 }
@@ -610,15 +610,15 @@ QTPLOT_RECIPE("樣式", "格線與圖例", "手動指定圖例項目",
     usl->line.pattern = LinePattern::Dashed;
 
     LegendItem ok;
-    ok.text = QStringLiteral("合格");
+    ok.text = RT("合格");
     ok.line = LineStyle::none();
     ok.marker = MarkerStyle(MarkerShape::FilledCircle, 8, okColor);
     LegendItem ng;
-    ng.text = QStringLiteral("超出規格");
+    ng.text = RT("超出規格");
     ng.line = LineStyle::none();
     ng.marker = MarkerStyle(MarkerShape::FilledTriangleUp, 9, ngColor);
     LegendItem spec;
-    spec.text = QStringLiteral("規格上限 USL = 12");
+    spec.text = RT("規格上限 USL = 12");
     spec.line = LineStyle(QColor(120, 120, 120), 1.5, LinePattern::Dashed);
     plot.legend.manualItems = {ok, ng, spec};
     plot.legend.isVisible = true;
@@ -649,5 +649,5 @@ QTPLOT_RECIPE("樣式", "版面與框線", "固定邊距",
     plot.paddingBottom = 30;
     plot.style.figureBackground = QColor(225, 232, 242);
     plot.style.dataBackground = QColor(255, 255, 255);
-    plot.title.text = QStringLiteral("左 90、右 60、上 40、下 30");
+    plot.title.text = RT("左 90、右 60、上 40、下 30");
 }

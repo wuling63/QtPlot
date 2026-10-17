@@ -30,6 +30,13 @@ public:
     /// 依名稱選取範例（命令列參數用）。找不到回傳 false。
     bool selectRecipe(const QString& name);
 
+    /// 範例程式自己的介面文字（選單、搜尋框、狀態列）跟著 QtPlot 目前的語言載入翻譯。
+    /// QtPlot 的語言換了（選單列或圖上的右鍵選單都可能換）就要再叫一次。
+    static void syncDemoTranslator();
+
+protected:
+    void changeEvent(QEvent* event) override;
+
 private slots:
     void onTreeSelectionChanged();
     void onFilterChanged(const QString& text);
@@ -37,6 +44,10 @@ private slots:
 
 private:
     void buildMenus();
+    void buildLanguageMenu(class QMenu* menu);
+    /// 換語言之後重建所有介面文字。範例清單（範例的名稱與說明）不翻譯，維持中文。
+    void retranslateUi();
+    void showStartupHint();
     void buildTree();
     void showRecipe(const Recipe* recipe);
     void applyTheme(bool dark);
@@ -57,6 +68,9 @@ private:
     bool m_darkTheme = false;
     QTimer* m_liveTimer = nullptr;
     int m_liveFrame = 0;
+    /// 換語言時翻譯器會一個一個裝上去（函式庫、主視窗、範例），每裝一個就發一次 LanguageChange。
+    /// 合併成一次重建，不然清單和範例會連續重建好幾次。
+    bool m_retranslatePending = false;
 };
 
 }  // namespace demo

@@ -26,7 +26,7 @@ QTPLOT_RECIPE("場", "等值線", "等值線",
               "預設的等值不取資料的頭尾 —— 等於最小值或最大值的等值線沒有資訊。") {
     plot.addContour(terrain, kArea, 120, 120, 10);
     plot.equalAxisScale = true;
-    plot.title.text = QStringLiteral("兩個山丘加一個凹陷");
+    plot.title.text = RT("兩個山丘加一個凹陷");
 }
 
 QTPLOT_RECIPE("場", "等值線", "等值線疊熱圖",
@@ -76,7 +76,7 @@ QTPLOT_RECIPE("場", "等值線", "只畫特定幾條",
     major->labelFont.bold = true;
 
     plot.equalAxisScale = true;
-    plot.addAnnotation(QStringLiteral("粗線：0 與 2　細線：其餘"), Qt::AlignLeft | Qt::AlignTop);
+    plot.addAnnotation(RT("粗線：0 與 2　細線：其餘"), Qt::AlignLeft | Qt::AlignTop);
 }
 
 QTPLOT_RECIPE("場", "向量場", "向量場",
@@ -88,7 +88,7 @@ QTPLOT_RECIPE("場", "向量場", "向量場",
         },
         kArea, 15, 15);
     plot.equalAxisScale = true;
-    plot.title.text = QStringLiteral("旋轉場 (-y, x)");
+    plot.title.text = RT("旋轉場 (-y, x)");
 }
 
 QTPLOT_RECIPE("場", "向量場", "依大小上色",
@@ -105,7 +105,7 @@ QTPLOT_RECIPE("場", "向量場", "依大小上色",
     f->colormap = Colormap(Colormap::Turbo);
     f->anchor = VectorField::Anchor::Center;
     plot.equalAxisScale = true;
-    plot.title.text = QStringLiteral("點源場（顏色 = 強度）");
+    plot.title.text = RT("點源場（顏色 = 強度）");
 }
 
 QTPLOT_RECIPE("場", "向量場", "梯度場與等值線",
@@ -128,5 +128,5 @@ QTPLOT_RECIPE("場", "向量場", "梯度場與等值線",
     f->line.width = 1.2;
 
     plot.equalAxisScale = true;
-    plot.title.text = QStringLiteral("等值線與梯度場");
+    plot.title.text = RT("等值線與梯度場");
 }

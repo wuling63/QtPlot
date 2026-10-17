@@ -14,11 +14,19 @@
 #include "qtplot/Multiplot.h"
 #include "qtplot/PlotWidget.h"
 
+#include <QCoreApplication>
 #include <QString>
 #include <QVector>
 
 namespace qtplot {
 namespace demo {
+
+/// 範例裡的文字（章節、分類、範例名稱，以及畫在圖上的標題、軸名、圖例、標註）：照目前的語言翻。
+///
+/// 原文就是繁體中文，沒有翻譯時照原文。換語言時主視窗會把範例重畫一次，圖上的字就跟著換。
+/// 範例的說明段落不翻，維持中文。翻譯檔是 demo/i18n/recipes_<語言>.ts。
+inline QString rt(const char* text) { return QCoreApplication::translate("recipe", text); }
+inline QString rt(const QString& text) { return QCoreApplication::translate("recipe", text.toUtf8().constData()); }
 
 using RecipeFunc = void (*)(qtplot::Plot& plot);
 /// 會動的範例。frame == 0 代表「建立」，之後每次計時器觸發就 +1。
@@ -107,6 +115,9 @@ private:
 
 }  // namespace demo
 }  // namespace qtplot
+
+/// 範例程式碼裡寫中文字串用這個：RT("標題")。
+#define RT(text) ::qtplot::demo::rt(text)
 
 // ── 巨集機械 ──
 #define QTPLOT_CAT_(a, b) a##b

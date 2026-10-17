@@ -41,9 +41,9 @@ QTPLOT_RECIPE("標註", "引線與括號", "引線標註",
     auto* s = plot.addScatter(xs, ys);
     s->marker = MarkerStyle::none();
 
-    plot.addCallout(QStringLiteral("第一個波峰"), 12, 1.0, 35, 1.35);
-    plot.addCallout(QStringLiteral("過零點"), 25, 0.0, 52, 0.55);
-    auto* c = plot.addCallout(QStringLiteral("最低點"), 37, -1.0, 60, -1.3);
+    plot.addCallout(RT("第一個波峰"), 12, 1.0, 35, 1.35);
+    plot.addCallout(RT("過零點"), 25, 0.0, 52, 0.55);
+    auto* c = plot.addCallout(RT("最低點"), 37, -1.0, 60, -1.3);
     c->label.font.bold = true;
 }
 
@@ -56,9 +56,9 @@ QTPLOT_RECIPE("標註", "氣泡標註", "氣泡標註",
     auto* s = plot.addScatter(xs, ys);
     s->marker = MarkerStyle::none();
 
-    plot.addTooltip(QStringLiteral("第一個波峰"), 12, 1.0, 30, 1.4);
-    plot.addTooltip(QStringLiteral("過零點"), 25, 0.0, 48, 0.6);
-    auto* t = plot.addTooltip(QStringLiteral("最低點"), 37, -1.0, 62, -1.3);
+    plot.addTooltip(RT("第一個波峰"), 12, 1.0, 30, 1.4);
+    plot.addTooltip(RT("過零點"), 25, 0.0, 48, 0.6);
+    auto* t = plot.addTooltip(RT("最低點"), 37, -1.0, 62, -1.3);
     t->label.font.bold = true;
 
     plot.setAxisLimits(-5, 100, -1.8, 1.8);
@@ -108,13 +108,13 @@ QTPLOT_RECIPE("標註", "引線與括號", "區間括號",
     plot.addBars({12, 19, 24, 21, 9});
     plot.setAxisLimits(-0.8, 4.8, 0, 32);
 
-    auto* b1 = plot.addBracket(QStringLiteral("成長期"), 0, 27, 2, 27);
+    auto* b1 = plot.addBracket(RT("成長期"), 0, 27, 2, 27);
     b1->tipLength = 8;
 
-    auto* b2 = plot.addBracket(QStringLiteral("衰退"), 3, 27, 4, 27);
+    auto* b2 = plot.addBracket(RT("衰退"), 3, 27, 4, 27);
     b2->tipLength = 8;
 
-    auto* v = plot.addBracket(QStringLiteral("差距 12"), 4.55, 9, 4.55, 21);
+    auto* v = plot.addBracket(RT("差距 12"), 4.55, 9, 4.55, 21);
     v->horizontal = false;
     v->tipLength = -8;
 }
@@ -141,7 +141,7 @@ QTPLOT_RECIPE("標註", "比例尺與影像", "影像與比例尺",
     m->marker.shape = MarkerShape::OpenCircle;
     m->marker.size = 18;
     m->marker.outline.width = 2;
-    plot.addCallout(QStringLiteral("目標"), 120, 80, 185, 135);
+    plot.addCallout(RT("目標"), 120, 80, 185, 135);
 
     plot.bottomAxis()->isVisible = false;
     plot.leftAxis()->isVisible = false;
@@ -173,7 +173,7 @@ QTPLOT_RECIPE("標註", "比例尺與影像", "保持長寬比",
 QTPLOT_RECIPE("特殊座標", "三角圖", "三角圖",
               "三個成分加起來固定為 100%。土壤分類、合金成分、地質都用這種圖。"
               "TriangularAxis 只畫座標系，資料用 toCartesian() 換算後拿一般的 Markers 畫。") {
-    plot.addTriangularAxis({QStringLiteral("砂"), QStringLiteral("粉砂"), QStringLiteral("黏土")});
+    plot.addTriangularAxis({RT("砂"), RT("粉砂"), RT("黏土")});
 
     // 幾組土壤樣本（砂 / 粉砂 / 黏土）
     const QVector<QVector<double>> samples{
@@ -186,7 +186,7 @@ QTPLOT_RECIPE("特殊座標", "三角圖", "三角圖",
     }
     auto* m = plot.addMarkers(xs, ys, QColor(214, 39, 40));
     m->marker.size = 10;
-    plot.title.text = QStringLiteral("土壤成分");
+    plot.title.text = RT("土壤成分");
 }
 
 QTPLOT_RECIPE("特殊座標", "三角圖", "三角圖上的分區",
@@ -196,10 +196,10 @@ QTPLOT_RECIPE("特殊座標", "三角圖", "三角圖上的分區",
     auto corner = [](double a, double b, double c) { return TriangularAxis::toCartesian(a, b, c); };
     // 中央的「均衡」區
     plot.addPolygon({corner(50, 25, 25), corner(25, 50, 25), corner(25, 25, 50)})->legendText =
-        QStringLiteral("均衡區");
+        RT("均衡區");
     // 靠近 A 角的「A 主導」區
     plot.addPolygon({corner(100, 0, 0), corner(60, 40, 0), corner(60, 0, 40)})->legendText =
-        QStringLiteral("A 主導");
+        RT("A 主導");
 
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignRight | Qt::AlignTop;
@@ -223,7 +223,7 @@ QTPLOT_RECIPE("特殊座標", "史密斯圖", "史密斯圖",
     auto* s = plot.addScatter(xs, ys, QColor(214, 39, 40));
     s->line.width = 2;
     s->marker = MarkerStyle(MarkerShape::FilledCircle, 7, QColor(214, 39, 40));
-    s->legendText = QStringLiteral("匹配路徑");
+    s->legendText = RT("匹配路徑");
     plot.legend.isVisible = true;
 }
 
@@ -243,7 +243,7 @@ QTPLOT_RECIPE("特殊座標", "相量圖", "相量圖",
         {0.45, 60, QColor(44, 160, 44), QStringLiteral("I_C")},
     });
     ph->showProjections = true;
-    plot.title.text = QStringLiteral("電壓與電流（I 落後 V 30°）");
+    plot.title.text = RT("電壓與電流（I 落後 V 30°）");
 }
 
 // ───────────────────── 不規則三角網 ─────────────────────
@@ -268,7 +268,7 @@ QTPLOT_RECIPE("特殊座標", "三角網", "TIN（不規則三角網）",
     tin->colormap = Colormap(Colormap::Viridis);
     tin->marker = MarkerStyle(MarkerShape::FilledCircle, 3, QColor(0, 0, 0, 140));
     plot.equalAxisScale = true;
-    plot.title.text = QStringLiteral("120 個散佈取樣點的地形");
+    plot.title.text = RT("120 個散佈取樣點的地形");
 }
 
 QTPLOT_RECIPE("特殊座標", "三角網", "三角網線框",
@@ -348,6 +348,6 @@ QTPLOT_RECIPE("特殊座標", "史密斯圖", "等駐波比圓",
     auto* m = plot.addMarkers(xs, ys);
     m->marker = MarkerStyle(MarkerShape::FilledDiamond, 10, QColor(30, 90, 200));
 
-    plot.title.text = QStringLiteral("虛線由內而外：VSWR 1.5 / 2 / 3 / 5");
+    plot.title.text = RT("虛線由內而外：VSWR 1.5 / 2 / 3 / 5");
     plot.equalAxisScale = true;
 }

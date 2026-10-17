@@ -62,7 +62,7 @@ QTPLOT_RECIPE("樣式", "進階樣式", "旋轉的形狀",
         e->line = LineStyle(QColor(40, 40, 220, 60 + i * 18), 1.2);
     }
     plot.equalAxisScale = true;
-    plot.title.text = QStringLiteral("每個橢圓轉 18°");
+    plot.title.text = RT("每個橢圓轉 18°");
 }
 
 QTPLOT_RECIPE("樣式", "進階樣式", "旋轉的矩形與多邊形",
@@ -70,16 +70,16 @@ QTPLOT_RECIPE("樣式", "進階樣式", "旋轉的矩形與多邊形",
               "所以自動範圍不會把轉出去的部分切掉。") {
     auto* r = plot.addRectangle(-4, 4, -1.5, 1.5);
     r->rotationDegrees = 30;
-    r->legendText = QStringLiteral("矩形轉 30°");
+    r->legendText = RT("矩形轉 30°");
 
     auto* tri = plot.addPolygon({{0, 3}, {-2.6, -1.5}, {2.6, -1.5}});
     tri->rotationDegrees = -20;
-    tri->legendText = QStringLiteral("三角形轉 -20°");
+    tri->legendText = RT("三角形轉 -20°");
 
     auto* e = plot.addEllipse(0, 0, 5, 2);
     e->rotationDegrees = 70;
     e->fill = FillStyle(QColor(0, 0, 0, 0));
-    e->legendText = QStringLiteral("橢圓轉 70°");
+    e->legendText = RT("橢圓轉 70°");
 
     plot.equalAxisScale = true;
     plot.legend.isVisible = true;
@@ -134,7 +134,7 @@ QTPLOT_RECIPE("圖種", "散點與線", "平滑曲線",
     auto* straight = plot.addScatter(xs, ys, QColor(180, 180, 180));
     straight->line.width = 1.0;
     straight->marker = MarkerStyle(MarkerShape::FilledCircle, 7, QColor(120, 120, 120));
-    straight->legendText = QStringLiteral("直線相連");
+    straight->legendText = RT("直線相連");
 
     for (double tension : {0.3, 0.7}) {
         auto* smooth = plot.addScatter(xs, ys);
@@ -142,7 +142,7 @@ QTPLOT_RECIPE("圖種", "散點與線", "平滑曲線",
         smooth->smoothTension = tension;
         smooth->marker = MarkerStyle::none();
         smooth->line.width = 2;
-        smooth->legendText = QStringLiteral("Smooth，tension = %1").arg(tension);
+        smooth->legendText = RT("Smooth，tension = %1").arg(tension);
     }
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignLeft | Qt::AlignTop;
@@ -161,18 +161,18 @@ QTPLOT_RECIPE("圖種", "散點與線", "平滑但不過衝",
     over->smoothTension = 0.8;
     over->marker = MarkerStyle::none();
     over->line.width = 2;
-    over->legendText = QStringLiteral("Smooth（會過衝）");
+    over->legendText = RT("Smooth（會過衝）");
 
     auto* mono = plot.addScatter(xs, ys, QColor(44, 160, 44));
     mono->interpolation = Scatter::Interpolation::SmoothMonotone;
     mono->marker = MarkerStyle::none();
     mono->line.width = 2;
-    mono->legendText = QStringLiteral("SmoothMonotone（不過衝）");
+    mono->legendText = RT("SmoothMonotone（不過衝）");
 
     auto* raw = plot.addScatter(xs, ys, QColor(60, 60, 60));
     raw->line = LineStyle::none();
     raw->marker = MarkerStyle(MarkerShape::FilledCircle, 8, QColor(60, 60, 60));
-    raw->legendText = QStringLiteral("原始資料");
+    raw->legendText = RT("原始資料");
 
     plot.addHorizontalLine(0.0, QColor(150, 150, 150))->line.pattern = LinePattern::Dashed;
     plot.addHorizontalLine(1.0, QColor(150, 150, 150))->line.pattern = LinePattern::Dashed;
@@ -193,8 +193,8 @@ QTPLOT_RECIPE("圖種", "散點與線", "垂直方向的訊號",
     auto* s = plot.addSignal(gen::sin(5000, 1.0, 4.0));
     s->vertical = true;
     s->legendText = QStringLiteral("vertical = true");
-    plot.leftAxis()->label.text = QStringLiteral("取樣點（索引）");
-    plot.bottomAxis()->label.text = QStringLiteral("數值");
+    plot.leftAxis()->label.text = RT("取樣點（索引）");
+    plot.bottomAxis()->label.text = RT("數值");
     plot.legend.isVisible = true;
 }
 
@@ -205,8 +205,8 @@ QTPLOT_RECIPE("圖種", "散點與線", "垂直訊號加反向 X 軸",
     s->vertical = true;
     s->marker = MarkerStyle::none();
     plot.bottomAxis()->inverted = true;
-    plot.leftAxis()->label.text = QStringLiteral("深度");
-    plot.bottomAxis()->label.text = QStringLiteral("數值（向左為正）");
+    plot.leftAxis()->label.text = RT("深度");
+    plot.bottomAxis()->label.text = RT("數值（向左為正）");
 }
 
 QTPLOT_RECIPE("圖種", "散點與線", "只畫一段",
@@ -216,13 +216,13 @@ QTPLOT_RECIPE("圖種", "散點與線", "只畫一段",
     const QVector<double> ys = gen::randomWalk(1000);
 
     auto* all = plot.addSignal(ys, 1.0, QColor(200, 200, 200));
-    all->legendText = QStringLiteral("全部 1000 點");
+    all->legendText = RT("全部 1000 點");
 
     auto* part = plot.addSignal(ys, 1.0, QColor(214, 39, 40));
     part->renderFirst = 300;
     part->renderLast = 500;
     part->line.width = 2.5;
-    part->legendText = QStringLiteral("只畫 300–500");
+    part->legendText = RT("只畫 300–500");
 
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignLeft | Qt::AlignTop;
@@ -246,7 +246,7 @@ QTPLOT_RECIPE("標註", "文字", "文字的完整格式",
     t->alignment = Qt::AlignHCenter | Qt::AlignVCenter;
 
     plot.addMarkers({42}, {69}, QColor(40, 40, 40))->marker.size = 9;
-    plot.addAnnotation(QStringLiteral("黑點是文字錨定的資料座標 (42, 69)"),
+    plot.addAnnotation(RT("黑點是文字錨定的資料座標 (42, 69)"),
                        Qt::AlignLeft | Qt::AlignTop);
 }
 
@@ -261,9 +261,9 @@ QTPLOT_RECIPE("標註", "文字", "對齊與像素偏移",
         Qt::AlignHCenter | Qt::AlignBottom, Qt::AlignLeft | Qt::AlignVCenter,
         Qt::AlignHCenter | Qt::AlignTop, Qt::AlignRight | Qt::AlignVCenter,
         Qt::AlignHCenter | Qt::AlignBottom};
-    const QStringList names{QStringLiteral("上方"), QStringLiteral("右側"),
-                            QStringLiteral("下方"), QStringLiteral("左側"),
-                            QStringLiteral("上方＋偏移")};
+    const QStringList names{RT("上方"), RT("右側"),
+                            RT("下方"), RT("左側"),
+                            RT("上方＋偏移")};
 
     for (int i = 0; i < xs.size(); ++i) {
         auto* t = plot.addText(names[i], xs[i], ys[i]);
@@ -438,9 +438,9 @@ QTPLOT_RECIPE("進階", "組合與標註", "三軸組合圖",
     area->interpolation = Scatter::Interpolation::Smooth;
     area->fillToY = 0;
     area->fill = FillStyle(QColor(revColor.red(), revColor.green(), revColor.blue(), 110));
-    area->legendText = QStringLiteral("營收 ($)");
+    area->legendText = RT("營收 ($)");
     plot.leftAxis()->setRange(0, 2080);
-    plot.leftAxis()->label.text = QStringLiteral("營收 ($)");
+    plot.leftAxis()->label.text = RT("營收 ($)");
     plot.leftAxis()->label.font.color = revColor;
     plot.leftAxis()->tickFont.color = revColor;
 
@@ -449,7 +449,7 @@ QTPLOT_RECIPE("進階", "組合與標註", "三軸組合圖",
     markupAxis->showTickLabels = true;
     markupAxis->majorTickLength = 5;
     markupAxis->setRange(0, 26);
-    markupAxis->label.text = QStringLiteral("加價率 (%)");
+    markupAxis->label.text = RT("加價率 (%)");
     markupAxis->label.font.color = markColor;
     markupAxis->tickFont.color = markColor;
     markupAxis->majorTickLine.color = markColor;
@@ -460,14 +460,14 @@ QTPLOT_RECIPE("進階", "組合與標註", "三軸組合圖",
                      QColor(0, 0, 0, 0), QString()});
     auto* bp = plot.addBars(bars);
     bp->yAxis = markupAxis;
-    bp->legendText = QStringLiteral("加價率 (%)");
+    bp->legendText = RT("加價率 (%)");
 
     // 3) 折線（右軸）
     auto* marginAxis = plot.addAxis(Edge::Right);
     marginAxis->showTickLabels = true;
     marginAxis->majorTickLength = 5;
     marginAxis->setRange(0, 21);
-    marginAxis->label.text = QStringLiteral("毛利率 (%)");
+    marginAxis->label.text = RT("毛利率 (%)");
     marginAxis->label.font.color = marginColor;
     marginAxis->tickFont.color = marginColor;
     marginAxis->majorTickLine.color = marginColor;
@@ -477,7 +477,7 @@ QTPLOT_RECIPE("進階", "組合與標註", "三軸組合圖",
     line->line.width = 2;
     line->interpolation = Scatter::Interpolation::Smooth;
     line->marker = MarkerStyle(MarkerShape::FilledCircle, 8, marginColor);
-    line->legendText = QStringLiteral("毛利率 (%)");
+    line->legendText = RT("毛利率 (%)");
 
     QVector<Tick> ticks;
     for (int i = 0; i < names.size(); ++i) ticks.append({static_cast<double>(i), names[i]});
@@ -486,7 +486,7 @@ QTPLOT_RECIPE("進階", "組合與標註", "三軸組合圖",
     plot.bottomAxis()->tickGenerator = gen;
     plot.setAxisLimits(-0.6, names.size() - 0.4, 0, 2080);
 
-    plot.title.text = QStringLiteral("加價率 vs 毛利率");
+    plot.title.text = RT("加價率 vs 毛利率");
     plot.legend.isVisible = true;
     plot.legend.horizontal = true;
     plot.legend.alignment = Qt::AlignHCenter | Qt::AlignBottom;
@@ -515,9 +515,9 @@ QTPLOT_RECIPE("進階", "組合與標註", "散點加資料標籤",
     m->pointLabels.font.color = QColor(40, 70, 190);
     m->pointLabels.font.size = 9;
 
-    plot.bottomAxis()->label.text = QStringLiteral("身高");
-    plot.leftAxis()->label.text = QStringLiteral("體重");
-    plot.title.text = QStringLiteral("體重對身高");
+    plot.bottomAxis()->label.text = RT("身高");
+    plot.leftAxis()->label.text = RT("體重");
+    plot.title.text = RT("體重對身高");
     plot.setAxisLimits(49, 75, 40, 160);
 }
 
@@ -557,14 +557,14 @@ QTPLOT_RECIPE("進階", "組合與標註", "分組散點加各組迴歸線",
         auto* line = plot.addScatter({lo, hi}, {fit.predict(lo), fit.predict(hi)}, colors[g]);
         line->marker = MarkerStyle::none();
         line->line.width = 2;
-        line->legendText = QStringLiteral("%1  截距 %2  斜率 %3")
+        line->legendText = RT("%1  截距 %2  斜率 %3")
                                .arg(groups[g])
                                .arg(fit.intercept, 0, 'f', 2)
                                .arg(fit.slope, 0, 'f', 3);
     }
 
-    plot.bottomAxis()->label.text = QStringLiteral("花瓣長 (mm)");
-    plot.leftAxis()->label.text = QStringLiteral("花萼長 (mm)");
+    plot.bottomAxis()->label.text = RT("花瓣長 (mm)");
+    plot.leftAxis()->label.text = RT("花萼長 (mm)");
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignLeft | Qt::AlignTop;
 }
@@ -610,15 +610,15 @@ QTPLOT_RECIPE("進階", "組合與標註", "偏態:平均數被尾巴拉走",
     const QPair<double, double> l = addPanel(left, 0.0, QColor(140, 190, 70));
     const QPair<double, double> r = addPanel(right, 5.0, QColor(70, 130, 200));
 
-    plot.addText(QStringLiteral("左偏：平均 %1 < 中位數 %2")
+    plot.addText(RT("左偏：平均 %1 < 中位數 %2")
                      .arg(l.first, 0, 'f', 2).arg(l.second, 0, 'f', 2),
                  2.0, 0.95)->alignment = Qt::AlignHCenter | Qt::AlignBottom;
-    plot.addText(QStringLiteral("右偏：平均 %1 > 中位數 %2")
+    plot.addText(RT("右偏：平均 %1 > 中位數 %2")
                      .arg(r.first, 0, 'f', 2).arg(r.second, 0, 'f', 2),
                  7.0, 0.95)->alignment = Qt::AlignHCenter | Qt::AlignBottom;
 
-    plot.leftAxis()->label.text = QStringLiteral("密度");
-    plot.title.text = QStringLiteral("尾巴把平均數拉走");
+    plot.leftAxis()->label.text = RT("密度");
+    plot.title.text = RT("尾巴把平均數拉走");
     plot.setAxisLimits(-0.3, 9.3, 0, 1.08);
 }
 
@@ -627,8 +627,8 @@ QTPLOT_RECIPE("進階", "漸層與堆疊", "含負值的堆疊面積圖",
               "不能直接用「累積和」：有負值的時候，那一層會把它上面所有層一起"
               "往下拉，層與層之間還會互相穿越，畫出來的面積就不再是各層的值了。"
               "每個 x 各自維護「正累積」和「負累積」才對。") {
-    const QStringList regions{QStringLiteral("東北"), QStringLiteral("中西"),
-                              QStringLiteral("南部"), QStringLiteral("西部")};
+    const QStringList regions{RT("東北"), RT("中西"),
+                              RT("南部"), RT("西部")};
     const QVector<QColor> colors{QColor(140, 200, 240), QColor(50, 130, 215),
                                  QColor(230, 110, 40), QColor(250, 215, 110)};
 
@@ -652,11 +652,11 @@ QTPLOT_RECIPE("進階", "漸層與堆疊", "含負值的堆疊面積圖",
     for (int k = 0; k < bands.size(); ++k) bands[k]->legendText = regions[k];
 
     plot.addHorizontalLine(0)->line = LineStyle(QColor(90, 90, 90), 1.2);
-    plot.leftAxis()->label.text = QStringLiteral("利潤");
+    plot.leftAxis()->label.text = RT("利潤");
     plot.legend.isVisible = true;
     plot.legend.horizontal = true;
     plot.legend.alignment = Qt::AlignHCenter | Qt::AlignTop;
-    plot.title.text = QStringLiteral("各區利潤趨勢");
+    plot.title.text = RT("各區利潤趨勢");
     plot.bottomAxis()->tickGenerator = std::make_shared<AutomaticTickGenerator>();
 }
 
@@ -667,8 +667,8 @@ QTPLOT_RECIPE("進階", "漸層與堆疊", "堆疊面積加原始曲線",
               "面積看總量與組成，線看各層自己的趨勢。") {
     gen::setSeed(27);
     const int n = 25;
-    const QStringList names{QStringLiteral("A 類"), QStringLiteral("B 類"),
-                            QStringLiteral("C 類"), QStringLiteral("D 類")};
+    const QStringList names{RT("A 類"), RT("B 類"),
+                            RT("C 類"), RT("D 類")};
     const QVector<QColor> colors{QColor(45, 125, 170), QColor(245, 150, 40),
                                  QColor(175, 210, 240), QColor(110, 110, 110)};
 
@@ -697,7 +697,7 @@ QTPLOT_RECIPE("進階", "漸層與堆疊", "堆疊面積加原始曲線",
         line->line.width = 1.4;
     }
 
-    plot.leftAxis()->label.text = QStringLiteral("金額");
+    plot.leftAxis()->label.text = RT("金額");
     plot.legend.isVisible = true;
     plot.legend.horizontal = true;
     plot.legend.alignment = Qt::AlignLeft | Qt::AlignTop;
@@ -712,9 +712,9 @@ QTPLOT_RECIPE("進階", "漸層與堆疊", "地平線圖（Horizon）",
               "代價是讀不出數值，只能比深淺與形狀；層數超過三四層顏色也分不出來了。") {
     gen::setSeed(77);
     const int n = 220;
-    const QStringList names{QStringLiteral("CPU"), QStringLiteral("記憶體"),
-                            QStringLiteral("磁碟"), QStringLiteral("網路"),
-                            QStringLiteral("延遲"), QStringLiteral("錯誤率")};
+    const QStringList names{QStringLiteral("CPU"), RT("記憶體"),
+                            RT("磁碟"), RT("網路"),
+                            RT("延遲"), RT("錯誤率")};
 
     QVector<double> xs;
     for (int i = 0; i < n; ++i) xs.append(i);
@@ -741,5 +741,5 @@ QTPLOT_RECIPE("進階", "漸層與堆疊", "地平線圖（Horizon）",
     plot.leftAxis()->isVisible = false;
     plot.grid.isVisible = false;
     plot.setAxisLimits(-26, n + 2, -0.1, names.size() * rowHeight);
-    plot.title.text = QStringLiteral("六條指標疊在一起看");
+    plot.title.text = RT("六條指標疊在一起看");
 }

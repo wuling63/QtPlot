@@ -68,10 +68,10 @@ QTPLOT_RECIPE("裝飾", "色階圖例", "熱圖加色階圖例",
     heat->extent = CoordinateRect(0, 10, 0, 10);
 
     auto* bar = plot.addColorbar(*heat);
-    bar->label.text = QStringLiteral("強度");
+    bar->label.text = RT("強度");
 
     plot.equalAxisScale = true;
-    plot.title.text = QStringLiteral("2D 高斯");
+    plot.title.text = RT("2D 高斯");
 }
 
 QTPLOT_RECIPE("裝飾", "色階圖例", "圖例的位置與方向",
@@ -87,7 +87,7 @@ QTPLOT_RECIPE("裝飾", "色階圖例", "圖例的位置與方向",
     heat->smooth = true;
 
     auto* bar = plot.addColorbar(*heat, Edge::Bottom);
-    bar->label.text = QStringLiteral("高度 (m)");
+    bar->label.text = RT("高度 (m)");
     bar->thickness = 14;
     bar->lengthFraction = 0.6;
 
@@ -112,7 +112,7 @@ QTPLOT_RECIPE("裝飾", "色階圖例", "等值線與 TIN 的圖例",
     tin->colormap = Colormap(Colormap::Turbo);
 
     auto* bar = plot.addColorbar(*tin);
-    bar->label.text = QStringLiteral("高程 (m)");
+    bar->label.text = RT("高程 (m)");
 
     plot.equalAxisScale = true;
 }
@@ -131,9 +131,9 @@ QTPLOT_RECIPE("裝飾", "色階圖例", "同一邊兩個色階",
     b->colormap = Colormap(Colormap::Turbo);
     b->smooth = true;
 
-    plot.addColorbar(*a, Edge::Right)->label.text = QStringLiteral("高斯");
-    plot.addColorbar(*b, Edge::Right)->label.text = QStringLiteral("正弦");
-    plot.title.text = QStringLiteral("兩個色階都貼在右邊");
+    plot.addColorbar(*a, Edge::Right)->label.text = RT("高斯");
+    plot.addColorbar(*b, Edge::Right)->label.text = RT("正弦");
+    plot.title.text = RT("兩個色階都貼在右邊");
 }
 
 QTPLOT_RECIPE("裝飾", "色階圖例", "兩個色階並排",
@@ -150,8 +150,8 @@ QTPLOT_RECIPE("裝飾", "色階圖例", "兩個色階並排",
     contour->colormap = Colormap(Colormap::Hot);
     contour->line.width = 1.5;
 
-    plot.addColorbar(*a, Edge::Right)->label.text = QStringLiteral("底圖");
-    plot.addColorbar(*contour, Edge::Left)->label.text = QStringLiteral("等值線");
+    plot.addColorbar(*a, Edge::Right)->label.text = RT("底圖");
+    plot.addColorbar(*contour, Edge::Left)->label.text = RT("等值線");
     plot.equalAxisScale = true;
 }
 
@@ -176,7 +176,7 @@ QTPLOT_RECIPE("裝飾", "影像標記", "用影像當標記",
     pins->centered = true;
 
     plot.setAxisLimits(0, 10, 2, 9);
-    plot.title.text = QStringLiteral("路線上的五個停留點");
+    plot.title.text = RT("路線上的五個停留點");
 }
 
 // ───────────────────────── 浮動軸 ─────────────────────────
@@ -217,7 +217,7 @@ QTPLOT_RECIPE("裝飾", "浮動軸", "局部的參考刻度",
     ruler->line = LineStyle(QColor(200, 60, 60), 1.5);
     ruler->tickLine = LineStyle(QColor(200, 60, 60), 1.2);
     ruler->tickFont.color = QColor(200, 60, 60);
-    ruler->label.text = QStringLiteral("局部尺規");
+    ruler->label.text = RT("局部尺規");
     ruler->label.font.color = QColor(200, 60, 60);
 }
 
@@ -231,10 +231,10 @@ QTPLOT_RECIPE_LIVE("即時", "波形", "DataStreamerXY（不規則取樣）",
     if (frame == 0) {
         auto* s = plot.addDataStreamerXY(200);
         s->viewWidth = 60;  // 只顯示最近 60 秒
-        s->legendText = QStringLiteral("不等間距的事件");
+        s->legendText = RT("不等間距的事件");
         s->marker = MarkerStyle(MarkerShape::FilledCircle, 4, QColor(31, 119, 180));
         plot.legend.isVisible = true;
-        plot.bottomAxis()->label.text = QStringLiteral("時間（秒）");
+        plot.bottomAxis()->label.text = RT("時間（秒）");
         return;
     }
     if (auto* s = firstOf<DataStreamerXY>(plot)) {

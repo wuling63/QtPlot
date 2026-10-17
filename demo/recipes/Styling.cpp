@@ -12,10 +12,10 @@ QTPLOT_RECIPE("樣式", "主題與配色", "深色主題",
     for (int i = 0; i < 4; ++i) {
         auto* s = plot.addScatter(xs, gen::sin(100, 1.0, 2.0, i * 0.1));
         s->marker = MarkerStyle::none();
-        s->legendText = QStringLiteral("相位 %1").arg(i);
+        s->legendText = RT("相位 %1").arg(i);
     }
     plot.legend.isVisible = true;
-    plot.title.text = QStringLiteral("深色主題");
+    plot.title.text = RT("深色主題");
 }
 
 QTPLOT_RECIPE("樣式", "主題與配色", "調色盤一覽",
@@ -39,7 +39,7 @@ QTPLOT_RECIPE("樣式", "主題與配色", "調色盤一覽",
     for (int pi = 0; pi < names.size(); ++pi)
         manual->ticks.append({pi + 0.4, names[pi], true});
     plot.leftAxis()->tickGenerator = manual;
-    plot.bottomAxis()->label.text = QStringLiteral("顏色編號");
+    plot.bottomAxis()->label.text = RT("顏色編號");
 }
 
 QTPLOT_RECIPE("樣式", "主題與配色", "色階一覽",
@@ -144,7 +144,7 @@ QTPLOT_RECIPE("樣式", "格線與圖例", "圖例位置與方向",
     for (int i = 0; i < 3; ++i) {
         auto* s = plot.addScatter(xs, gen::sin(50, 1.0, 1.0, i * 0.15));
         s->marker = MarkerStyle::none();
-        s->legendText = QStringLiteral("曲線 %1").arg(i + 1);
+        s->legendText = RT("曲線 %1").arg(i + 1);
     }
     plot.legend.isVisible = true;
     plot.legend.horizontal = true;
@@ -247,7 +247,7 @@ QTPLOT_RECIPE("樣式", "文字", "字型的每一個欄位",
               "中間與更重的那幾級能不能畫出差別，完全看手上的字型裝了什麼。") {
     struct Row { QString text; std::function<void(FontStyle&)> apply; };
     const QVector<Row> rows{
-        {QStringLiteral("預設"), [](FontStyle&) {}},
+        {RT("預設"), [](FontStyle&) {}},
         {QStringLiteral("size = 20"), [](FontStyle& f) { f.size = 20; }},
         {QStringLiteral("weight = Light"), [](FontStyle& f) { f.weight = FontStyle::Light; }},
         {QStringLiteral("weight = Bold"), [](FontStyle& f) { f.weight = FontStyle::Bold; }},
@@ -257,8 +257,8 @@ QTPLOT_RECIPE("樣式", "文字", "字型的每一個欄位",
         {QStringLiteral("strikeOut"), [](FontStyle& f) { f.strikeOut = true; }},
         {QStringLiteral("letterSpacing = 4"), [](FontStyle& f) { f.letterSpacing = 4; }},
         {QStringLiteral("letterSpacing = -1.5"), [](FontStyle& f) { f.letterSpacing = -1.5; }},
-        {QStringLiteral("stretch = 60（扁）"), [](FontStyle& f) { f.stretch = 60; }},
-        {QStringLiteral("stretch = 170（寬）"), [](FontStyle& f) { f.stretch = 170; }},
+        {RT("stretch = 60（扁）"), [](FontStyle& f) { f.stretch = 60; }},
+        {RT("stretch = 170（寬）"), [](FontStyle& f) { f.stretch = 170; }},
         {QStringLiteral("rotation = -15"), [](FontStyle& f) { f.rotation = -15; }},
         {QStringLiteral("family = Courier New"),
          [](FontStyle& f) { f.family = QStringLiteral("Courier New"); }},
@@ -275,7 +275,7 @@ QTPLOT_RECIPE("樣式", "文字", "字型的每一個欄位",
         name->label.font.size = 9;
         name->label.font.color = QColor(120, 120, 120);
 
-        auto* sample = plot.addText(QStringLiteral("Sample 範例 123"), 5.2, y);
+        auto* sample = plot.addText(RT("Sample 範例 123"), 5.2, y);
         sample->alignment = Qt::AlignLeft | Qt::AlignVCenter;
         sample->label.font.size = 13;
         rows[i].apply(sample->label.font);
@@ -284,7 +284,7 @@ QTPLOT_RECIPE("樣式", "文字", "字型的每一個欄位",
     plot.bottomAxis()->isVisible = false;
     plot.leftAxis()->isVisible = false;
     plot.grid.isVisible = false;
-    plot.title.text = QStringLiteral("FontStyle 的每一個欄位");
+    plot.title.text = RT("FontStyle 的每一個欄位");
     plot.setAxisLimits(0, 11, top - rows.size() * spacing, top + spacing);
 }
 
@@ -299,16 +299,16 @@ QTPLOT_RECIPE("樣式", "文字", "一次改掉整張圖的字",
               "注意順序 —— 圖元是在加進來之後才被走到的，所以要先加圖元再改字型。") {
     gen::setSeed(4);
     plot.addScatter(gen::consecutive(12), gen::randomWalk(12, 1.0, 10))
-        ->legendText = QStringLiteral("A 線");
+        ->legendText = RT("A 線");
     plot.addScatter(gen::consecutive(12), gen::randomWalk(12, 1.0, 6))
-        ->legendText = QStringLiteral("B 線");
+        ->legendText = RT("B 線");
     auto* bars = plot.addBars({4, 7, 5, 8, 6});
     for (Bar& b : bars->bars) b.label = QString::number(b.value, 'f', 0);
-    bars->legendText = QStringLiteral("月產量");
+    bars->legendText = RT("月產量");
 
-    plot.title.text = QStringLiteral("一次設定好所有文字");
-    plot.bottomAxis()->label.text = QStringLiteral("月份");
-    plot.leftAxis()->label.text = QStringLiteral("數量");
+    plot.title.text = RT("一次設定好所有文字");
+    plot.bottomAxis()->label.text = RT("月份");
+    plot.leftAxis()->label.text = RT("數量");
     plot.legend.isVisible = true;
 
     // 圖元都加完了才動字型
@@ -329,17 +329,17 @@ QTPLOT_RECIPE("樣式", "文字", "只改符合條件的那些字",
     gen::setSeed(8);
     auto* s = plot.addScatter(gen::consecutive(20), gen::randomWalk(20, 1.0, 50));
     s->marker.shape = MarkerShape::FilledCircle;
-    s->legendText = QStringLiteral("量測");
+    s->legendText = RT("量測");
 
-    plot.title.text = QStringLiteral("只有粗體的字被挑出來改");
+    plot.title.text = RT("只有粗體的字被挑出來改");
     plot.title.font.bold = true;
-    plot.bottomAxis()->label.text = QStringLiteral("這根軸名是粗體");
+    plot.bottomAxis()->label.text = RT("這根軸名是粗體");
     plot.bottomAxis()->label.font.bold = true;
-    plot.leftAxis()->label.text = QStringLiteral("這根不是");
+    plot.leftAxis()->label.text = RT("這根不是");
     plot.legend.isVisible = true;
 
     auto* note = plot.addAnnotation(
-        QStringLiteral("粗體的被放大 20% 並染紅\n其餘不動"),
+        RT("粗體的被放大 20% 並染紅\n其餘不動"),
         Qt::AlignLeft | Qt::AlignBottom);
     note->label.font.size = 9;
 
@@ -357,10 +357,10 @@ QTPLOT_RECIPE("樣式", "文字", "轉角度",
               "才留得出旋轉後外接框需要的厚度，否則文字會被切掉。"
               "（tickFont.rotation 也會被採用，這樣 setFontRotation() 才不會漏掉刻度。）") {
     const QStringList months{
-        QStringLiteral("一月的營收"), QStringLiteral("二月的營收"), QStringLiteral("三月的營收"),
-        QStringLiteral("四月的營收"), QStringLiteral("五月的營收"), QStringLiteral("六月的營收")};
+        RT("一月的營收"), RT("二月的營收"), RT("三月的營收"),
+        RT("四月的營收"), RT("五月的營收"), RT("六月的營收")};
     auto* bars = plot.addBars({42, 55, 38, 61, 49, 58});
-    for (Bar& b : bars->bars) b.label = QStringLiteral("%1 百萬").arg(b.value, 0, 'f', 0);
+    for (Bar& b : bars->bars) b.label = RT("%1 百萬").arg(b.value, 0, 'f', 0);
     bars->valueLabelFont.rotation = -90;
     bars->valueLabelFont.size = 9;
 
@@ -370,8 +370,8 @@ QTPLOT_RECIPE("樣式", "文字", "轉角度",
     plot.bottomAxis()->tickGenerator = ticks;
     plot.bottomAxis()->tickLabelRotation = -40;
 
-    plot.leftAxis()->label.text = QStringLiteral("百萬元");
+    plot.leftAxis()->label.text = RT("百萬元");
     plot.leftAxis()->label.font.rotation = -90;  // 垂直軸的預設就是這個，寫出來備查
-    plot.title.text = QStringLiteral("長標籤轉個角度就擠得下");
+    plot.title.text = RT("長標籤轉個角度就擠得下");
     plot.setAxisLimits(-0.7, months.size() - 0.3, 0, 72);
 }

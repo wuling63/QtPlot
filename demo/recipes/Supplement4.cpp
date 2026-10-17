@@ -61,7 +61,7 @@ QTPLOT_RECIPE("座標軸", "調整範圍", "讀取目前的範圍",
     plot.addSignal(gen::sin(100, 3, 2));
     plot.autoScale();
     const AxisLimits lim = plot.axisLimits();
-    plot.addAnnotation(QStringLiteral("X: %1 ～ %2\nY: %3 ～ %4")
+    plot.addAnnotation(RT("X: %1 ～ %2\nY: %3 ～ %4")
                            .arg(lim.x.min, 0, 'f', 2).arg(lim.x.max, 0, 'f', 2)
                            .arg(lim.y.min, 0, 'f', 2).arg(lim.y.max, 0, 'f', 2));
 }
@@ -82,7 +82,7 @@ QTPLOT_RECIPE("樣式", "格線與圖例", "格線跟著上方的軸",
     auto* s = plot.addScatter(gen::linspace(0, 1000, 30), gen::randomUniform(30, 0, 10));
     s->xAxis = plot.topAxis();
     plot.topAxis()->showTickLabels = true;
-    plot.topAxis()->label.text = QStringLiteral("上軸（格線跟著它）");
+    plot.topAxis()->label.text = RT("上軸（格線跟著它）");
     plot.bottomAxis()->isVisible = false;
 }
 
@@ -92,7 +92,7 @@ QTPLOT_RECIPE("座標軸", "多軸與範圍", "只用右側的 Y 軸",
     auto* s = plot.addSignal(gen::randomWalk(200, 1, 100));
     s->yAxis = plot.rightAxis();
     plot.rightAxis()->showTickLabels = true;
-    plot.rightAxis()->label.text = QStringLiteral("數值");
+    plot.rightAxis()->label.text = RT("數值");
     plot.leftAxis()->isVisible = false;
 }
 
@@ -101,7 +101,7 @@ QTPLOT_RECIPE("入門", "圖元管理", "清空整張圖",
               "用 reset()。這裡先加了三條線，clear 之後只剩最後加的那條。") {
     for (int i = 0; i < 3; ++i) plot.addSignal(gen::sin(50, 1, 1, i * 0.25));
     plot.clear();
-    plot.addSignal(gen::cos(50, 2, 2))->legendText = QStringLiteral("clear() 之後才加的");
+    plot.addSignal(gen::cos(50, 2, 2))->legendText = RT("clear() 之後才加的");
     plot.legend.isVisible = true;
 }
 
@@ -110,7 +110,7 @@ QTPLOT_RECIPE("樣式", "版面與框線", "放大倍率輸出",
               "版面不變、只是更清晰。左邊是 1 倍、右邊是 3 倍，貼到同樣大小時右邊銳利得多。") {
     Plot small;
     small.addSignal(gen::sin(40, 1, 1))->marker = MarkerStyle(MarkerShape::FilledCircle, 5, QColor(31, 119, 180));
-    small.title.text = QStringLiteral("小圖");
+    small.title.text = RT("小圖");
     small.autoScale();  // 沒有放進 PlotWidget 的 Plot 要自己算範圍
     const QImage x1 = small.renderToImage(320, 240, 1.0);
     const QImage x3 = small.renderToImage(320, 240, 3.0);
@@ -150,7 +150,7 @@ QTPLOT_RECIPE("樣式", "版面與框線", "隱藏標題但保留文字",
               "把標題的字型顏色設成全透明，文字還在（匯出 SVG 時可以當描述），"
               "版面也不會替它留空間。要恢復只要把顏色改回來。") {
     plot.addSignal(gen::sin(100));
-    plot.title.text = QStringLiteral("這段文字不會畫出來");
+    plot.title.text = RT("這段文字不會畫出來");
     plot.title.font.color = QColor(0, 0, 0, 0);
 }
 
@@ -160,7 +160,7 @@ QTPLOT_RECIPE("座標軸", "標籤與刻度", "自己寫的刻度產生器",
     plot.addSignal(gen::randomWalk(300, 1, 50));
     auto t = std::make_shared<FixedIntervalTicks>();
     t->interval = 5;
-    t->unit = QStringLiteral(" 單位");
+    t->unit = RT(" 單位");
     plot.leftAxis()->tickGenerator = t;
 }
 
@@ -174,8 +174,8 @@ QTPLOT_RECIPE("座標軸", "標籤與刻度", "指定日期的刻度",
     auto m = std::make_shared<ManualTickGenerator>();
     const QDate days[] = {QDate(2024, 1, 1), QDate(2024, 2, 10), QDate(2024, 6, 10), QDate(2024, 9, 17),
                           QDate(2024, 12, 31)};
-    const QStringList names{QStringLiteral("元旦"), QStringLiteral("春節"), QStringLiteral("端午"),
-                            QStringLiteral("中秋"), QStringLiteral("除夕")};
+    const QStringList names{RT("元旦"), RT("春節"), RT("端午"),
+                            RT("中秋"), RT("除夕")};
     for (int i = 0; i < 5; ++i)
         m->ticks.append({static_cast<double>(QDateTime(days[i], QTime(0, 0)).toSecsSinceEpoch()), names[i], true});
     plot.bottomAxis()->tickGenerator = m;
@@ -199,7 +199,7 @@ QTPLOT_RECIPE("入門", "快速上手", "多個正弦波疊加",
 QTPLOT_RECIPE("標註", "文字", "角落標註的樣式",
               "Annotation 的底色、框線、內距、字型都能改。常拿來放「資料來源」或「目前狀態」。") {
     plot.addSignal(gen::sin(100));
-    auto* a = plot.addAnnotation(QStringLiteral("資料來源：中央氣象署"), Qt::AlignRight | Qt::AlignBottom);
+    auto* a = plot.addAnnotation(RT("資料來源：中央氣象署"), Qt::AlignRight | Qt::AlignBottom);
     a->background = FillStyle(QColor(255, 240, 200));
     a->border = LineStyle(QColor(200, 140, 30), 2);
     a->padding = 10;
@@ -213,8 +213,8 @@ QTPLOT_RECIPE("標註", "文字", "角落標註的九個位置",
     plot.addSignal(gen::sin(100));
     const Qt::Alignment hs[] = {Qt::AlignLeft, Qt::AlignHCenter, Qt::AlignRight};
     const Qt::Alignment vs[] = {Qt::AlignTop, Qt::AlignVCenter, Qt::AlignBottom};
-    const QStringList hn{QStringLiteral("左"), QStringLiteral("中"), QStringLiteral("右")};
-    const QStringList vn{QStringLiteral("上"), QStringLiteral("中"), QStringLiteral("下")};
+    const QStringList hn{RT("左"), RT("中"), RT("右")};
+    const QStringList vn{RT("上"), RT("中"), RT("下")};
     for (int v = 0; v < 3; ++v)
         for (int h = 0; h < 3; ++h) plot.addAnnotation(vn[v] + hn[h], hs[h] | vs[v]);
 }
@@ -227,7 +227,7 @@ QTPLOT_RECIPE("圖種", "參考線與區間", "區間的花紋與框線",
     s->fill.hatch = HatchPattern::DiagonalUp;
     s->fill.hatchColor = QColor(214, 39, 40, 120);
     s->line = LineStyle(QColor(214, 39, 40), 1.5, LinePattern::Dashed);
-    s->legendText = QStringLiteral("預測區間");
+    s->legendText = RT("預測區間");
     plot.legend.isVisible = true;
 }
 
@@ -235,8 +235,8 @@ QTPLOT_RECIPE("圖種", "長條與統計", "長條上的自訂文字",
               "Bar::label 只能放一段文字；要在長條旁邊放更多東西（說明、徽章），"
               "就用 Text 放在長條的座標上。") {
     plot.addBars(QVector<double>{12, 18, 9, 22});
-    const QStringList notes{QStringLiteral("新品"), QStringLiteral("熱銷"), QStringLiteral("缺貨"),
-                            QStringLiteral("冠軍")};
+    const QStringList notes{RT("新品"), RT("熱銷"), RT("缺貨"),
+                            RT("冠軍")};
     const double vals[] = {12, 18, 9, 22};
     for (int i = 0; i < 4; ++i) {
         auto* t = plot.addText(notes[i], i, vals[i] / 2);
@@ -263,7 +263,7 @@ QTPLOT_RECIPE("圖種", "長條與統計", "多段範圍長條（直向）",
         }
     auto* bp = plot.addBars(bars);
     bp->includeZero = false;
-    categoryTicks(plot.bottomAxis(), {QStringLiteral("機台 A"), QStringLiteral("機台 B"), QStringLiteral("機台 C")});
+    categoryTicks(plot.bottomAxis(), {RT("機台 A"), RT("機台 B"), RT("機台 C")});
 }
 
 QTPLOT_RECIPE("圖種", "長條與統計", "多段範圍長條（橫向）",
@@ -283,8 +283,8 @@ QTPLOT_RECIPE("圖種", "長條與統計", "多段範圍長條（橫向）",
     auto* bp = plot.addBars(bars);
     bp->horizontal = true;
     bp->includeZero = false;
-    categoryTicks(plot.leftAxis(), {QStringLiteral("小明"), QStringLiteral("小華"), QStringLiteral("小美")});
-    plot.bottomAxis()->label.text = QStringLiteral("時刻");
+    categoryTicks(plot.leftAxis(), {RT("小明"), RT("小華"), RT("小美")});
+    plot.bottomAxis()->label.text = RT("時刻");
 }
 
 QTPLOT_RECIPE("互動", "命中與提示", "十字線的樣式",
@@ -348,7 +348,7 @@ QTPLOT_RECIPE("財金", "K 線", "股票代號浮水印",
 
 QTPLOT_RECIPE("財金", "K 線", "多行的浮水印",
               "文字裡放換行就是多行；lineHeight 把行距收緊一點，代號和名稱看起來是一組。") {
-    auto* wm = plot.addAnnotation(QStringLiteral("2330\n台積電"), Qt::AlignHCenter | Qt::AlignVCenter);
+    auto* wm = plot.addAnnotation(RT("2330\n台積電"), Qt::AlignHCenter | Qt::AlignVCenter);
     wm->label.font.size = 48;
     wm->label.font.bold = true;
     wm->label.font.lineHeight = 0.9;
@@ -411,8 +411,8 @@ QTPLOT_RECIPE("場", "熱圖", "指定格子大小",
     auto* hm = plot.addHeatmap(gen::randomUniform(rows * cols), rows, cols);
     const double cw = 2.5, ch = 0.5;
     hm->extent = CoordinateRect(0, cols * cw, 0, rows * ch);
-    plot.bottomAxis()->label.text = QStringLiteral("每格 2.5 單位寬");
-    plot.leftAxis()->label.text = QStringLiteral("每格 0.5 單位高");
+    plot.bottomAxis()->label.text = RT("每格 2.5 單位寬");
+    plot.leftAxis()->label.text = RT("每格 0.5 單位高");
 }
 
 QTPLOT_RECIPE("場", "熱圖", "日期軸的熱圖",
@@ -427,7 +427,7 @@ QTPLOT_RECIPE("場", "熱圖", "日期軸的熱圖",
     const double t0 = epoch2024();
     hm->extent = CoordinateRect(t0, t0 + days * 86400.0, 0, 24);
     plot.bottomAxis()->tickGenerator = std::make_shared<DateTimeTickGenerator>();
-    plot.leftAxis()->label.text = QStringLiteral("時");
+    plot.leftAxis()->label.text = RT("時");
     plot.addColorbar(*hm);
 }
 
@@ -464,8 +464,8 @@ QTPLOT_RECIPE("極座標", "圓餅與玫瑰", "扇形標籤和圖例不同",
               "PieSlice::label 畫在扇形上、legendText 放在圖例裡，兩者可以不一樣："
               "扇形上只放百分比、圖例放完整名稱，圖面才不會擠。") {
     auto* pie = plot.addPie({45, 25, 20, 10});
-    const QStringList full{QStringLiteral("北部營業處"), QStringLiteral("中部營業處"),
-                           QStringLiteral("南部營業處"), QStringLiteral("東部營業處")};
+    const QStringList full{RT("北部營業處"), RT("中部營業處"),
+                           RT("南部營業處"), RT("東部營業處")};
     for (int i = 0; i < 4; ++i) {
         pie->slices[i].label = QStringLiteral("%1%").arg(pie->slices[i].value);
         pie->slices[i].legendText = full[i];
@@ -493,7 +493,7 @@ QTPLOT_RECIPE("統計", "箱型與分布", "箱子的樣式",
               "boxBorder 是箱子與中位數線的線條；fillAlpha 控制箱子的填色。") {
     gen::setSeed(4);
     auto* p = plot.addPopulation({gen::randomNormal(50, 10, 2), gen::randomNormal(50, 12, 2.5)},
-                                 {QStringLiteral("前"), QStringLiteral("後")});
+                                 {RT("前"), RT("後")});
     p->boxBorder = LineStyle(QColor(40, 40, 40), 2);
     p->fillAlpha = 160;
     p->showPoints = false;
@@ -505,7 +505,7 @@ QTPLOT_RECIPE("統計", "箱型與分布", "資料點的樣式",
               "點多的時候抖開來，才看得出密集的地方。") {
     gen::setSeed(5);
     auto* p = plot.addPopulation({gen::randomNormal(120, 10, 2), gen::randomNormal(120, 12, 2)},
-                                 {QStringLiteral("甲"), QStringLiteral("乙")});
+                                 {RT("甲"), RT("乙")});
     p->pointMarker = MarkerStyle(MarkerShape::OpenCircle, 7, QColor(0, 0, 0, 160));
     p->jitter = 0.8;
     p->showBox = false;
@@ -523,12 +523,12 @@ QTPLOT_RECIPE("統計", "箱型與分布", "分組的分布圖",
             g.values = gen::randomNormal(40, 10 + t * 2 + k * 3, 2);
             g.position = t + (k == 0 ? -0.2 : 0.2);
             g.color = colors[k];
-            if (t == 0) g.legendText = k == 0 ? QStringLiteral("對照") : QStringLiteral("處理");
+            if (t == 0) g.legendText = k == 0 ? RT("對照") : RT("處理");
             p->groups.append(g);
         }
     p->groupWidth = 0.35;
     p->showErrorBar = false;
-    categoryTicks(plot.bottomAxis(), {QStringLiteral("第 1 週"), QStringLiteral("第 2 週"), QStringLiteral("第 3 週")});
+    categoryTicks(plot.bottomAxis(), {RT("第 1 週"), RT("第 2 週"), RT("第 3 週")});
     plot.legend.isVisible = true;
 }
 
@@ -538,7 +538,7 @@ QTPLOT_RECIPE("統計", "箱型與分布", "重疊很多的山脊圖",
     gen::setSeed(7);
     QVector<RidgeGroup> groups;
     for (int i = 0; i < 12; ++i)
-        groups.append({QStringLiteral("%1 月").arg(i + 1),
+        groups.append({RT("%1 月").arg(i + 1),
                        gen::randomNormal(200, 10 + 8 * std::sin(i / 12.0 * 6.283), 3), QColor()});
     auto* r = plot.addRidgeline(groups);
     r->overlap = 2.5;
@@ -566,8 +566,8 @@ QTPLOT_RECIPE("極座標", "雷達與量表", "每個維度各自的刻度",
               "independentAxes 讓每個維度以自己的最大值為滿格；這時候一定要把每條放射線"
               "各自的刻度標出來。做法是每個維度疊一根只畫半徑標籤的 PolarAxis，"
               "ringLabelAngle 對準那條放射線。") {
-    const QStringList dims{QStringLiteral("價格(萬)"), QStringLiteral("馬力"), QStringLiteral("油耗"),
-                           QStringLiteral("座位"), QStringLiteral("後車廂(L)")};
+    const QStringList dims{RT("價格(萬)"), RT("馬力"), RT("油耗"),
+                           RT("座位"), RT("後車廂(L)")};
     const QVector<double> maxes{200, 400, 25, 8, 600};
     auto* grid = plot.addPolarAxis(1.0, dims.size());
     grid->spokeLabels = dims;
@@ -626,15 +626,15 @@ QTPLOT_RECIPE("極座標", "旭日圖", "投資組合旭日圖",
         s.fillColor = c;
         return s;
     };
-    SunburstNode stock = node(QStringLiteral("股票"), 0, QColor(31, 119, 180));
-    stock.children = {node(QStringLiteral("台股"), 35, QColor(70, 150, 210)),
-                      node(QStringLiteral("美股"), 25, QColor(110, 175, 225))};
-    SunburstNode bond = node(QStringLiteral("債券"), 0, QColor(44, 160, 44));
-    bond.children = {node(QStringLiteral("公債"), 15, QColor(90, 190, 90)),
-                     node(QStringLiteral("公司債"), 10, QColor(140, 210, 140))};
-    SunburstNode cash = node(QStringLiteral("現金"), 15, QColor(255, 127, 14));
+    SunburstNode stock = node(RT("股票"), 0, QColor(31, 119, 180));
+    stock.children = {node(RT("台股"), 35, QColor(70, 150, 210)),
+                      node(RT("美股"), 25, QColor(110, 175, 225))};
+    SunburstNode bond = node(RT("債券"), 0, QColor(44, 160, 44));
+    bond.children = {node(RT("公債"), 15, QColor(90, 190, 90)),
+                     node(RT("公司債"), 10, QColor(140, 210, 140))};
+    SunburstNode cash = node(RT("現金"), 15, QColor(255, 127, 14));
     plot.addSunburst({stock, bond, cash});
-    auto* t = plot.addText(QStringLiteral("總額\n$1,000萬"), 0, 0);
+    auto* t = plot.addText(RT("總額\n$1,000萬"), 0, 0);
     t->alignment = Qt::AlignHCenter | Qt::AlignVCenter;
     t->label.font.bold = true;
     t->label.font.size = 12;
@@ -658,7 +658,7 @@ QTPLOT_RECIPE("標註", "比例尺與影像", "只有一個方向的比例尺",
               "height 給 0 就只畫水平那段 —— 地圖通常只需要水平比例尺。") {
     plot.addSignal(gen::randomWalk(300));
     auto* sb = plot.addScaleBar(50, 0);
-    sb->widthLabel = QStringLiteral("50 公尺");
+    sb->widthLabel = RT("50 公尺");
     for (Axis* a : {plot.bottomAxis(), plot.leftAxis()}) a->isVisible = false;
     plot.grid.isVisible = false;
 }
@@ -703,8 +703,8 @@ QTPLOT_RECIPE("圖種", "散點與線", "直向 SignalXY 配反向 Y 軸",
     auto* s = plot.addSignalXY(gen::linspace(0, 500, 300), gen::addNoise(gen::sin(300, 5, 3, 0, 20), 0.12));
     s->vertical = true;
     plot.leftAxis()->inverted = true;
-    plot.leftAxis()->label.text = QStringLiteral("深度 (m)");
-    plot.bottomAxis()->label.text = QStringLiteral("溫度 (°C)");
+    plot.leftAxis()->label.text = RT("深度 (m)");
+    plot.bottomAxis()->label.text = RT("溫度 (°C)");
 }
 
 QTPLOT_RECIPE("圖種", "散點與線", "SignalXY 加標記",
@@ -741,21 +741,21 @@ QTPLOT_RECIPE("特殊座標", "史密斯圖", "阻抗匹配路徑",
     auto* a = plot.addScatter(x1, y1, QColor(214, 39, 40));
     a->marker = MarkerStyle::none();
     a->line.width = 3;
-    a->legendText = QStringLiteral("串聯電容");
+    a->legendText = RT("串聯電容");
     auto* b = plot.addScatter(x2, y2, QColor(31, 119, 180));
     b->marker = MarkerStyle::none();
     b->line.width = 3;
-    b->legendText = QStringLiteral("並聯電感");
+    b->legendText = RT("並聯電感");
     const Coordinates load = at({0.3, 0.6});
     plot.addMarkers({load.x}, {load.y}, QColor(0, 0, 0))->marker.size = 10;
-    plot.addText(QStringLiteral("負載"), load.x + 0.04, load.y);
+    plot.addText(RT("負載"), load.x + 0.04, load.y);
     plot.legend.isVisible = true;
 }
 
 QTPLOT_RECIPE("標註", "氣泡標註", "氣泡標註的文字樣式",
               "Tooltip::label 是完整的 Label：字型、大小、粗細、多行都可以。") {
     plot.addSignal(gen::sin(100, 3, 1));
-    auto* t = plot.addTooltip(QStringLiteral("峰值\n3.00"), 25, 3, 45, 4.2);
+    auto* t = plot.addTooltip(RT("峰值\n3.00"), 25, 3, 45, 4.2);
     t->label.font.size = 14;
     t->label.font.bold = true;
     t->label.font.lineHeight = 1.2;
@@ -765,7 +765,7 @@ QTPLOT_RECIPE("標註", "氣泡標註", "氣泡標註的文字樣式",
 QTPLOT_RECIPE("標註", "氣泡標註", "氣泡標註的顏色",
               "background、border、cornerRadius 決定外框的長相；深色底配白字最醒目。") {
     plot.addSignal(gen::sin(100, 3, 1));
-    auto* t = plot.addTooltip(QStringLiteral("谷底 −3.00"), 75, -3, 55, -1.5);
+    auto* t = plot.addTooltip(RT("谷底 −3.00"), 75, -3, 55, -1.5);
     t->background = FillStyle(QColor(214, 39, 40));
     t->border = LineStyle(QColor(150, 20, 20), 2);
     t->cornerRadius = 10;
@@ -782,7 +782,7 @@ QTPLOT_RECIPE("樣式", "文字", "從檔案載入字型",
     const QString fam = loadFontFile(QStringLiteral("C:/Windows/Fonts/consola.ttf"));
     plot.addSignal(gen::sin(100));
     plot.setFontFamily(fam);
-    plot.title.text = fam.isEmpty() ? QStringLiteral("（找不到字型檔，沿用系統字型）")
+    plot.title.text = fam.isEmpty() ? RT("（找不到字型檔，沿用系統字型）")
                                     : QStringLiteral("Font: %1").arg(fam);
 }
 

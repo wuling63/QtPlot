@@ -98,7 +98,7 @@ QtPlotDemo                        # 開啟 Cookbook 瀏覽器
 QtPlotDemo --recipe "散點圖"       # 開啟並跳到指定範例
 QtPlotDemo --export out\          # 不開視窗，把 451 支範例全部存成 PNG
 QtPlotDemo --soak                 # 不開視窗，照 GUI 的方式連續換過每一支範例
-QtPlotDemo --lang en              # QtPlot 自己的文字換成英文（en zh_CN ja ko fr de it es zh_TW）
+QtPlotDemo --lang en              # 指定介面語言（en zh_CN ja ko fr de it es zh_TW）
 ```
 
 `--export` 是無頭模式，可以拿來做視覺回歸：改完引擎重跑一次，比對前後的 PNG 就知道哪張圖變了。
@@ -156,7 +156,12 @@ plot.leftAxis()->addBreak(12, 995);   // 0–12 與 995 以上畫在同一根軸
 - 日曆熱圖的月份、星期與數值格式照 `qtplot::displayLocale()`，不會去改整個程式的 `QLocale::setDefault()`。
 - C／C#：`qp_set_language("ja")`、`Plot.SetLanguage("ja")`。
 
-只翻 QtPlot 自己的文字；範例程式（Cookbook）的標題與說明維持中文。
+範例程式的選單列也有「語言」選單，選了之後選單、左邊的範例清單（章節、分類、名稱）、
+圖上的字（標題、軸名、圖例、標註）一起換，下次開啟會記住。只有圖上方那段範例說明維持中文。
+
+範例裡的中文字串寫成 `RT("…")`，翻譯在 `demo/i18n/recipes_<語言>.ts`。
+改了範例的文字之後跑 `python tools/recipe_i18n.py update`：新字串會加進各語言的 .ts（標成未翻），
+已有的翻譯保留，用 Qt Linguist 補上即可。
 新增語言：在 `src/qtplot/CMakeLists.txt` 的 `TS_FILES` 加 `qtplot_<代碼>.ts`，
 跑 `cmake --build build --target update_translations`，用 Qt Linguist 翻完再建置。
 

@@ -32,6 +32,38 @@ add_executable(QtPlotDemo WIN32
 target_include_directories(QtPlotDemo PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(QtPlotDemo PRIVATE qtplot)
 
+# 範例程式自己的介面文字（選單、搜尋框、狀態列）的翻譯。只掃主視窗這幾個檔：
+# 範例（recipes/）的名稱與說明是內容不是介面，不翻。
+qt_add_translations(QtPlotDemo
+    TS_FILES "${CMAKE_CURRENT_SOURCE_DIR}/i18n/demo_en.ts"
+             "${CMAKE_CURRENT_SOURCE_DIR}/i18n/demo_zh_CN.ts"
+             "${CMAKE_CURRENT_SOURCE_DIR}/i18n/demo_ja.ts"
+             "${CMAKE_CURRENT_SOURCE_DIR}/i18n/demo_ko.ts"
+             "${CMAKE_CURRENT_SOURCE_DIR}/i18n/demo_fr.ts"
+             "${CMAKE_CURRENT_SOURCE_DIR}/i18n/demo_de.ts"
+             "${CMAKE_CURRENT_SOURCE_DIR}/i18n/demo_it.ts"
+             "${CMAKE_CURRENT_SOURCE_DIR}/i18n/demo_es.ts"
+    SOURCES MainWindow.cpp SharedAxesWindow.cpp
+    LUPDATE_OPTIONS -no-obsolete -locations none
+    QM_FILES_OUTPUT_VARIABLE demo_qm_files)
+# 範例內容（清單上的名稱、圖上的字）的翻譯。這幾個 .ts 不是 lupdate 產生的：
+# 範例裡的中文是用 RT("…") 寫的，lupdate 認不得，交給它管會被當成過時的字串刪掉。
+# 範例改了字之後用 tools/recipe_i18n.py 重新抽字串、合併翻譯。
+qt_add_lrelease(QtPlotDemo
+    TS_FILES "${CMAKE_CURRENT_SOURCE_DIR}/i18n/recipes_en.ts"
+             "${CMAKE_CURRENT_SOURCE_DIR}/i18n/recipes_zh_CN.ts"
+             "${CMAKE_CURRENT_SOURCE_DIR}/i18n/recipes_ja.ts"
+             "${CMAKE_CURRENT_SOURCE_DIR}/i18n/recipes_ko.ts"
+             "${CMAKE_CURRENT_SOURCE_DIR}/i18n/recipes_fr.ts"
+             "${CMAKE_CURRENT_SOURCE_DIR}/i18n/recipes_de.ts"
+             "${CMAKE_CURRENT_SOURCE_DIR}/i18n/recipes_it.ts"
+             "${CMAKE_CURRENT_SOURCE_DIR}/i18n/recipes_es.ts"
+    QM_FILES_OUTPUT_VARIABLE recipe_qm_files)
+qt_add_resources(QtPlotDemo demo_translations
+    PREFIX "/demo/i18n"
+    BASE "${CMAKE_CURRENT_BINARY_DIR}"
+    FILES ${demo_qm_files} ${recipe_qm_files})
+
 # --export 模式要把訊息印到主控台，所以保留 stdout（WIN32 子系統預設沒有）
 set_target_properties(QtPlotDemo PROPERTIES OUTPUT_NAME "QtPlotDemo")
 

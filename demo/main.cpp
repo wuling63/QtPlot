@@ -4,10 +4,10 @@
 //   QtPlotDemo                      開啟瀏覽器
 //   QtPlotDemo --recipe "散點圖"     開啟並直接跳到該支範例
 //   QtPlotDemo --export <資料夾>     不開視窗，把全部範例存成 PNG
-//   QtPlotDemo --lang en            QtPlot 的介面文字（右鍵選單、預設軸名）換成英文
-//                                   可用：en zh_CN ja ko fr de it es zh_TW；開著之後也能在右鍵選單「語言」裡換
+//   QtPlotDemo --lang en            介面換成英文（en zh_CN ja ko fr de it es zh_TW）
 //
-// 開視窗時預設跟著系統語言；--export／--soak 預設不翻譯，產出的圖才不會因機器而異。
+// 開視窗時用上次在「語言」選單選的（沒選過就跟著系統）；開著之後也能從選單列或圖上的右鍵選單換。
+// --export／--soak 預設不翻譯，產出的圖才不會因機器而異。
 #include "MainWindow.h"
 #include "Recipe.h"
 #include "qtplot/Translation.h"
@@ -15,6 +15,10 @@
 #include <QApplication>
 #include <QDir>
 #include <QRegularExpression>
+#include <QMenuBar>
+#include <QSet>
+#include <QSettings>
+#include <QTreeWidget>
 #include <QStringList>
 #include <QTextStream>
 
@@ -131,6 +135,7 @@ int soakAll() {
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
+    QApplication::setOrganizationName(QStringLiteral("QtPlot"));
     QApplication::setApplicationName(QStringLiteral("QtPlot Cookbook"));
     QApplication::setApplicationVersion(QStringLiteral("0.1.0"));
 
@@ -142,7 +147,9 @@ int main(int argc, char* argv[]) {
     if (langIdx >= 0 && langIdx + 1 < args.size())
         qtplot::setLanguage(args.at(langIdx + 1));
     else if (!batch)
-        qtplot::setLanguage(QString());  // 跟著系統
+        qtplot::setLanguage(QSettings().value(QStringLiteral("language")).toString());  // 上次選的；空 = 跟著系統
+    // 範例程式自己的翻譯（選單、範例名稱、圖上的字）跟著 QtPlot 的語言載入；--export --lang de 也會用到
+    demo::MainWindow::syncDemoTranslator();
 
     // --export 要在建視窗之前處理：這個模式不需要視窗
     const int exportIdx = args.indexOf(QStringLiteral("--export"));
@@ -154,6 +161,63 @@ int main(int argc, char* argv[]) {
 
     // --soak 同樣不需要視窗
     if (args.contains(QStringLiteral("--soak"))) return soakAll();
+
+    // --check-languages：把每一種語言輪流切一遍，確認選單、範例清單、圖上的字都跟著換，而且不會當掉（ctest 用）
+    if (args.contains(QStringLiteral("--check-languages"))) {
+        demo::MainWindow window;
+        window.show();
+        QApplication::processEvents();
+        auto* tree = window.findChild<QTreeWidget*>();
+        auto* plotWidget = window.findChild<qtplot::PlotWidget*>();
+        // 圖上看得到的字：標題與四根軸的名稱
+        auto plotTexts = [plotWidget] {
+            qtplot::Plot& p = plotWidget->plot();
+            QString s = p.title.text;
+            for (qtplot::Axis* a : p.axes()) s += QLatin1Char('|') + a->label.text;
+            return s;
+        };
+        auto settle = [] {
+            // LanguageChange 是 post 的，主視窗再用 singleShot(0) 合併成一次重建：要跑兩輪
+            for (int i = 0; i < 3; ++i) QApplication::processEvents();
+        };
+        // 清單看的是全部章節名稱，不是只看第一個：日文的「入門」和中文寫法一樣，是正確的翻譯
+        auto treeTexts = [tree] {
+            QStringList all;
+            for (int i = 0; i < tree->topLevelItemCount(); ++i) all << tree->topLevelItem(i)->text(0);
+            return all.join(QLatin1Char('|'));
+        };
+        const QString zhTree = treeTexts();
+        const QString zhPlot = plotTexts();
+        QTextStream out(stdout);
+        int failures = 0;
+        QSet<QString> seen;
+        for (const QString& code : qtplot::availableLanguages()) {
+            if (code == QLatin1String("zh_TW")) continue;
+            qtplot::setLanguage(code);
+            settle();
+            const QList<QAction*> menus = window.menuBar()->actions();
+            // 用視窗標題判斷選單有沒有換：選單名不一定每種語言都不同（義大利文的「檔案」也叫 File）
+            const QString title = window.windowTitle();
+            const QString treeText = tree->topLevelItem(0)->text(0);
+            const QString treeAll = treeTexts();
+            const QString plot = plotTexts();
+            const bool menuOk = menus.size() == 4 && !seen.contains(title);
+            const bool treeOk = treeAll != zhTree;
+            const bool plotOk = plot != zhPlot;
+            seen.insert(title);
+            const bool ok = menuOk && treeOk && plotOk;
+            out << (ok ? "  ok   " : "  FAIL ") << code << "  選單 " << (menuOk ? "✓" : "✗") << "  清單「" << treeText
+                << "」" << (treeOk ? "✓" : "✗") << "  圖「" << plot << "」" << (plotOk ? "✓" : "✗") << "\n";
+            if (!ok) ++failures;
+        }
+        qtplot::setLanguage(QStringLiteral("zh_TW"));
+        settle();
+        const bool back = window.menuBar()->actions().first()->text() == QStringLiteral("檔案(&F)") &&
+                          treeTexts() == zhTree && plotTexts() == zhPlot;
+        out << (back ? "  ok   " : "  FAIL ") << "切回繁體中文（選單、清單、圖都回到原文）\n";
+        out.flush();
+        return failures + (back ? 0 : 1);
+    }
 
     demo::MainWindow window;
     window.show();

@@ -21,11 +21,13 @@ endif()
 # soak：449 支範例輪流畫進同一張圖，檢查換圖後有沒有殘留，回傳 0 表示乾淨。
 add_test(NAME selftest COMMAND qtplot_selftest)
 add_test(NAME soak COMMAND QtPlotDemo --soak)
-set_tests_properties(selftest soak PROPERTIES TIMEOUT 300)
+# 主視窗的「語言」選單：九種語言輪流切一遍
+add_test(NAME demo_languages COMMAND QtPlotDemo --check-languages)
+set_tests_properties(selftest soak demo_languages PROPERTIES TIMEOUT 300)
 
 # QTPLOT_DEPLOY=OFF 時執行檔旁邊沒有 Qt 的 DLL，改從 Qt 安裝目錄找
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.22 AND QT6_INSTALL_PREFIX)
-    set_tests_properties(selftest soak PROPERTIES ENVIRONMENT_MODIFICATION
+    set_tests_properties(selftest soak demo_languages PROPERTIES ENVIRONMENT_MODIFICATION
         "PATH=path_list_prepend:${QT6_INSTALL_PREFIX}/${QT6_INSTALL_BINS}")
 endif()
 

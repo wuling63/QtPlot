@@ -7,17 +7,17 @@ using namespace qtplot;
 QTPLOT_RECIPE("入門", "快速上手", "散點圖",
               "最常用的一種圖：給 X 與 Y 兩個陣列，畫出折線加標記。") {
     plot.addScatter({1, 2, 3, 4, 5}, {1, 4, 9, 16, 25});
-    plot.title.text = QStringLiteral("散點圖");
-    plot.bottomAxis()->label.text = QStringLiteral("X 軸");
-    plot.leftAxis()->label.text = QStringLiteral("Y 軸");
+    plot.title.text = RT("散點圖");
+    plot.bottomAxis()->label.text = RT("X 軸");
+    plot.leftAxis()->label.text = RT("Y 軸");
 }
 
 QTPLOT_RECIPE("入門", "快速上手", "訊號圖（百萬點）",
               "等間距取樣的資料用 Signal：不存 X 陣列，而且點數超過像素數時會自動做 "
               "min/max 抽樣，所以一百萬點也能即時平移縮放。") {
     plot.addSignal(gen::randomWalk(1'000'000), 1.0);
-    plot.title.text = QStringLiteral("1,000,000 點的隨機漫步");
-    plot.bottomAxis()->label.text = QStringLiteral("取樣點");
+    plot.title.text = RT("1,000,000 點的隨機漫步");
+    plot.bottomAxis()->label.text = RT("取樣點");
 }
 
 QTPLOT_RECIPE("入門", "快速上手", "多條曲線與圖例",
@@ -36,7 +36,7 @@ QTPLOT_RECIPE("入門", "快速上手", "長條圖",
               "從一串數值直接建一組等距長條。長條圖預設把 0 含進 Y 範圍，"
               "免得視覺上誇大差異。") {
     plot.addBars({12, 19, 7, 23, 15});
-    plot.title.text = QStringLiteral("長條圖");
+    plot.title.text = RT("長條圖");
 }
 
 QTPLOT_RECIPE("入門", "快速上手", "填色區間",
@@ -49,10 +49,10 @@ QTPLOT_RECIPE("入門", "快速上手", "填色區間",
         lo.append(v - 0.3);
     }
     auto* band = plot.addFillY(xs, lo, hi);
-    band->legendText = QStringLiteral("±0.3 區間");
+    band->legendText = RT("±0.3 區間");
     auto* line = plot.addScatter(xs, center);
     line->marker = MarkerStyle::none();
-    line->legendText = QStringLiteral("平均");
+    line->legendText = RT("平均");
     plot.legend.isVisible = true;
 }
 

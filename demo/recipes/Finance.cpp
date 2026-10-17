@@ -9,8 +9,8 @@ QTPLOT_RECIPE("財金", "K 線", "蠟燭圖",
               "並把底軸換成 IndexedDateTickGenerator 把序號標回日期。"
               "刻度只落在換月的位置，不是等距亂切。") {
     plot.addCandlestick(randomOhlcSeries(120, 100));
-    plot.title.text = QStringLiteral("日線");
-    plot.leftAxis()->label.text = QStringLiteral("價格");
+    plot.title.text = RT("日線");
+    plot.leftAxis()->label.text = RT("價格");
 }
 
 QTPLOT_RECIPE("財金", "K 線", "為什麼 X 要用序號",
@@ -22,14 +22,14 @@ QTPLOT_RECIPE("財金", "K 線", "為什麼 X 要用序號",
     c->bars = bars;
     c->useIndexX = false;  // 改用時間戳
     plot.bottomAxis()->tickGenerator = std::make_shared<DateTimeTickGenerator>();
-    plot.title.text = QStringLiteral("用時間戳當 X：週末會留白");
+    plot.title.text = RT("用時間戳當 X：週末會留白");
 }
 
 QTPLOT_RECIPE("財金", "K 線", "OHLC 美式棒線",
               "一條直線表示高低，左撇是開盤、右撇是收盤。"
               "比蠟燭省空間，根數多的時候比較不糊。") {
     plot.addOhlc(randomOhlcSeries(90, 100));
-    plot.title.text = QStringLiteral("OHLC 棒線");
+    plot.title.text = RT("OHLC 棒線");
 }
 
 QTPLOT_RECIPE("財金", "K 線", "漲跌配色",
@@ -38,7 +38,7 @@ QTPLOT_RECIPE("財金", "K 線", "漲跌配色",
     const QVector<Ohlc> bars = randomOhlcSeries(60, 100);
 
     auto* west = plot.addCandlestick(bars);
-    west->legendText = QStringLiteral("歐美：綠漲紅跌");
+    west->legendText = RT("歐美：綠漲紅跌");
 
     // 同一份資料往右移，用台股配色再畫一次
     QVector<Ohlc> shifted = bars;
@@ -47,7 +47,7 @@ QTPLOT_RECIPE("財金", "K 線", "漲跌配色",
     tw->risingColor = QColor(214, 39, 40);    // 紅漲
     tw->fallingColor = QColor(44, 160, 44);   // 綠跌
     tw->hollowRising = true;
-    tw->legendText = QStringLiteral("台股：紅漲綠跌（空心陽線）");
+    tw->legendText = RT("台股：紅漲綠跌（空心陽線）");
     // 畫在下方，兩種配色才比得出來
     for (Ohlc& b : tw->bars) {
         b.open -= 18;
@@ -132,7 +132,7 @@ QTPLOT_RECIPE("財金", "技術指標", "價格與成交量共圖",
     plot.addCandlestick(bars);
 
     auto* volAxis = plot.addAxis(Edge::Right);
-    volAxis->label.text = QStringLiteral("成交量");
+    volAxis->label.text = RT("成交量");
     volAxis->showTickLabels = true;
     volAxis->majorTickLength = 5;
 
@@ -144,8 +144,8 @@ QTPLOT_RECIPE("財金", "技術指標", "價格與成交量共圖",
     for (const Ohlc& b : bars) maxVol = std::max(maxVol, b.volume);
     volAxis->setRange(0, maxVol * 3);
 
-    plot.leftAxis()->label.text = QStringLiteral("價格");
-    plot.title.text = QStringLiteral("價格與成交量");
+    plot.leftAxis()->label.text = RT("價格");
+    plot.title.text = RT("價格與成交量");
 }
 
 QTPLOT_RECIPE("財金", "技術指標", "標示買賣點",
@@ -158,22 +158,22 @@ QTPLOT_RECIPE("財金", "技術指標", "標示買賣點",
     const int sellIndex = 68;
 
     plot.addVerticalSpan(buyIndex, sellIndex, QColor(80, 140, 220))->legendText =
-        QStringLiteral("持有期間");
+        RT("持有期間");
 
     auto* buy = plot.addMarkers({double(buyIndex)}, {bars[buyIndex].low * 0.985},
                                 QColor(44, 160, 44));
     buy->marker.shape = MarkerShape::FilledTriangleUp;
     buy->marker.size = 14;
-    buy->legendText = QStringLiteral("買進");
+    buy->legendText = RT("買進");
 
     auto* sell = plot.addMarkers({double(sellIndex)}, {bars[sellIndex].high * 1.015},
                                  QColor(214, 39, 40));
     sell->marker.shape = MarkerShape::FilledTriangleDown;
     sell->marker.size = 14;
-    sell->legendText = QStringLiteral("賣出");
+    sell->legendText = RT("賣出");
 
     const double ret = (bars[sellIndex].close / bars[buyIndex].close - 1) * 100;
-    plot.addAnnotation(QStringLiteral("報酬率 %1%").arg(ret, 0, 'f', 2),
+    plot.addAnnotation(RT("報酬率 %1%").arg(ret, 0, 'f', 2),
                        Qt::AlignRight | Qt::AlignTop);
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignLeft | Qt::AlignTop;

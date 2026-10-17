@@ -14,22 +14,22 @@ QTPLOT_RECIPE("圖種", "商務圖表", "柏拉圖",
               "折線必須綁在自己的百分比軸上。和長條共用左軸的話，"
               "「80%」會被當成數量 80 畫上去 —— 兩條線的尺根本不同。") {
     QVector<ParetoItem> items{
-        {QStringLiteral("刮傷"), 186, QColor()},  {QStringLiteral("尺寸超差"), 121, QColor()},
-        {QStringLiteral("毛邊"), 74, QColor()},   {QStringLiteral("色差"), 41, QColor()},
-        {QStringLiteral("變形"), 28, QColor()},   {QStringLiteral("污漬"), 19, QColor()},
-        {QStringLiteral("缺料"), 11, QColor()},   {QStringLiteral("其他"), 8, QColor()},
+        {RT("刮傷"), 186, QColor()},  {RT("尺寸超差"), 121, QColor()},
+        {RT("毛邊"), 74, QColor()},   {RT("色差"), 41, QColor()},
+        {RT("變形"), 28, QColor()},   {RT("污漬"), 19, QColor()},
+        {RT("缺料"), 11, QColor()},   {RT("其他"), 8, QColor()},
     };
     auto* pr = plot.addPareto(items);
     pr->showValueLabels = true;
 
     const int n = pr->itemsToReach(80);
     auto* note = plot.addAnnotation(
-        QStringLiteral("前 %1 項就佔了 80%\n先處理這幾項").arg(n),
+        RT("前 %1 項就佔了 80%\n先處理這幾項").arg(n),
         Qt::AlignRight | Qt::AlignBottom);
     note->label.font.size = 10;
 
-    plot.leftAxis()->label.text = QStringLiteral("不良件數");
-    plot.title.text = QStringLiteral("不良原因的柏拉圖");
+    plot.leftAxis()->label.text = RT("不良件數");
+    plot.title.text = RT("不良原因的柏拉圖");
     plot.bottomAxis()->tickLabelRotation = -30;
     plot.grid.isVisible = false;
 }
@@ -43,12 +43,12 @@ QTPLOT_RECIPE("圖種", "商務圖表", "鬆餅圖",
               "格子的配額用最大餘額法分 —— 直接四捨五入的話格子總數會對不上，"
               "十個 3.33% 可以湊出 30 格也可以湊出 40 格。") {
     QVector<WaffleCategory> cats{
-        {QStringLiteral("已完成"), 62, QColor(70, 150, 90)},
-        {QStringLiteral("進行中"), 23, QColor(230, 170, 50)},
-        {QStringLiteral("未開始"), 15, QColor(190, 80, 65)},
+        {RT("已完成"), 62, QColor(70, 150, 90)},
+        {RT("進行中"), 23, QColor(230, 170, 50)},
+        {RT("未開始"), 15, QColor(190, 80, 65)},
     };
     plot.addWaffle(cats, 10, 10);
-    plot.title.text = QStringLiteral("專案進度（一格 1%）");
+    plot.title.text = RT("專案進度（一格 1%）");
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignRight | Qt::AlignVCenter;
 }
@@ -61,17 +61,17 @@ QTPLOT_RECIPE("圖種", "商務圖表", "斜率圖",
               "highlight 把要講的那幾條加粗，其餘自動淡化。"
               "全部一樣濃的話，強調就沒有意義了。") {
     QVector<SlopeSeries> series{
-        {QStringLiteral("北區"), {412, 468}, QColor(), false},
-        {QStringLiteral("中區"), {365, 352}, QColor(), false},
-        {QStringLiteral("南區"), {298, 374}, QColor(200, 70, 50), true},
-        {QStringLiteral("東區"), {143, 138}, QColor(), false},
-        {QStringLiteral("離島"), {87, 96}, QColor(), false},
+        {RT("北區"), {412, 468}, QColor(), false},
+        {RT("中區"), {365, 352}, QColor(), false},
+        {RT("南區"), {298, 374}, QColor(200, 70, 50), true},
+        {RT("東區"), {143, 138}, QColor(), false},
+        {RT("離島"), {87, 96}, QColor(), false},
     };
-    auto* sl = plot.addSlope({QStringLiteral("去年"), QStringLiteral("今年")}, series);
+    auto* sl = plot.addSlope({RT("去年"), RT("今年")}, series);
     sl->labelFont.size = 10;
 
-    plot.leftAxis()->label.text = QStringLiteral("營收（百萬）");
-    plot.title.text = QStringLiteral("南區是唯一大幅成長的");
+    plot.leftAxis()->label.text = RT("營收（百萬）");
+    plot.title.text = RT("南區是唯一大幅成長的");
     plot.setAxisLimits(-0.55, 1.55, 60, 500);
 }
 
@@ -81,28 +81,28 @@ QTPLOT_RECIPE("圖種", "商務圖表", "排名變化圖（bump chart）",
               "Y 軸要配 inverted = true 讓第 1 名在最上面，"
               "否則第 1 名會畫在最底下，和「第一」的直覺相反。") {
     QVector<SlopeSeries> series{
-        {QStringLiteral("甲隊"), {1, 2, 2, 4, 3}, QColor(), false},
-        {QStringLiteral("乙隊"), {2, 1, 1, 1, 1}, QColor(45, 110, 185), true},
-        {QStringLiteral("丙隊"), {3, 4, 5, 2, 2}, QColor(), false},
-        {QStringLiteral("丁隊"), {4, 3, 3, 3, 5}, QColor(), false},
-        {QStringLiteral("戊隊"), {5, 5, 4, 5, 4}, QColor(), false},
+        {RT("甲隊"), {1, 2, 2, 4, 3}, QColor(), false},
+        {RT("乙隊"), {2, 1, 1, 1, 1}, QColor(45, 110, 185), true},
+        {RT("丙隊"), {3, 4, 5, 2, 2}, QColor(), false},
+        {RT("丁隊"), {4, 3, 3, 3, 5}, QColor(), false},
+        {RT("戊隊"), {5, 5, 4, 5, 4}, QColor(), false},
     };
     // 名次愈小愈好，所以這裡直接把「值」當成名次：給 useRanks 的話會再排一次，
     // 變成「名次的名次」。資料本來就是名次時維持 useRanks = false。
     for (SlopeSeries& s : series)
         for (double& v : s.values) v = 6 - v;  // 轉成「分數」讓排名函式去排
 
-    auto* sl = plot.addSlope({QStringLiteral("第 1 季"), QStringLiteral("第 2 季"),
-                              QStringLiteral("第 3 季"), QStringLiteral("第 4 季"),
-                              QStringLiteral("年度")},
+    auto* sl = plot.addSlope({RT("第 1 季"), RT("第 2 季"),
+                              RT("第 3 季"), RT("第 4 季"),
+                              RT("年度")},
                              series);
     sl->useRanks = true;
     sl->showEndValues = true;
     sl->marker.size = 9;
 
     plot.leftAxis()->inverted = true;
-    plot.leftAxis()->label.text = QStringLiteral("名次");
-    plot.title.text = QStringLiteral("乙隊從第 2 名一路守到年度冠軍");
+    plot.leftAxis()->label.text = RT("名次");
+    plot.title.text = RT("乙隊從第 2 名一路守到年度冠軍");
     plot.setAxisLimits(-0.75, 4.75, 0.4, 5.6);
 }
 
@@ -117,9 +117,9 @@ QTPLOT_RECIPE("統計", "箱型與分布", "山脊圖",
               "畫的順序也有關係：要由下往上畫，上面那條才壓得住下面那條的尾巴；"
               "反過來的話重疊處會看起來像破洞。") {
     gen::setSeed(44);
-    const QStringList months{QStringLiteral("一月"), QStringLiteral("三月"),
-                             QStringLiteral("五月"), QStringLiteral("七月"),
-                             QStringLiteral("九月"), QStringLiteral("十一月")};
+    const QStringList months{RT("一月"), RT("三月"),
+                             RT("五月"), RT("七月"),
+                             RT("九月"), RT("十一月")};
     const QVector<double> means{14, 19, 25, 30, 26, 18};
     const QVector<double> spreads{3.0, 3.4, 2.8, 2.2, 3.0, 3.6};
 
@@ -133,8 +133,8 @@ QTPLOT_RECIPE("統計", "箱型與分布", "山脊圖",
     auto* r = plot.addRidgeline(groups);
     r->overlap = 1.1;
 
-    plot.bottomAxis()->label.text = QStringLiteral("日均溫（°C）");
-    plot.title.text = QStringLiteral("一年之中氣溫分布的移動");
+    plot.bottomAxis()->label.text = RT("日均溫（°C）");
+    plot.title.text = RT("一年之中氣溫分布的移動");
 }
 
 // ───────────────────────── 日曆熱圖 ─────────────────────────
@@ -161,9 +161,9 @@ QTPLOT_RECIPE("場", "熱圖", "日曆熱圖",
     auto* cal = plot.addCalendarHeatmap(values);
     cal->colormap = Colormap(Colormap::Blues);
     plot.addColorbar(cal->colormap, cal->effectiveColorRange())->label.text =
-        QStringLiteral("提交次數");
+        RT("提交次數");
 
-    plot.title.text = QStringLiteral("2025 上半年的每日活動量");
+    plot.title.text = RT("2025 上半年的每日活動量");
 }
 
 // ───────────────────────── 沖積圖 ─────────────────────────
@@ -176,11 +176,11 @@ QTPLOT_RECIPE("圖種", "流量與關係", "沖積圖（多階段流向）",
               "分類在各階段內照「第一次出現的順序」排，不是字典序 —— "
               "字典序會把「高／中／低」排成「中高低」。") {
     gen::setSeed(61);
-    const QStringList regions{QStringLiteral("北區"), QStringLiteral("中區"),
-                              QStringLiteral("南區")};
-    const QStringList plans{QStringLiteral("基本方案"), QStringLiteral("進階方案")};
-    const QStringList outcomes{QStringLiteral("續約"), QStringLiteral("升級"),
-                               QStringLiteral("流失")};
+    const QStringList regions{RT("北區"), RT("中區"),
+                              RT("南區")};
+    const QStringList plans{RT("基本方案"), RT("進階方案")};
+    const QStringList outcomes{RT("續約"), RT("升級"),
+                               RT("流失")};
 
     QVector<QStringList> records;
     for (int i = 0; i < 400; ++i) {
@@ -194,9 +194,9 @@ QTPLOT_RECIPE("圖種", "流量與關係", "沖積圖（多階段流向）",
     }
 
     const AlluvialResult al = alluvialFromRecords(
-        records, {QStringLiteral("區域"), QStringLiteral("方案"), QStringLiteral("結果")});
+        records, {RT("區域"), RT("方案"), RT("結果")});
     auto* sk = plot.addSankey(al.nodes, al.links);
     sk->nodeWidthFraction = 0.04;
 
-    plot.title.text = QStringLiteral("客戶從區域到方案再到續約結果");
+    plot.title.text = RT("客戶從區域到方案再到續約結果");
 }

@@ -14,7 +14,7 @@ QTPLOT_RECIPE_WIDGET("互動", "命中與提示", "游標吸附到資料點",
                      "左上角顯示 Index / X / Y。snapTolerancePx 超過就不吸附，"
                      "回到跟著游標，不會硬吸到一個離很遠的點。") {
     Plot& plot = widget.plot();
-    plot.addSignal(gen::randomWalk(1000), 1.0)->legendText = QStringLiteral("訊號");
+    plot.addSignal(gen::randomWalk(1000), 1.0)->legendText = RT("訊號");
 
     auto* cross = plot.addCrosshair(0, 0);
     cross->followCursor = true;
@@ -25,7 +25,7 @@ QTPLOT_RECIPE_WIDGET("互動", "命中與提示", "游標吸附到資料點",
     cross->showLabels = false;
 
     plot.legend.isVisible = true;
-    plot.addAnnotation(QStringLiteral("把游標移到線上"), Qt::AlignRight | Qt::AlignTop);
+    plot.addAnnotation(RT("把游標移到線上"), Qt::AlignRight | Qt::AlignTop);
 }
 
 QTPLOT_RECIPE_WIDGET("互動", "命中與提示", "只比 X 的吸附",
@@ -35,7 +35,7 @@ QTPLOT_RECIPE_WIDGET("互動", "命中與提示", "只比 X 的吸附",
                      "NearestXY 則是二維距離最近，散點圖用那個比較直覺。") {
     Plot& plot = widget.plot();
     gen::setSeed(4);
-    plot.addSignal(gen::randomWalk(400), 1.0)->legendText = QStringLiteral("訊號");
+    plot.addSignal(gen::randomWalk(400), 1.0)->legendText = RT("訊號");
 
     auto* cross = plot.addCrosshair(0, 0);
     cross->followCursor = true;
@@ -82,7 +82,7 @@ QTPLOT_RECIPE_WIDGET("互動", "框選", "框選資料點",
     widget.selectionMode = true;
     widget.showTooltipOnHover = false;
 
-    plot.addAnnotation(QStringLiteral("按住左鍵拖曳框選"), Qt::AlignLeft | Qt::AlignTop);
+    plot.addAnnotation(RT("按住左鍵拖曳框選"), Qt::AlignLeft | Qt::AlignTop);
     plot.setAxisLimits(-0.05, 1.05, -0.05, 1.05);
 }
 
@@ -94,7 +94,7 @@ QTPLOT_RECIPE_WIDGET("互動", "框選", "框選多組資料",
     gen::setSeed(77);
     for (int i = 0; i < 3; ++i)
         plot.addMarkers(gen::randomUniform(60, 0, 10), gen::randomUniform(60, 0, 10))
-            ->legendText = QStringLiteral("第 %1 組").arg(i + 1);
+            ->legendText = RT("第 %1 組").arg(i + 1);
 
     widget.selectionMode = true;
     widget.selectedMarker = MarkerStyle(MarkerShape::OpenSquare, 13, QColor(30, 30, 30));
@@ -114,7 +114,7 @@ QTPLOT_RECIPE_WIDGET("互動", "拖曳", "各種可拖的圖元",
     auto* line = plot.addHorizontalLine(10, QColor(214, 39, 40));
     line->draggable = true;
     line->line.pattern = LinePattern::Dashed;
-    line->text.text = QStringLiteral("門檻");
+    line->text.text = RT("門檻");
     line->text.font.color = QColor(214, 39, 40);
 
     auto* span = plot.addVerticalSpan(60, 110, QColor(80, 140, 220));
@@ -129,11 +129,11 @@ QTPLOT_RECIPE_WIDGET("互動", "拖曳", "各種可拖的圖元",
     auto* arrow = plot.addArrow(200, -15, 150, -22, QColor(150, 60, 160));
     arrow->draggable = true;
 
-    auto* text = plot.addText(QStringLiteral("可拖的標註"), 40, -18);
+    auto* text = plot.addText(RT("可拖的標註"), 40, -18);
     text->draggable = true;
     text->background = FillStyle(QColor(255, 255, 210));
     text->border = LineStyle(QColor(160, 160, 100), 1.0);
 
-    plot.addAnnotation(QStringLiteral("上面每一個都可以用滑鼠拖"),
+    plot.addAnnotation(RT("上面每一個都可以用滑鼠拖"),
                        Qt::AlignRight | Qt::AlignTop);
 }

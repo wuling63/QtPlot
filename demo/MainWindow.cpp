@@ -1,7 +1,9 @@
 #include "MainWindow.h"
 
 #include "SharedAxesWindow.h"
+#include "qtplot/Translation.h"
 
+#include <QActionGroup>
 #include <QApplication>
 #include <QDir>
 #include <QFileDialog>
@@ -14,12 +16,15 @@
 #include <QPlainTextEdit>
 #include <QProgressDialog>
 #include <QRegularExpression>
+#include <QSettings>
 #include <QSplitter>
 #include <QStackedWidget>
 #include <QStatusBar>
 #include <QTimer>
 #include <QToolBar>
+#include <QTranslator>
 #include <QTreeWidget>
+#include <QTreeWidgetItemIterator>
 #include <QVBoxLayout>
 
 namespace qtplot {
@@ -29,9 +34,39 @@ namespace {
 constexpr int kRoleChapter = Qt::UserRole + 1;
 constexpr int kRoleCategory = Qt::UserRole + 2;
 constexpr int kRoleName = Qt::UserRole + 3;
+
+// 範例程式自己的翻譯（和 QtPlot 函式庫的分開：函式庫的翻譯編在函式庫裡，使用者的程式不必帶這份）。
+// 兩份：demo_* 是主視窗的介面（選單、搜尋框），recipes_* 是範例的內容（清單上的名稱、圖上的字）。
+QTranslator* g_demoTranslators[2] = {nullptr, nullptr};
+QString g_demoLanguage = QStringLiteral("zh_TW");  // 目前載入的是哪一種
 }  // namespace
 
+void MainWindow::syncDemoTranslator() {
+    const QString want = qtplot::effectiveLanguage();
+    if (want == g_demoLanguage) return;
+    g_demoLanguage = want;
+    for (QTranslator*& t : g_demoTranslators) {
+        if (!t) continue;
+        QCoreApplication::removeTranslator(t);
+        delete t;
+        t = nullptr;
+    }
+    if (want == QLatin1String("zh_TW")) return;  // 原文
+    const QString files[2] = {QStringLiteral(":/demo/i18n/demo_%1.qm").arg(want),
+                              QStringLiteral(":/demo/i18n/recipes_%1.qm").arg(want)};
+    for (int i = 0; i < 2; ++i) {
+        auto* t = new QTranslator(qApp);
+        if (t->load(files[i])) {
+            QCoreApplication::installTranslator(t);
+            g_demoTranslators[i] = t;
+        } else {
+            delete t;
+        }
+    }
+}
+
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
+    syncDemoTranslator();
     setWindowTitle(tr("QtPlot Cookbook — Qt/QPainter 互動式繪圖"));
     resize(1280, 860);
 
@@ -131,9 +166,74 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
         }
     }
 
+    showStartupHint();
+}
+
+void MainWindow::showStartupHint() {
     const int n = RecipeRegistry::instance().recipes().size();
     statusBar()->showMessage(tr("共 %1 支範例。滑鼠：左鍵拖曳平移、右鍵拖曳縮放、"
                                 "中鍵框選、滾輪縮放、左鍵雙擊自動範圍。").arg(n));
+}
+
+void MainWindow::changeEvent(QEvent* event) {
+    if (event->type() == QEvent::LanguageChange && !m_retranslatePending) {
+        // 語言可能是從圖上的右鍵選單換的：範例程式自己的翻譯要跟上，並記住這次的選擇。
+        // 等這一輪事件處理完再重建 —— 翻譯器一個一個裝上去，每個都會再發一次 LanguageChange
+        m_retranslatePending = true;
+        QTimer::singleShot(0, this, [this] {
+            m_retranslatePending = false;
+            syncDemoTranslator();
+            QSettings().setValue(QStringLiteral("language"), qtplot::language());
+            retranslateUi();
+        });
+    }
+    QMainWindow::changeEvent(event);
+}
+
+void MainWindow::retranslateUi() {
+    setWindowTitle(tr("QtPlot Cookbook — Qt/QPainter 互動式繪圖"));
+    m_filter->setPlaceholderText(tr("搜尋範例…"));
+    menuBar()->clear();
+    buildMenus();
+    showStartupHint();
+
+    // 範例清單換成新語言，選取停在同一支範例上；選取一變就會重跑範例，圖上的字跟著換
+    const Recipe* current = m_current;
+    m_tree->blockSignals(true);
+    buildTree();
+    onFilterChanged(m_filter->text());
+    m_tree->blockSignals(false);
+    if (current) {
+        for (QTreeWidgetItemIterator it(m_tree); *it; ++it) {
+            QTreeWidgetItem* item = *it;
+            if (item->data(0, kRoleName).toString() == current->name &&
+                item->data(0, kRoleChapter).toString() == current->chapter &&
+                item->data(0, kRoleCategory).toString() == current->category) {
+                m_tree->setCurrentItem(item);
+                break;
+            }
+        }
+        showRecipe(current);
+    }
+}
+
+void MainWindow::buildLanguageMenu(QMenu* menu) {
+    auto* group = new QActionGroup(menu);
+    const bool followSystem = qtplot::language().isEmpty();
+    auto add = [&](const QString& label, const QString& code, bool checked) {
+        QAction* a = menu->addAction(label);
+        a->setCheckable(true);
+        a->setChecked(checked);
+        group->addAction(a);
+        // 換語言之後 QtPlot 會發 LanguageChange，changeEvent 再把整個介面重建；
+        // 這裡不能直接重建選單 —— 這個 action 正在被觸發，當場刪掉會出事
+        connect(a, &QAction::triggered, this, [code] { qtplot::setLanguage(code); });
+    };
+    add(tr("跟隨系統"), QString(), followSystem);
+    menu->addSeparator();
+    // 語言名稱一律用該語言自己寫，選錯語言時也認得出要切回哪一個
+    for (const QString& code : qtplot::availableLanguages())
+        add(qtplot::languageDisplayName(code), code, !followSystem && qtplot::effectiveLanguage() == code);
 }
 
 void MainWindow::buildMenus() {
@@ -154,10 +254,12 @@ void MainWindow::buildMenus() {
     });
     QAction* dark = viewMenu->addAction(tr("深色主題(&D)"));
     dark->setCheckable(true);
+    dark->setChecked(m_darkTheme);  // 換語言時選單會重建，勾選狀態要沿用
     connect(dark, &QAction::toggled, this, [this](bool on) { applyTheme(on); });
 
     QAction* bench = viewMenu->addAction(tr("顯示效能(&B)"));
     bench->setCheckable(true);
+    bench->setChecked(m_plotWidget->showBenchmark);
     connect(bench, &QAction::toggled, this, [this](bool on) {
         m_plotWidget->showBenchmark = on;
         m_plotWidget->refresh();
@@ -170,6 +272,9 @@ void MainWindow::buildMenus() {
         w->setAttribute(Qt::WA_DeleteOnClose);
         w->show();
     });
+
+    // 語言：介面文字（範例程式與 QtPlot 的選單、軸名）即時切換，下次開啟會記住
+    buildLanguageMenu(menuBar()->addMenu(tr("語言(&L)")));
 
     QMenu* helpMenu = menuBar()->addMenu(tr("說明(&H)"));
     helpMenu->addAction(tr("關於(&A)…"), this, [this] {
@@ -188,7 +293,7 @@ void MainWindow::buildTree() {
     const RecipeRegistry& reg = RecipeRegistry::instance();
     for (const QString& chapter : reg.chapters()) {
         auto* chapterItem = new QTreeWidgetItem(m_tree);
-        chapterItem->setText(0, chapter);
+        chapterItem->setText(0, rt(chapter));
         QFont f = chapterItem->font(0);
         f.setBold(true);
         chapterItem->setFont(0, f);
@@ -196,12 +301,12 @@ void MainWindow::buildTree() {
 
         for (const QString& category : reg.categories(chapter)) {
             auto* categoryItem = new QTreeWidgetItem(chapterItem);
-            categoryItem->setText(0, category);
+            categoryItem->setText(0, rt(category));
             categoryItem->setFlags(Qt::ItemIsEnabled);
 
             for (const Recipe* r : reg.inCategory(chapter, category)) {
                 auto* recipeItem = new QTreeWidgetItem(categoryItem);
-                recipeItem->setText(0, r->name);
+                recipeItem->setText(0, rt(r->name));
                 recipeItem->setData(0, kRoleChapter, r->chapter);
                 recipeItem->setData(0, kRoleCategory, r->category);
                 recipeItem->setData(0, kRoleName, r->name);
@@ -326,7 +431,8 @@ bool MainWindow::selectRecipe(const QString& name) {
             QTreeWidgetItem* category = chapter->child(j);
             for (int k = 0; k < category->childCount(); ++k) {
                 QTreeWidgetItem* recipe = category->child(k);
-                if (recipe->text(0).compare(name, Qt::CaseInsensitive) == 0) {
+                if (recipe->text(0).compare(name, Qt::CaseInsensitive) == 0 ||
+                    recipe->data(0, kRoleName).toString().compare(name, Qt::CaseInsensitive) == 0) {
                     m_tree->setCurrentItem(recipe);
                     return true;
                 }

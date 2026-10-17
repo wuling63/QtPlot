@@ -871,19 +871,45 @@ void Fishbone::render(RenderPack& rp) {
     // 原因的橫線還要再往左拉 causeLen，文字又接在橫線的左端。
     // 三段都算進去，最左邊那一根的文字才不會被切掉 ——
     // 只算骨頭和橫線的話，長一點的原因名會直接消失在圖外。
-    double widestCausePx = 0;
-    for (const FishboneCategory& c : categories) {
-        for (const FishboneCause& cause : c.causes) {
-            Label lb;
-            lb.text = cause.text;
-            lb.font = causeFont;
-            lb.font.size *= scale;
-            widestCausePx = std::max(widestCausePx, measureText(lb).width());
-        }
-    }
+    //
+    // 相鄰兩根骨頭之間也要放得下「橫線 + 原因文字」：骨頭是平行的，同一高度上兩根的水平距離
+    // 就是錨點的間距，文字比這段長就會壓到左邊那根骨頭上。中文短，通常放得下；
+    // 換成德文、日文之後字變長，放不下時把原因文字等比例縮小（最多縮到 55%）。
     const double tipOverhang = boneLen * std::cos(theta);
-    const double usableLeft = spineLeft + tipOverhang + causeLen + widestCausePx + 6 * scale;
     const double usableRight = spineRight - box.width() * 0.03;
+    const int perSide = std::max(upper.size(), lower.size());
+    double textScale = 1.0;
+    double widestCausePx = 0;
+    double usableLeft = 0;
+    for (int iter = 0; iter < 4; ++iter) {
+        double widestSubPx = 0;
+        widestCausePx = 0;
+        for (const FishboneCategory& c : categories) {
+            for (const FishboneCause& cause : c.causes) {
+                Label lb;
+                lb.text = cause.text;
+                lb.font = causeFont;
+                lb.font.size *= scale * textScale;
+                widestCausePx = std::max(widestCausePx, measureText(lb).width());
+                if (!showSubCauses) continue;
+                for (const QString& sub : cause.subCauses) {
+                    Label sl;
+                    sl.text = sub;
+                    sl.font = subCauseFont;
+                    sl.font.size *= scale * textScale;
+                    widestSubPx = std::max(widestSubPx, measureText(sl).width());
+                }
+            }
+        }
+        usableLeft = spineLeft + tipOverhang + causeLen + widestCausePx + 6 * scale;
+        if (perSide <= 1) break;
+        const double spacing = (usableRight - usableLeft) / (perSide - 1);
+        // 小刺的文字從橫線 3/4 處往左上（下）伸出去，再往左排
+        const double need = std::max(causeLen + widestCausePx, causeLen * 0.75 + 0.16 * tipOverhang + widestSubPx) +
+                            12 * scale;
+        if (spacing >= need || textScale <= 0.55) break;
+        textScale = std::max(0.55, textScale * std::max(0.6, spacing / need));
+    }
 
     auto placeSide = [&](const QVector<int>& side, int sign) {
         if (side.isEmpty()) return;
@@ -938,7 +964,7 @@ void Fishbone::render(RenderPack& rp) {
                 Label lb;
                 lb.text = cat.causes[j].text;
                 lb.font = causeFont;
-                lb.font.size *= scale;
+                lb.font.size *= scale * textScale;
                 drawText(p, at + QPointF(-causeLen - 3 * scale, 0), lb,
                          Qt::AlignRight | Qt::AlignVCenter);
 
@@ -956,7 +982,7 @@ void Fishbone::render(RenderPack& rp) {
                     Label sl;
                     sl.text = subs[q];
                     sl.font = subCauseFont;
-                    sl.font.size *= scale;
+                    sl.font.size *= scale * textScale;
                     // 往左展開，不要置中：小刺和主骨是平行的，置中的話文字有一半
                     // 會壓在主骨上，而主骨是整張圖最粗的那條線，壓上去就看不清了。
                     drawText(p, stip + QPointF(-3 * scale, 0), sl,

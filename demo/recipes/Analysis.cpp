@@ -76,7 +76,7 @@ QTPLOT_RECIPE("統計", "品質管制", "管制圖與 Nelson 規則",
                                     ControlRule::TwoOfThreeBeyond2Sigma,
                                     ControlRule::FourOfFiveBeyond1Sigma});
     c->limits = baseline;
-    c->legendText = QStringLiteral("量測值");
+    c->legendText = RT("量測值");
 
     auto* shift = plot.addVerticalLine(29.5);
     shift->line = LineStyle(QColor(120, 120, 120, 170), 1.2, LinePattern::Dashed);
@@ -89,7 +89,7 @@ QTPLOT_RECIPE("統計", "品質管制", "管制圖與 Nelson 規則",
     }
     QStringList lines;
     for (auto it = firstHit.cbegin(); it != firstHit.cend(); ++it)
-        lines << QStringLiteral("規則 %1 第 %2 點：%3")
+        lines << RT("規則 %1 第 %2 點：%3")
                      .arg(it.key())
                      .arg(it.value())
                      .arg(controlRuleName(static_cast<ControlRule>(it.key())));
@@ -97,9 +97,9 @@ QTPLOT_RECIPE("統計", "品質管制", "管制圖與 Nelson 規則",
                                     Qt::AlignLeft | Qt::AlignBottom);
     note->label.font.size = 9;
 
-    plot.leftAxis()->label.text = QStringLiteral("直徑（mm）");
-    plot.bottomAxis()->label.text = QStringLiteral("樣本序號");
-    plot.title.text = QStringLiteral("製程管制圖（I 圖）：第 30 點起偏移 1.3σ");
+    plot.leftAxis()->label.text = RT("直徑（mm）");
+    plot.bottomAxis()->label.text = RT("樣本序號");
+    plot.title.text = RT("製程管制圖（I 圖）：第 30 點起偏移 1.3σ");
     plot.grid.isVisible = false;
 }
 
@@ -117,7 +117,7 @@ QTPLOT_RECIPE("統計", "品質管制", "σ 估法決定抓不抓得到漂移",
 
     auto* c = plot.addControlChart(v, {ControlRule::Beyond3Sigma});
     c->sigmaEstimate = SigmaEstimate::MovingRange;
-    c->legendText = QStringLiteral("量測值");
+    c->legendText = RT("量測值");
 
     const ControlLimits mr = c->effectiveLimits();
     const ControlLimits sd = controlLimits(v, SigmaEstimate::StandardDeviation);
@@ -127,13 +127,13 @@ QTPLOT_RECIPE("統計", "品質管制", "σ 估法決定抓不抓得到漂移",
         auto* line = plot.addHorizontalLine(y);
         line->line = LineStyle(QColor(150, 110, 60), 1.4, LinePattern::Dotted);
     }
-    auto* wide = plot.addText(QStringLiteral("標準差法的 UCL"), 1, sd.upper());
+    auto* wide = plot.addText(RT("標準差法的 UCL"), 1, sd.upper());
     wide->alignment = Qt::AlignLeft | Qt::AlignBottom;
     wide->label.font.color = QColor(150, 110, 60);
     wide->label.font.size = 9;
 
     auto* note = plot.addAnnotation(
-        QStringLiteral("移動全距法  σ = %1  → 抓到 %2 點\n"
+        RT("移動全距法  σ = %1  → 抓到 %2 點\n"
                        "標準差法    σ = %3  → 抓到 %4 點")
             .arg(mr.sigma, 0, 'f', 3)
             .arg(c->violations().size())
@@ -142,9 +142,9 @@ QTPLOT_RECIPE("統計", "品質管制", "σ 估法決定抓不抓得到漂移",
         Qt::AlignLeft | Qt::AlignBottom);
     note->label.font.size = 9;
 
-    plot.leftAxis()->label.text = QStringLiteral("直徑（mm）");
-    plot.bottomAxis()->label.text = QStringLiteral("樣本序號");
-    plot.title.text = QStringLiteral("漂移把標準差法的界限撐寬到報不出來");
+    plot.leftAxis()->label.text = RT("直徑（mm）");
+    plot.bottomAxis()->label.text = RT("樣本序號");
+    plot.title.text = RT("漂移把標準差法的界限撐寬到報不出來");
     plot.grid.isVisible = false;
 }
 
@@ -162,11 +162,11 @@ QTPLOT_RECIPE("統計", "診斷圖", "常態 Q-Q 圖",
     auto* pts = plot.addNormalQQ(v, &refLine, QColor(45, 110, 185));
     pts->marker.size = 5;
     pts->marker.outline = LineStyle(QColor(255, 255, 255, 170), 0.7);
-    pts->legendText = QStringLiteral("樣本（n = 200）");
-    if (refLine) refLine->legendText = QStringLiteral("四分位參考線");
+    pts->legendText = RT("樣本（n = 200）");
+    if (refLine) refLine->legendText = RT("四分位參考線");
 
-    plot.leftAxis()->label.text = QStringLiteral("身高（cm）");
-    plot.title.text = QStringLiteral("常態 Q-Q 圖：點貼著線就是常態");
+    plot.leftAxis()->label.text = RT("身高（cm）");
+    plot.title.text = RT("常態 Q-Q 圖：點貼著線就是常態");
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignLeft | Qt::AlignTop;
 }
@@ -203,11 +203,11 @@ QTPLOT_RECIPE("統計", "診斷圖", "Q-Q 圖認偏態與厚尾",
 
     struct Series { QString name; QVector<double> data; QColor color; MarkerShape shape; };
     const QVector<Series> series{
-        {QStringLiteral("右偏（對數常態）"), standardize(lognormal), QColor(200, 80, 50),
+        {RT("右偏（對數常態）"), standardize(lognormal), QColor(200, 80, 50),
          MarkerShape::FilledCircle},
-        {QStringLiteral("厚尾"), standardize(heavy), QColor(70, 110, 190),
+        {RT("厚尾"), standardize(heavy), QColor(70, 110, 190),
          MarkerShape::FilledTriangleUp},
-        {QStringLiteral("均勻分布"), standardize(gen::randomUniform(n, 0, 1)),
+        {RT("均勻分布"), standardize(gen::randomUniform(n, 0, 1)),
          QColor(90, 150, 80), MarkerShape::FilledSquare},
     };
 
@@ -223,11 +223,11 @@ QTPLOT_RECIPE("統計", "診斷圖", "Q-Q 圖認偏態與厚尾",
     auto* ref = plot.addScatter({-3.2, 3.2}, {-3.2, 3.2}, QColor(110, 110, 110));
     ref->marker = MarkerStyle::none();
     ref->line.pattern = LinePattern::Dashed;
-    ref->legendText = QStringLiteral("標準常態 (y = x)");
+    ref->legendText = RT("標準常態 (y = x)");
 
-    plot.bottomAxis()->label.text = QStringLiteral("理論分位數");
-    plot.leftAxis()->label.text = QStringLiteral("標準化後的樣本分位數");
-    plot.title.text = QStringLiteral("偏離的方向告訴你偏離的種類");
+    plot.bottomAxis()->label.text = RT("理論分位數");
+    plot.leftAxis()->label.text = RT("標準化後的樣本分位數");
+    plot.title.text = RT("偏離的方向告訴你偏離的種類");
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignLeft | Qt::AlignTop;
     plot.setAxisLimits(-3.4, 3.4, -4.2, 5.2);
@@ -249,10 +249,10 @@ QTPLOT_RECIPE("統計", "診斷圖", "ROC 曲線",
     auto* diag = plot.addScatter({0, 1}, {0, 1}, QColor(140, 140, 140));
     diag->marker = MarkerStyle::none();
     diag->line.pattern = LinePattern::Dashed;
-    diag->legendText = QStringLiteral("亂猜（AUC = 0.5）");
+    diag->legendText = RT("亂猜（AUC = 0.5）");
 
     auto* curve = plot.addClassifierCurve(roc, QColor(190, 60, 50), true);
-    curve->legendText = QStringLiteral("模型（AUC = %1）").arg(roc.area, 0, 'f', 3);
+    curve->legendText = RT("模型（AUC = %1）").arg(roc.area, 0, 'f', 3);
 
     // 把 Youden 指數最大的那個門檻標出來 —— 這是最常用的「切在哪裡」準則
     int best = 0;
@@ -269,16 +269,16 @@ QTPLOT_RECIPE("統計", "診斷圖", "ROC 曲線",
     mark->marker.size = 11;
     mark->marker.outline.width = 2;
     auto* tip = plot.addCallout(
-        QStringLiteral("最佳門檻 %1\nTPR %2 / FPR %3")
+        RT("最佳門檻 %1\nTPR %2 / FPR %3")
             .arg(roc.thresholds[best], 0, 'f', 2)
             .arg(roc.ys[best], 0, 'f', 2)
             .arg(roc.xs[best], 0, 'f', 2),
         roc.xs[best], roc.ys[best], roc.xs[best] + 0.22, roc.ys[best] - 0.22);
     tip->label.font.size = 9;
 
-    plot.bottomAxis()->label.text = QStringLiteral("假陽率 FPR");
-    plot.leftAxis()->label.text = QStringLiteral("真陽率 TPR");
-    plot.title.text = QStringLiteral("ROC 曲線");
+    plot.bottomAxis()->label.text = RT("假陽率 FPR");
+    plot.leftAxis()->label.text = RT("真陽率 TPR");
+    plot.title.text = RT("ROC 曲線");
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignRight | Qt::AlignBottom;
     plot.setAxisLimits(-0.02, 1.02, -0.02, 1.02);
@@ -317,11 +317,11 @@ QTPLOT_RECIPE("統計", "診斷圖", "Precision–Recall 曲線",
     const ClassifierCurve rocS = rocCurve(skewed.first, skewed.second);
 
     auto* b = plot.addClassifierCurve(prB, QColor(45, 110, 185));
-    b->legendText = QStringLiteral("陽性 30%：AP %1（AUC %2）")
+    b->legendText = RT("陽性 30%：AP %1（AUC %2）")
                         .arg(prB.area, 0, 'f', 3)
                         .arg(rocB.area, 0, 'f', 3);
     auto* s = plot.addClassifierCurve(prS, QColor(200, 80, 50));
-    s->legendText = QStringLiteral("陽性 3%：AP %1（AUC %2）")
+    s->legendText = RT("陽性 3%：AP %1（AUC %2）")
                         .arg(prS.area, 0, 'f', 3)
                         .arg(rocS.area, 0, 'f', 3);
 
@@ -332,12 +332,12 @@ QTPLOT_RECIPE("統計", "診斷圖", "Precision–Recall 曲線",
         h->line = LineStyle(QColor(140, 140, 140, 170), 1.0, LinePattern::Dotted);
     }
     auto* note = plot.addAnnotation(
-        QStringLiteral("虛線 = 亂猜的基準（就是陽性率）"), Qt::AlignLeft | Qt::AlignBottom);
+        RT("虛線 = 亂猜的基準（就是陽性率）"), Qt::AlignLeft | Qt::AlignBottom);
     note->label.font.size = 9;
 
-    plot.bottomAxis()->label.text = QStringLiteral("召回率 Recall");
-    plot.leftAxis()->label.text = QStringLiteral("精確率 Precision");
-    plot.title.text = QStringLiteral("類別不平衡時 PR 比 ROC 敏感");
+    plot.bottomAxis()->label.text = RT("召回率 Recall");
+    plot.leftAxis()->label.text = RT("精確率 Precision");
+    plot.title.text = RT("類別不平衡時 PR 比 ROC 敏感");
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignRight | Qt::AlignTop;
     plot.setAxisLimits(-0.02, 1.02, -0.02, 1.05);
@@ -377,26 +377,26 @@ QTPLOT_RECIPE("統計", "存活分析", "Kaplan–Meier 存活曲線",
     const SurvivalCurve kmC = kaplanMeier(control.first, control.second);
 
     const SurvivalPlottables t = plot.addSurvivalCurve(kmT, QColor(45, 125, 190));
-    t.curve->legendText = QStringLiteral("治療組（n = 70）");
+    t.curve->legendText = RT("治療組（n = 70）");
     const SurvivalPlottables c = plot.addSurvivalCurve(kmC, QColor(200, 75, 55));
-    c.curve->legendText = QStringLiteral("對照組（n = 70）");
+    c.curve->legendText = RT("對照組（n = 70）");
 
     auto* half = plot.addHorizontalLine(0.5);
     half->line = LineStyle(QColor(130, 130, 130, 180), 1.0, LinePattern::Dashed);
 
     QStringList medians;
     if (!std::isnan(kmC.medianSurvival))
-        medians << QStringLiteral("對照組中位 %1 個月").arg(kmC.medianSurvival, 0, 'f', 1);
+        medians << RT("對照組中位 %1 個月").arg(kmC.medianSurvival, 0, 'f', 1);
     if (!std::isnan(kmT.medianSurvival))
-        medians << QStringLiteral("治療組中位 %1 個月").arg(kmT.medianSurvival, 0, 'f', 1);
+        medians << RT("治療組中位 %1 個月").arg(kmT.medianSurvival, 0, 'f', 1);
     else
-        medians << QStringLiteral("治療組未達中位存活");
+        medians << RT("治療組未達中位存活");
     auto* note = plot.addAnnotation(medians.join(QLatin1Char('\n')),
                                     Qt::AlignLeft | Qt::AlignBottom);
     note->label.font.size = 9;
 
-    plot.bottomAxis()->label.text = QStringLiteral("追蹤時間（月）");
-    plot.title.text = QStringLiteral("Kaplan–Meier 存活曲線（陰影為 95% CI）");
+    plot.bottomAxis()->label.text = RT("追蹤時間（月）");
+    plot.title.text = RT("Kaplan–Meier 存活曲線（陰影為 95% CI）");
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignRight | Qt::AlignTop;
     plot.setAxisLimits(0, 37, 0, 1.03);
@@ -456,7 +456,7 @@ QTPLOT_RECIPE("統計", "後設分析", "森林圖",
 
     QVector<ForestRow> rows;
     for (const Study& s : studies) rows.append(row(s.name, s.or_, s.lo, s.hi, s.weight, false));
-    rows.append(row(QStringLiteral("合併（固定效應）"), pooled, pooledLo, pooledHi, 0, true));
+    rows.append(row(RT("合併（固定效應）"), pooled, pooledLo, pooledHi, 0, true));
 
     auto* f = plot.addForestPlot(rows);
     f->nullValue = 0;  // log10(1) = 0
@@ -464,8 +464,8 @@ QTPLOT_RECIPE("統計", "後設分析", "森林圖",
     f->capSizePx = 3;
 
     plot.bottomAxis()->tickGenerator = std::make_shared<LogTickGenerator>();
-    plot.bottomAxis()->label.text = QStringLiteral("勝算比（對數軸）");
-    plot.title.text = QStringLiteral("森林圖：七個研究與合併估計");
+    plot.bottomAxis()->label.text = RT("勝算比（對數軸）");
+    plot.title.text = RT("森林圖：七個研究與合併估計");
     plot.grid.isVisible = false;
     // 右邊要留給數值欄
     plot.setAxisLimits(std::log10(0.12), std::log10(26), -0.7, rows.size() - 0.3);
@@ -496,7 +496,7 @@ QTPLOT_RECIPE("場", "頻譜", "功率譜與窗函數",
 
     struct Which { WindowFunction w; QString name; QColor color; };
     const QVector<Which> windows{
-        {WindowFunction::Rectangular, QStringLiteral("矩形（不開窗）"), QColor(200, 80, 50)},
+        {WindowFunction::Rectangular, RT("矩形（不開窗）"), QColor(200, 80, 50)},
         {WindowFunction::Hann, QStringLiteral("Hann"), QColor(45, 110, 185)},
         {WindowFunction::BlackmanHarris, QStringLiteral("Blackman–Harris"),
          QColor(80, 150, 80)},
@@ -514,9 +514,9 @@ QTPLOT_RECIPE("場", "頻譜", "功率譜與窗函數",
         v->line = LineStyle(QColor(130, 130, 130, 120), 1.0, LinePattern::Dotted);
     }
 
-    plot.bottomAxis()->label.text = QStringLiteral("頻率（Hz）");
-    plot.leftAxis()->label.text = QStringLiteral("振幅（dB）");
-    plot.title.text = QStringLiteral("窗函數壓掉旁波，小的成分才看得見");
+    plot.bottomAxis()->label.text = RT("頻率（Hz）");
+    plot.leftAxis()->label.text = RT("振幅（dB）");
+    plot.title.text = RT("窗函數壓掉旁波，小的成分才看得見");
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignRight | Qt::AlignTop;
     plot.setAxisLimits(0, 250, -150, 10);
@@ -547,9 +547,9 @@ QTPLOT_RECIPE("場", "頻譜", "頻譜圖（掃頻與諧波）",
 
     const Spectrogram sp = spectrogram(sig, fs, 512, 64, WindowFunction::Hann, true, 70);
     auto* h = plot.addSpectrogram(sp, Colormap(Colormap::Turbo));
-    plot.addColorbar(*h)->label.text = QStringLiteral("強度（dB）");
+    plot.addColorbar(*h)->label.text = RT("強度（dB）");
 
-    plot.title.text = QStringLiteral("頻譜圖：掃頻、二次諧波與中段的哨音");
+    plot.title.text = RT("頻譜圖：掃頻、二次諧波與中段的哨音");
     plot.grid.isVisible = false;
     plot.setAxisLimits(0, sp.duration(), 0, sp.maxFrequency());
 }

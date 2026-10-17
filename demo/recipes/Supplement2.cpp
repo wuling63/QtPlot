@@ -54,7 +54,7 @@ QTPLOT_RECIPE("圖種", "3D 圖表", "3D 散點圖",
         s->points = cluster(centers[i][0], centers[i][1], centers[i][2], 40);
         s->color = colors[i];
         s->dropLines = true;
-        s->name = QStringLiteral("第 %1 群").arg(i + 1);
+        s->name = RT("第 %1 群").arg(i + 1);
         chart->add(std::move(s));
     }
     plot.legend.isVisible = true;
@@ -98,7 +98,7 @@ QTPLOT_RECIPE("圖種", "3D 圖表", "3D 曲線（勞倫茲吸引子）",
     chart->aspectZ = 1;
     chart->azimuth = -40;
     chart->elevation = 20;
-    plot.title.text = QStringLiteral("勞倫茲吸引子");
+    plot.title.text = RT("勞倫茲吸引子");
 }
 
 QTPLOT_RECIPE("圖種", "3D 圖表", "3D 曲面",
@@ -113,7 +113,7 @@ QTPLOT_RECIPE("圖種", "3D 圖表", "3D 曲面",
     auto* chart = plot.addChart3D();
     chart->add(std::move(s));
     plot.addColorbar(*chart);
-    plot.title.text = QStringLiteral("peaks 函數");
+    plot.title.text = RT("peaks 函數");
 }
 
 QTPLOT_RECIPE("圖種", "3D 圖表", "3D 線框",
@@ -152,14 +152,14 @@ QTPLOT_RECIPE("圖種", "3D 圖表", "透視投影的曲面",
     chart->azimuth = -35;
     chart->elevation = 35;
     chart->aspectZ = 0.45;
-    plot.title.text = QStringLiteral("sin(x) cos(y)，透視投影");
+    plot.title.text = RT("sin(x) cos(y)，透視投影");
 }
 
 QTPLOT_RECIPE("圖種", "3D 圖表", "3D 山脊圖（瀑布）",
               "把山脊圖的每條分布曲線沿 Y 往後排，每條填到地板。"
               "近的曲線擋住遠的，月份用 yTickFormatter 印成文字。") {
-    const QStringList months = {QStringLiteral("一月"), QStringLiteral("三月"), QStringLiteral("五月"),
-                                QStringLiteral("七月"), QStringLiteral("九月"), QStringLiteral("十一月")};
+    const QStringList months = {RT("一月"), RT("三月"), RT("五月"),
+                                RT("七月"), RT("九月"), RT("十一月")};
     const double means[] = {13, 18, 24, 30, 26, 18};
     const double spreads[] = {3.0, 3.4, 2.8, 2.2, 3.0, 3.6};
 
@@ -176,9 +176,9 @@ QTPLOT_RECIPE("圖種", "3D 圖表", "3D 山脊圖（瀑布）",
 
     auto* chart = plot.addChart3D();
     chart->add(std::move(w));
-    chart->xLabel = QStringLiteral("日均溫（°C）");
-    chart->yLabel = QStringLiteral("月份");
-    chart->zLabel = QStringLiteral("密度");
+    chart->xLabel = RT("日均溫（°C）");
+    chart->yLabel = RT("月份");
+    chart->zLabel = RT("密度");
     chart->yTickFormatter = [months](double y) {
         const int i = static_cast<int>(std::lround(y));
         return (i >= 0 && i < months.size()) ? months[i] : QString();
@@ -187,7 +187,7 @@ QTPLOT_RECIPE("圖種", "3D 圖表", "3D 山脊圖（瀑布）",
     chart->aspectZ = 0.5;
     chart->azimuth = -25;
     chart->elevation = 28;
-    plot.title.text = QStringLiteral("一年之中氣溫分布的移動");
+    plot.title.text = RT("一年之中氣溫分布的移動");
 }
 
 QTPLOT_RECIPE("圖種", "3D 圖表", "3D 柱狀圖",
@@ -204,9 +204,9 @@ QTPLOT_RECIPE("圖種", "3D 圖表", "3D 柱狀圖",
 
     auto* chart = plot.addChart3D();
     chart->add(std::move(c));
-    chart->xLabel = QStringLiteral("月份");
-    chart->yLabel = QStringLiteral("門市");
-    chart->zLabel = QStringLiteral("營收");
+    chart->xLabel = RT("月份");
+    chart->yLabel = RT("門市");
+    chart->zLabel = RT("營收");
     chart->zRange = CoordinateRange(0, 100);
 }
 
@@ -224,7 +224,7 @@ QTPLOT_RECIPE_WIDGET("圖種", "3D 圖表", "用滑鼠旋轉 3D 圖",
     chart->add(std::move(s));
     chart->colormap = Colormap(Colormap::Turbo);
     plot.addColorbar(*chart);
-    plot.title.text = QStringLiteral("按住左鍵拖曳旋轉");
+    plot.title.text = RT("按住左鍵拖曳旋轉");
     enableMouseRotation(widget, chart);
 }
 
@@ -234,16 +234,16 @@ QTPLOT_RECIPE("樣式", "格線與圖例", "圖例標題",
               "legend.title 畫在項目上方，說明這組圖例在分什麼（例如「感測器」）。") {
     const char* names[] = {"A 區", "B 區", "C 區"};
     for (int i = 0; i < 3; ++i)
-        plot.addSignal(gen::sin(100, 1.0 + i * 0.4, 1.0 + i * 0.5), 1.0)->legendText = QString::fromUtf8(names[i]);
+        plot.addSignal(gen::sin(100, 1.0 + i * 0.4, 1.0 + i * 0.5), 1.0)->legendText = RT(names[i]);
     plot.legend.isVisible = true;
-    plot.legend.title.text = QStringLiteral("感測器位置");
+    plot.legend.title.text = RT("感測器位置");
 }
 
 QTPLOT_RECIPE("樣式", "格線與圖例", "圖例分欄",
               "項目很多時直向圖例會比繪圖區還高。columns 把它分成幾欄（一欄一欄往下填）。") {
     for (int i = 0; i < 12; ++i) {
         auto* s = plot.addSignal(gen::sin(120, 1.0, 1.0, i / 12.0), 1.0);
-        s->legendText = QStringLiteral("序列 %1").arg(i + 1);
+        s->legendText = RT("序列 %1").arg(i + 1);
     }
     plot.legend.isVisible = true;
     plot.legend.columns = 3;
@@ -256,11 +256,11 @@ QTPLOT_RECIPE("樣式", "格線與圖例", "圖例放在繪圖區外面",
     gen::setSeed(5);
     for (int i = 0; i < 4; ++i) {
         auto* s = plot.addScatter(gen::consecutive(60), gen::randomWalk(60, 1.0, i * 3.0));
-        s->legendText = QStringLiteral("帳戶 %1").arg(QChar('A' + i));
+        s->legendText = RT("帳戶 %1").arg(QChar('A' + i));
     }
     plot.legend.isVisible = true;
     plot.legend.placement = Legend::Placement::OutsideRight;
-    plot.legend.title.text = QStringLiteral("帳戶");
+    plot.legend.title.text = RT("帳戶");
 }
 
 QTPLOT_RECIPE("樣式", "格線與圖例", "圖例放在下方並換行",
@@ -268,7 +268,7 @@ QTPLOT_RECIPE("樣式", "格線與圖例", "圖例放在下方並換行",
               "多的自動換到下一列。") {
     const char* names[] = {"北部", "中部", "南部", "東部", "離島", "海外"};
     for (int i = 0; i < 6; ++i)
-        plot.addSignal(gen::cos(80, 1.0 + i * 0.2, 1.0 + i * 0.3), 1.0)->legendText = QString::fromUtf8(names[i]);
+        plot.addSignal(gen::cos(80, 1.0 + i * 0.2, 1.0 + i * 0.3), 1.0)->legendText = RT(names[i]);
     plot.legend.isVisible = true;
     plot.legend.placement = Legend::Placement::OutsideBottom;
     plot.legend.horizontal = true;
@@ -293,7 +293,7 @@ QTPLOT_RECIPE("統計", "箱型與分布", "核密度的核函數",
         auto* s = plot.addScatter(xs, kernelDensity(data, xs, h, k.type));
         s->marker = MarkerStyle::none();
         s->line.width = 2;
-        s->legendText = QString::fromUtf8(k.name);
+        s->legendText = RT(k.name);
     }
 
     // 資料點本身畫成底下的短線（rug）
@@ -301,7 +301,7 @@ QTPLOT_RECIPE("統計", "箱型與分布", "核密度的核函數",
     rug->marker = MarkerStyle(MarkerShape::VerticalBar, 8, QColor(0, 0, 0, 140));
 
     plot.legend.isVisible = true;
-    plot.leftAxis()->label.text = QStringLiteral("密度");
+    plot.leftAxis()->label.text = RT("密度");
 }
 
 // ───────────────────────────── 形狀 ─────────────────────────────
@@ -318,13 +318,13 @@ QTPLOT_RECIPE("圖種", "形狀與標註", "箭頭的形狀",
         a->headShape = heads[i].shape;
         a->headLength = 16;
         a->headWidth = 12;
-        auto* t = plot.addText(QString::fromUtf8(heads[i].name), 1.8, y);
+        auto* t = plot.addText(RT(heads[i].name), 1.8, y);
         t->alignment = Qt::AlignRight | Qt::AlignVCenter;
     }
     auto* both = plot.addArrow(8, -0.5, 2, -0.5, QColor(80, 80, 80));
     both->doubleEnded = true;
     both->line.width = 1.5;
-    plot.addText(QStringLiteral("doubleEnded：6 公尺"), 5, -0.2)->alignment = Qt::AlignHCenter | Qt::AlignBottom;
+    plot.addText(RT("doubleEnded：6 公尺"), 5, -0.2)->alignment = Qt::AlignHCenter | Qt::AlignBottom;
 
     plot.bottomAxis()->setRange(-1, 10);
     plot.leftAxis()->setRange(-1.5, 7);
@@ -349,7 +349,7 @@ QTPLOT_RECIPE("場", "熱圖", "依可信度調淡的熱圖",
     heat->colormap = Colormap(Colormap::Turbo);
     heat->alphaMap = confidence;
     plot.addColorbar(*heat);
-    plot.title.text = QStringLiteral("邊緣樣本少，畫得比較淡");
+    plot.title.text = RT("邊緣樣本少，畫得比較淡");
 }
 
 QTPLOT_RECIPE("場", "熱圖", "格子中心對齊刻度",
@@ -388,7 +388,7 @@ QTPLOT_RECIPE("座標軸", "標籤與刻度", "固定間隔的日期刻度",
     ticks->interval = DateTimeTickGenerator::Interval::Weeks;
     ticks->format = QStringLiteral("MM-dd");
     plot.bottomAxis()->tickGenerator = ticks;
-    plot.bottomAxis()->label.text = QStringLiteral("每根刻度都是週一");
+    plot.bottomAxis()->label.text = RT("每根刻度都是週一");
 }
 
 // ───────────────────────────── 長條圖 ─────────────────────────────
@@ -407,8 +407,8 @@ void setTicks(Axis* axis, const QVector<double>& positions, const QStringList& n
 QTPLOT_RECIPE("圖種", "長條與統計", "群組堆疊長條加百分比",
               "每個月兩根堆疊長條並排。每一段印出它佔自己那根的百分比（labelPlacement = Center），"
               "總數寫在頂端 —— 組成和總量可以同時比較。") {
-    const QStringList months = {QStringLiteral("2 月"), QStringLiteral("3 月"), QStringLiteral("4 月"), QStringLiteral("5 月"),
-                                QStringLiteral("6 月"), QStringLiteral("7 月"), QStringLiteral("8 月")};
+    const QStringList months = {RT("2 月"), RT("3 月"), RT("4 月"), RT("5 月"),
+                                RT("6 月"), RT("7 月"), RT("8 月")};
     const double bmw[7][3] = {{25, 6, 10}, {10, 4, 15}, {40, 7, 20}, {50, 20, 16}, {13, 5, 47}, {30, 3, 38}, {30, 6, 20}};
     const double ferrari[7][3] = {{5, 2, 20}, {12, 1, 14}, {15, 2, 32}, {5, 1, 45}, {20, 3, 25}, {30, 2, 40}, {12, 2, 35}};
     struct Brand { const char* name; const double (*data)[3]; double offset; QColor colors[3]; };
@@ -442,7 +442,7 @@ QTPLOT_RECIPE("圖種", "長條與統計", "群組堆疊長條加百分比",
         }
         for (int s = 0; s < 3; ++s) {
             LegendItem it;
-            it.text = QStringLiteral("%1 %2").arg(QString::fromUtf8(b.name), QString::fromUtf8(parts[s]));
+            it.text = QStringLiteral("%1 %2").arg(RT(b.name), RT(parts[s]));
             it.fill = FillStyle(b.colors[s]);
             it.line = LineStyle::none();
             plot.legend.manualItems.append(it);
@@ -494,7 +494,7 @@ QTPLOT_RECIPE("圖種", "長條與統計", "排序的相關係數長條",
                                      : mix(QColor(190, 225, 130), QColor(15, 105, 55), pairs[i].r);
         bars.append(b);
         pos.append(n - 1 - i);
-        names.append(QString::fromUtf8(pairs[i].pair));
+        names.append(RT(pairs[i].pair));
     }
     plot.addBars(bars)->horizontal = true;
     setTicks(plot.leftAxis(), pos, names);
@@ -502,7 +502,7 @@ QTPLOT_RECIPE("圖種", "長條與統計", "排序的相關係數長條",
     plot.style.dataBackground = QColor(234, 234, 242);
     plot.grid.majorLine.color = QColor(255, 255, 255);
     plot.setAxisLimits(-1.1, 1.1, -0.7, n - 0.3);
-    plot.bottomAxis()->label.text = QStringLiteral("相關係數");
+    plot.bottomAxis()->label.text = RT("相關係數");
 }
 
 QTPLOT_RECIPE("圖種", "長條與統計", "依類別上色的排名長條",
@@ -533,7 +533,7 @@ QTPLOT_RECIPE("圖種", "長條與統計", "依類別上色的排名長條",
         b.labelColor = QColor(255, 255, 255);
         bars.append(b);
         pos.append(n - 1 - i);
-        names.append(QString::fromUtf8(models[i].name));
+        names.append(RT(models[i].name));
     }
     auto* bp = plot.addBars(bars);
     bp->horizontal = true;
@@ -543,7 +543,7 @@ QTPLOT_RECIPE("圖種", "長條與統計", "依類別上色的排名長條",
 
     for (int c = 0; c < 4; ++c) {
         LegendItem it;
-        it.text = QString::fromUtf8(licenses[c]);
+        it.text = RT(licenses[c]);
         it.fill = FillStyle(colors[c]);
         it.line = LineStyle::none();
         plot.legend.manualItems.append(it);
@@ -554,15 +554,15 @@ QTPLOT_RECIPE("圖種", "長條與統計", "依類別上色的排名長條",
     plot.bottomAxis()->isVisible = false;
     plot.grid.isVisible = false;
     plot.setAxisLimits(0, 1300, -0.6, n - 0.4);
-    plot.title.text = QStringLiteral("Chatbot Arena Elo 評分（2023）");
+    plot.title.text = RT("Chatbot Arena Elo 評分（2023）");
 }
 
 // ───────────────────────────── 環狀圖 ─────────────────────────────
 
 QTPLOT_RECIPE("極座標", "環狀圖", "強調單一項目的環狀長條圖",
               "每個類別一道環，數值是弧長。只有一條上色、其他灰色，故事（藍莓破 5000）自己跳出來。") {
-    const QStringList fruits = {QStringLiteral("葡萄"), QStringLiteral("香蕉"), QStringLiteral("藍莓"), QStringLiteral("柳橙"),
-                                QStringLiteral("蘋果"), QStringLiteral("鳳梨"), QStringLiteral("芒果"), QStringLiteral("草莓")};
+    const QStringList fruits = {RT("葡萄"), RT("香蕉"), RT("藍莓"), RT("柳橙"),
+                                RT("蘋果"), RT("鳳梨"), RT("芒果"), RT("草莓")};
     auto* chart = plot.addRadialBarChart({6048, 5975, 5315, 4988, 4943, 4888, 4869, 4601}, fruits);
     chart->barColor = QColor(222, 222, 222);
     chart->colors = {QColor(), QColor(), QColor(20, 70, 230)};
@@ -573,7 +573,7 @@ QTPLOT_RECIPE("極座標", "環狀圖", "強調單一項目的環狀長條圖",
     chart->ringGapFraction = 0.35;
     chart->innerRadiusFraction = 0.55;
     chart->labelFont.bold = true;
-    plot.title.text = QStringLiteral("藍莓銷量突破 5000 箱");
+    plot.title.text = RT("藍莓銷量突破 5000 箱");
 }
 
 QTPLOT_RECIPE("極座標", "環狀圖", "距離正確的環狀長條",
@@ -592,19 +592,19 @@ QTPLOT_RECIPE("極座標", "環狀圖", "距離正確的環狀長條",
     chart->ringGapFraction = 0.55;
     chart->trackColor = QColor(238, 238, 238);
     chart->labelFont.size = 7.5;
-    plot.title.text = QStringLiteral("距離正確的環狀長條");
+    plot.title.text = RT("距離正確的環狀長條");
 }
 
 QTPLOT_RECIPE("極座標", "環狀圖", "附總數的環狀長條圖",
               "每道環各自一色，灰色軌道標出滿刻度，中央寫總數。") {
-    const QStringList countries = {QStringLiteral("美國"), QStringLiteral("中國"), QStringLiteral("日本"), QStringLiteral("英國"),
-                                   QStringLiteral("ROC"), QStringLiteral("澳洲"), QStringLiteral("義大利"), QStringLiteral("德國")};
+    const QStringList countries = {RT("美國"), RT("中國"), RT("日本"), RT("英國"),
+                                   QStringLiteral("ROC"), RT("澳洲"), RT("義大利"), RT("德國")};
     auto* chart = plot.addRadialBarChart({39, 38, 27, 22, 20, 17, 10, 10}, countries);
     chart->colors = {QColor(0, 100, 210), QColor(230, 0, 30), QColor(240, 70, 150), QColor(255, 175, 0),
                      QColor(0, 170, 170), QColor(50, 170, 20), QColor(200, 210, 40), QColor(225, 50, 80)};
-    chart->labelFormat = QStringLiteral("%1（%2）");
+    chart->labelFormat = RT("%1（%2）");
     chart->innerRadiusFraction = 0.25;
-    chart->centerLabel.text = QStringLiteral("總計（183）");
+    chart->centerLabel.text = RT("總計（183）");
 }
 
 QTPLOT_RECIPE("極座標", "環狀圖", "環狀熱圖",
@@ -613,8 +613,8 @@ QTPLOT_RECIPE("極座標", "環狀圖", "環狀熱圖",
     const QStringList states = QStringLiteral(
         "MI KY OH IN IL VT RI PA NY NJ NH DC MA MD ME DE CT WV VA TN SC NC GA FL LA AL MS AR OK TX "
         "NM NV AZ UT CO HI CA WA OR MT AK ID WY NE SD ND KS MO WI MN").split(QLatin1Char(' '));
-    const QStringList rights = {QStringLiteral("婚姻"), QStringLiteral("醫院探視"), QStringLiteral("收養"), QStringLiteral("就業"),
-                                QStringLiteral("住房"), QStringLiteral("仇恨犯罪"), QStringLiteral("校園")};
+    const QStringList rights = {RT("婚姻"), RT("醫院探視"), RT("收養"), RT("就業"),
+                                RT("住房"), RT("仇恨犯罪"), RT("校園")};
     const QColor colors[] = {QColor(205, 40, 40), QColor(240, 185, 70), QColor(15, 95, 170), QColor(125, 185, 60),
                              QColor(200, 30, 130), QColor(130, 60, 150), QColor(100, 175, 225)};
     const int rings = static_cast<int>(rights.size()), sectors = static_cast<int>(states.size());
@@ -639,9 +639,9 @@ QTPLOT_RECIPE("極座標", "環狀圖", "環狀熱圖",
     auto* h = plot.addCircularHeatmap(rings, sectors, cells, states);
     h->striped = striped;
     h->separators = {5, 17, 30, 43};
-    h->groupLabels = {{QStringLiteral("中西部"), 49.5}, {QStringLiteral("東北"), 11}, {QStringLiteral("東南"), 23.5},
-                      {QStringLiteral("西南"), 36.5}, {QStringLiteral("西北"), 41.5}};
-    h->centerLabel.text = QStringLiteral("各類權利");
+    h->groupLabels = {{RT("中西部"), 49.5}, {RT("東北"), 11}, {RT("東南"), 23.5},
+                      {RT("西南"), 36.5}, {RT("西北"), 41.5}};
+    h->centerLabel.text = RT("各類權利");
     for (int r = 0; r < rings; ++r) {
         LegendItem it;
         it.text = rights[r];
@@ -658,11 +658,11 @@ QTPLOT_RECIPE("極座標", "環狀圖", "環狀熱圖",
 QTPLOT_RECIPE("圖種", "3D 圖表", "3D 折線圖（緞帶）",
               "每個序列是一條往後排的緞帶，像試算表的 3D 折線圖。"
               "Waterfall3D 設了 thickness、關掉 fillToFloor 就只畫每條曲線的頂面。") {
-    const QStringList statuses = {QStringLiteral("回報"), QStringLiteral("受理"), QStringLiteral("指派"), QStringLiteral("確認"),
-                                  QStringLiteral("取消"), QStringLiteral("處理中"), QStringLiteral("QP"), QStringLiteral("PE 退回"),
-                                  QStringLiteral("PE 需要"), QStringLiteral("PE 審查"), QStringLiteral("技術完成"), QStringLiteral("完成")};
-    const QStringList months = {QStringLiteral("6 月"), QStringLiteral("7 月"), QStringLiteral("8 月"), QStringLiteral("9 月"),
-                                QStringLiteral("10 月"), QStringLiteral("11 月"), QStringLiteral("12 月")};
+    const QStringList statuses = {RT("回報"), RT("受理"), RT("指派"), RT("確認"),
+                                  RT("取消"), RT("處理中"), QStringLiteral("QP"), RT("PE 退回"),
+                                  RT("PE 需要"), RT("PE 審查"), RT("技術完成"), RT("完成")};
+    const QStringList months = {RT("6 月"), RT("7 月"), RT("8 月"), RT("9 月"),
+                                RT("10 月"), RT("11 月"), RT("12 月")};
     const QVector<QVector<double>> counts = {
         {2, 0, 12, 0, 0, 2, 2, 5, 5, 3, 0, 40},
         {5, 6, 8, 5, 2, 15, 5, 4, 3, 2, 10, 210},
@@ -679,7 +679,7 @@ QTPLOT_RECIPE("圖種", "3D 圖表", "3D 折線圖（緞帶）",
     w->thickness = 0.55;
     w->fillToFloor = false;
     w->fillAlpha = 255;
-    for (const QString& m : months) w->curveNames.append(QStringLiteral("2015 年 %1").arg(m));
+    for (const QString& m : months) w->curveNames.append(RT("2015 年 %1").arg(m));
 
     auto* chart = plot.addChart3D();
     chart->add(std::move(w));
@@ -687,7 +687,7 @@ QTPLOT_RECIPE("圖種", "3D 圖表", "3D 折線圖（緞帶）",
     chart->yTickFormatter = [months](double y) { return months.value(static_cast<int>(std::lround(y))); };
     chart->xLabel.clear();
     chart->yLabel.clear();
-    chart->zLabel = QStringLiteral("件數");
+    chart->zLabel = RT("件數");
     chart->aspectX = 1.6;
     chart->aspectY = 0.8;
     chart->aspectZ = 0.6;
@@ -700,11 +700,11 @@ QTPLOT_RECIPE("圖種", "3D 圖表", "3D 折線圖（緞帶）",
 
 QTPLOT_RECIPE("圖種", "3D 圖表", "3D 面積圖",
               "填到地板的實心板：每個序列沿 Y 擠出成一塊。後面的序列比較高，所以不會被前面的擋住。") {
-    const QStringList months = {QStringLiteral("1 月"), QStringLiteral("2 月"), QStringLiteral("3 月"), QStringLiteral("4 月"),
-                                QStringLiteral("5 月"), QStringLiteral("6 月"), QStringLiteral("7 月"), QStringLiteral("8 月"),
-                                QStringLiteral("9 月"), QStringLiteral("10 月"), QStringLiteral("11 月"), QStringLiteral("12 月")};
-    const QStringList series = {QStringLiteral("序列 A"), QStringLiteral("序列 B"), QStringLiteral("序列 C"),
-                                QStringLiteral("序列 D"), QStringLiteral("序列 E"), QStringLiteral("序列 F")};
+    const QStringList months = {RT("1 月"), RT("2 月"), RT("3 月"), RT("4 月"),
+                                RT("5 月"), RT("6 月"), RT("7 月"), RT("8 月"),
+                                RT("9 月"), RT("10 月"), RT("11 月"), RT("12 月")};
+    const QStringList series = {RT("序列 A"), RT("序列 B"), RT("序列 C"),
+                                RT("序列 D"), RT("序列 E"), RT("序列 F")};
     gen::setSeed(6);
     auto w = std::make_unique<Waterfall3D>();
     for (int i = 0; i < months.size(); ++i) w->xs.append(i);
@@ -727,7 +727,7 @@ QTPLOT_RECIPE("圖種", "3D 圖表", "3D 面積圖",
     chart->yTickFormatter = [series](double y) { return series.value(static_cast<int>(std::lround(y))); };
     chart->xLabel.clear();
     chart->yLabel.clear();
-    chart->zLabel = QStringLiteral("數量");
+    chart->zLabel = RT("數量");
     chart->zRange = CoordinateRange(0, 60);
     chart->aspectX = 1.2;
     chart->aspectZ = 0.55;
@@ -750,12 +750,12 @@ QTPLOT_RECIPE("圖種", "商務圖表", "圓錐漏斗加說明",
         {"購買", "• 完成交易", QColor(110, 90, 125), 2.6}};
     QVector<double> widths;
     QStringList labels;
-    for (const S& s : stages) { widths.append(s.width); labels.append(QString::fromUtf8(s.label)); }
+    for (const S& s : stages) { widths.append(s.width); labels.append(RT(s.label)); }
 
     auto* f = plot.addFunnel(widths, labels);
     for (int i = 0; i < f->stages.size(); ++i) {
         f->stages[i].fillColor = stages[i].color;
-        f->stages[i].description = QString::fromUtf8(stages[i].notes);
+        f->stages[i].description = RT(stages[i].notes);
     }
     f->cone3D = true;
     f->showValues = false;
@@ -767,7 +767,7 @@ QTPLOT_RECIPE("圖種", "商務圖表", "圓錐漏斗加說明",
     f->extent = CoordinateRect(0, 10, 0, 10);
     for (Axis* a : {plot.bottomAxis(), plot.leftAxis(), plot.topAxis(), plot.rightAxis()}) a->isVisible = false;
     plot.grid.isVisible = false;
-    plot.title.text = QStringLiteral("行銷漏斗");
+    plot.title.text = RT("行銷漏斗");
 }
 
 QTPLOT_RECIPE("圖種", "商務圖表", "空心圓錐漏斗加編號",
@@ -810,7 +810,7 @@ QTPLOT_RECIPE("極座標", "圓餅與玫瑰", "七等分的環形資訊圖",
     const QColor colors[] = {QColor(140, 195, 40), QColor(225, 50, 50), QColor(245, 150, 20), QColor(40, 65, 75),
                              QColor(95, 140, 150), QColor(30, 160, 220), QColor(40, 185, 190)};
     QStringList labels;
-    for (int i = 0; i < 7; ++i) labels.append(QStringLiteral("選項 %1").arg(i + 1));
+    for (int i = 0; i < 7; ++i) labels.append(RT("選項 %1").arg(i + 1));
     auto* pie = plot.addDonut(QVector<double>(7, 1.0), labels, 0.55);
     for (int i = 0; i < 7; ++i) {
         pie->slices[i].fillColor = colors[i];
@@ -821,7 +821,7 @@ QTPLOT_RECIPE("極座標", "圓餅與玫瑰", "七等分的環形資訊圖",
     pie->labelFont.bold = true;
     pie->labelFont.color = QColor(255, 255, 255);
     pie->sliceBorder = LineStyle(QColor(255, 255, 255), 4);
-    pie->centerLabel.text = QStringLiteral("7 個選項\n資訊圖表");
+    pie->centerLabel.text = RT("7 個選項\n資訊圖表");
     pie->centerLabel.font.size = 14;
     pie->centerLabel.font.bold = true;
     pie->centerLabel.font.color = QColor(225, 50, 50);
@@ -857,9 +857,9 @@ PolarAxis* addRings(Plot& plot, QVector<double> radii, LineStyle line) {
 QTPLOT_RECIPE("極座標", "玫瑰圖", "放射狀標籤的極座標長條圖",
               "半徑是線性的，同心圓可以當刻度讀。名稱沿半徑方向轉（radialLabels），"
               "並放在每一格自己的尖端外面（labelsFollowValue）。") {
-    const QStringList sources = {QStringLiteral("風力"), QStringLiteral("水力"), QStringLiteral("核能／其他"),
-                                 QStringLiteral("硬煤"), QStringLiteral("生質"), QStringLiteral("天然氣"),
-                                 QStringLiteral("太陽能"), QStringLiteral("褐煤")};
+    const QStringList sources = {RT("風力"), RT("水力"), RT("核能／其他"),
+                                 RT("硬煤"), RT("生質"), RT("天然氣"),
+                                 RT("太陽能"), RT("褐煤")};
     const QVector<double> share = {31.0, 4.2, 5.1, 8.3, 8.4, 10.5, 12.1, 17.7};
     const QVector<QColor> colors = {QColor(135, 206, 235), QColor(0, 0, 255), QColor(128, 0, 128), QColor(0, 0, 0),
                                     QColor(0, 128, 0), QColor(255, 165, 0), QColor(255, 255, 0), QColor(165, 42, 42)};
@@ -890,7 +890,7 @@ QTPLOT_RECIPE("極座標", "玫瑰圖", "放射狀標籤的極座標長條圖",
     tickLabels->ringLabelAngle = 78;
 
     addRings(plot, {1.0}, LineStyle(QColor(0, 0, 0), 1.5));
-    plot.title.text = QStringLiteral("2023 年德國能源來源（%）");
+    plot.title.text = RT("2023 年德國能源來源（%）");
     plot.equalAxisScale = true;
     plot.setAxisLimits(-1.1, 1.1, -1.1, 1.1);
     for (Axis* a : {plot.bottomAxis(), plot.leftAxis(), plot.topAxis(), plot.rightAxis()}) a->isVisible = false;
@@ -1071,7 +1071,7 @@ QTPLOT_RECIPE("圖種", "散點與線", "分組標名加趨勢線",
         {"C. Gurrado", 36, 17, 1}, {"F. Nibloe", 47, 19, 1}, {"A. Bampkin", 48, 18, 0}, {"B. Byrom", 18, 11, 0},
         {"W. Phant", 17, 10, 1}, {"M. Butson", 37, 6, 2}, {"R. Skellorne", 13, 4, 1}, {"F. Ferrey", 14, 1, 0},
         {"A. Cabbell", 21, 2, 1}, {"S. Anstey", 24, 1, 0}, {"F. Arend", 31, 2, 0}};
-    const QStringList countries = {QStringLiteral("美國"), QStringLiteral("日本"), QStringLiteral("加拿大")};
+    const QStringList countries = {RT("美國"), RT("日本"), RT("加拿大")};
     const QColor colors[] = {QColor(40, 120, 200), QColor(190, 70, 70), QColor(240, 190, 30)};
 
     QVector<double> allX, allY;
@@ -1086,7 +1086,7 @@ QTPLOT_RECIPE("圖種", "散點與線", "分組標名加趨勢線",
         allY += ys;
     }
     for (const A& a : analysts) {
-        auto* t = plot.addText(QString::fromUtf8(a.name), a.months, a.above);
+        auto* t = plot.addText(RT(a.name), a.months, a.above);
         t->alignment = Qt::AlignHCenter | Qt::AlignBottom;
         t->offsetY = -7;
         t->label.font.size = 8;
@@ -1096,9 +1096,9 @@ QTPLOT_RECIPE("圖種", "散點與線", "分組標名加趨勢線",
     auto* trend = plot.addLabeledLine(fit.a, fit.b, QString(), QColor(128, 128, 128));
     trend->line = LineStyle(QColor(128, 128, 128), 1.5, LinePattern::Dotted);
 
-    plot.title.text = QStringLiteral("試辦計畫後分析師的表現");
-    plot.bottomAxis()->label.text = QStringLiteral("任職月數");
-    plot.leftAxis()->label.text = QStringLiteral("表現高於平均的月數");
+    plot.title.text = RT("試辦計畫後分析師的表現");
+    plot.bottomAxis()->label.text = RT("任職月數");
+    plot.leftAxis()->label.text = RT("表現高於平均的月數");
     plot.setAxisLimits(0, 50, 0, 50);
     plot.legend.isVisible = true;
     plot.legend.horizontal = true;
@@ -1126,11 +1126,11 @@ QTPLOT_RECIPE("圖種", "散點與線", "依類別換標記形狀",
         }
         auto* m = plot.addMarkers(fertility, life, c.color);
         m->marker = MarkerStyle(c.shape, 8, c.color);
-        m->legendText = QString::fromUtf8(c.name);
+        m->legendText = RT(c.name);
     }
-    plot.title.text = QStringLiteral("各洲的生育率與預期壽命");
-    plot.bottomAxis()->label.text = QStringLiteral("生育率");
-    plot.leftAxis()->label.text = QStringLiteral("預期壽命");
+    plot.title.text = RT("各洲的生育率與預期壽命");
+    plot.bottomAxis()->label.text = RT("生育率");
+    plot.leftAxis()->label.text = RT("預期壽命");
     plot.legend.isVisible = true;
     plot.legend.placement = Legend::Placement::OutsideRight;
 }
@@ -1154,7 +1154,7 @@ QTPLOT_RECIPE("統計", "迴歸", "迴歸線加相關係數標籤",
         auto* m = plot.addMarkers(age, hr, g.color);
         m->marker = MarkerStyle(MarkerShape::FilledCircle, 9, fill);
         m->marker.outline = LineStyle(g.color, 1.0);
-        m->legendText = QString::fromUtf8(g.name);
+        m->legendText = RT(g.name);
 
         const FitResult fit = fitLine(age, hr, 28, 78);
         auto* l = plot.addLabeledLine(fit.a, fit.b, QStringLiteral("r = %1").arg(fit.r, 0, 'f', 2), g.color.darker(120));
@@ -1165,8 +1165,8 @@ QTPLOT_RECIPE("統計", "迴歸", "迴歸線加相關係數標籤",
     overall->textPosition = 0.92;
     overall->textOffsetPx = -4;
 
-    plot.bottomAxis()->label.text = QStringLiteral("年齡");
-    plot.leftAxis()->label.text = QStringLiteral("最大心率");
+    plot.bottomAxis()->label.text = RT("年齡");
+    plot.leftAxis()->label.text = RT("最大心率");
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignRight | Qt::AlignBottom;
 }
@@ -1215,7 +1215,7 @@ QTPLOT_RECIPE("統計", "迴歸", "分類區域",
         fill.setAlpha(150);
         auto* m = plot.addMarkers(lengths[k], widths[k], species[k].color);
         m->marker = MarkerStyle(MarkerShape::FilledCircle, 9, fill);
-        m->legendText = QString::fromUtf8(species[k].name);
+        m->legendText = RT(species[k].name);
         const FitResult fit = fitLine(lengths[k], widths[k], x0, x1);
         plot.addLabeledLine(fit.a, fit.b, QStringLiteral("r = %1").arg(fit.r, 0, 'f', 2), species[k].color.darker(115))
             ->textPosition = 0.85;
@@ -1226,8 +1226,8 @@ QTPLOT_RECIPE("統計", "迴歸", "分類區域",
     plot.addLabeledLine(all.a, all.b, QStringLiteral("r = %1").arg(all.r, 0, 'f', 2), QColor(50, 50, 50))->textPosition = 0.8;
 
     plot.setAxisLimits(x0, x1, y0, y1);
-    plot.bottomAxis()->label.text = QStringLiteral("花瓣長");
-    plot.leftAxis()->label.text = QStringLiteral("花瓣寬");
+    plot.bottomAxis()->label.text = RT("花瓣長");
+    plot.leftAxis()->label.text = RT("花瓣寬");
     plot.grid.isVisible = false;
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignRight | Qt::AlignBottom;
@@ -1264,7 +1264,7 @@ QTPLOT_RECIPE("圖種", "商務圖表", "氣泡加分組趨勢與平均線",
         b->minDiameterPx = 8;
         b->minLabelDiameterPx = 999;  // 名字寫在泡泡旁邊
         b->border = LineStyle::none();
-        b->legendText = QString::fromUtf8(departments[d].name);
+        b->legendText = RT(departments[d].name);
         for (int i = 0; i < 10; ++i) {
             auto* t = plot.addText(names[d][i], ages[i], scores[i]);
             t->alignment = Qt::AlignLeft | Qt::AlignTop;
@@ -1293,13 +1293,13 @@ QTPLOT_RECIPE("圖種", "商務圖表", "氣泡加分組趨勢與平均線",
     for (double v : allAge) meanAge += v / allAge.size();
     for (double v : allScore) meanScore += v / allScore.size();
     auto* h = plot.addHorizontalLine(meanScore, QColor(128, 128, 128));
-    h->text.text = QStringLiteral("平均 = %1").arg(meanScore, 0, 'f', 2);
+    h->text.text = RT("平均 = %1").arg(meanScore, 0, 'f', 2);
     auto* v = plot.addVerticalLine(meanAge, QColor(128, 128, 128));
-    v->text.text = QStringLiteral("平均 = %1").arg(meanAge, 0, 'f', 2);
+    v->text.text = RT("平均 = %1").arg(meanAge, 0, 'f', 2);
 
-    plot.title.text = QStringLiteral("各年齡員工的績效分析");
-    plot.bottomAxis()->label.text = QStringLiteral("年齡");
-    plot.leftAxis()->label.text = QStringLiteral("績效分數");
+    plot.title.text = RT("各年齡員工的績效分析");
+    plot.bottomAxis()->label.text = RT("年齡");
+    plot.leftAxis()->label.text = RT("績效分數");
     plot.setAxisLimits(18, 62, 0, 100);
     plot.legend.isVisible = true;
     plot.legend.placement = Legend::Placement::OutsideBottom;

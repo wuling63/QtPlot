@@ -10,10 +10,10 @@ QTPLOT_RECIPE("座標軸", "標籤與刻度", "軸標籤與標題",
               "標題與兩軸的標籤都是 Label，字型、顏色、粗體各自可設。"
               "版面會自動留出需要的空間，不用手調邊界。") {
     plot.addSignal(gen::sin(100, 1.0, 2.0));
-    plot.title.text = QStringLiteral("訊號量測結果");
+    plot.title.text = RT("訊號量測結果");
     plot.title.font.size = 16;
-    plot.bottomAxis()->label.text = QStringLiteral("時間（秒）");
-    plot.leftAxis()->label.text = QStringLiteral("電壓（伏特）");
+    plot.bottomAxis()->label.text = RT("時間（秒）");
+    plot.leftAxis()->label.text = RT("電壓（伏特）");
     plot.leftAxis()->label.font.bold = true;
 }
 
@@ -21,9 +21,9 @@ QTPLOT_RECIPE("座標軸", "標籤與刻度", "手動指定刻度",
               "ManualTickGenerator 完全接管刻度位置與文字，適合類別軸。") {
     plot.addBars({5, 9, 3, 7, 6});
     auto manual = std::make_shared<ManualTickGenerator>();
-    const QStringList days{QStringLiteral("週一"), QStringLiteral("週二"),
-                           QStringLiteral("週三"), QStringLiteral("週四"),
-                           QStringLiteral("週五")};
+    const QStringList days{RT("週一"), RT("週二"),
+                           RT("週三"), RT("週四"),
+                           RT("週五")};
     for (int i = 0; i < days.size(); ++i) manual->ticks.append({double(i), days[i], true});
     plot.bottomAxis()->tickGenerator = manual;
 }
@@ -37,7 +37,7 @@ QTPLOT_RECIPE("座標軸", "標籤與刻度", "自訂刻度文字",
         return QStringLiteral("%1%").arg(v * 100, 0, 'f', 0);
     };
     plot.leftAxis()->tickGenerator = gen2;
-    plot.leftAxis()->label.text = QStringLiteral("百分比");
+    plot.leftAxis()->label.text = RT("百分比");
 }
 
 QTPLOT_RECIPE("座標軸", "標籤與刻度", "日期時間軸",
@@ -51,7 +51,7 @@ QTPLOT_RECIPE("座標軸", "標籤與刻度", "日期時間軸",
     auto* s = plot.addSignalXY(xs, ys);
     s->marker = MarkerStyle::none();
     plot.bottomAxis()->tickGenerator = std::make_shared<DateTimeTickGenerator>();
-    plot.leftAxis()->label.text = QStringLiteral("價格");
+    plot.leftAxis()->label.text = RT("價格");
 }
 
 QTPLOT_RECIPE("座標軸", "標籤與刻度", "對數軸",
@@ -65,7 +65,7 @@ QTPLOT_RECIPE("座標軸", "標籤與刻度", "對數軸",
     auto* s = plot.addScatter(xs, ys);
     s->marker = MarkerStyle::none();
     plot.leftAxis()->tickGenerator = std::make_shared<LogTickGenerator>();
-    plot.leftAxis()->label.text = QStringLiteral("y（對數）");
+    plot.leftAxis()->label.text = RT("y（對數）");
     plot.grid.minorLine = LineStyle(QColor(0, 0, 0, 18), 1.0);
 }
 
@@ -75,22 +75,22 @@ QTPLOT_RECIPE("座標軸", "多軸與範圍", "左右雙 Y 軸",
     const QVector<double> xs = gen::consecutive(100);
     auto* small = plot.addScatter(xs, gen::sin(100, 1.0, 2.0));
     small->marker = MarkerStyle::none();
-    small->legendText = QStringLiteral("訊號（左軸）");
+    small->legendText = RT("訊號（左軸）");
 
     auto* right = plot.addAxis(Edge::Right);
     right->showTickLabels = true;
     right->majorTickLength = 5;
-    right->label.text = QStringLiteral("溫度（右軸）");
+    right->label.text = RT("溫度（右軸）");
     right->setRange(0, 1200);
 
     auto* big = plot.addScatter(xs, gen::randomWalk(100, 20, 600));
     big->yAxis = right;
     big->marker = MarkerStyle::none();
-    big->legendText = QStringLiteral("溫度（右軸）");
+    big->legendText = RT("溫度（右軸）");
 
     // 兩軸的數量級差太多，各自指定範圍；setRange 設過的軸不會被 autoScale 蓋掉
     plot.leftAxis()->setRange(-1.2, 1.2);
-    plot.leftAxis()->label.text = QStringLiteral("訊號（左軸）");
+    plot.leftAxis()->label.text = RT("訊號（左軸）");
     plot.legend.isVisible = true;
 }
 
@@ -98,7 +98,7 @@ QTPLOT_RECIPE("座標軸", "多軸與範圍", "反向軸",
               "inverted 設 true 會讓軸由大到小。深度、排名之類的資料需要這樣畫。") {
     plot.addScatter(gen::consecutive(20), gen::randomWalk(20, 1.0, 10));
     plot.leftAxis()->inverted = true;
-    plot.leftAxis()->label.text = QStringLiteral("深度（公尺，向下為正）");
+    plot.leftAxis()->label.text = RT("深度（公尺，向下為正）");
 }
 
 QTPLOT_RECIPE("座標軸", "多軸與範圍", "等比例軸",
@@ -121,5 +121,5 @@ QTPLOT_RECIPE("座標軸", "多軸與範圍", "鎖住某一軸",
     plot.addSignal(gen::sin(200, 1.0, 3.0));
     plot.leftAxis()->setRange(-1.5, 1.5);
     plot.leftAxis()->locked = true;
-    plot.addAnnotation(QStringLiteral("Y 軸已鎖定，拖曳只會平移 X"));
+    plot.addAnnotation(RT("Y 軸已鎖定，拖曳只會平移 X"));
 }

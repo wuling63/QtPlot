@@ -25,15 +25,15 @@ QTPLOT_RECIPE("圖種", "散點與線", "階梯線",
     };
 
     auto* straight = plot.addScatter(xs, offsetBy(6));
-    straight->legendText = QStringLiteral("Straight（直接連）");
+    straight->legendText = RT("Straight（直接連）");
 
     auto* h = plot.addScatter(xs, offsetBy(3));
     h->step = Scatter::StepStyle::Horizontal;
-    h->legendText = QStringLiteral("StepHorizontal（先水平再垂直）");
+    h->legendText = RT("StepHorizontal（先水平再垂直）");
 
     auto* v = plot.addScatter(xs, ys);
     v->step = Scatter::StepStyle::Vertical;
-    v->legendText = QStringLiteral("StepVertical（先垂直再水平）");
+    v->legendText = RT("StepVertical（先垂直再水平）");
 
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignLeft | Qt::AlignTop;
@@ -54,14 +54,14 @@ QTPLOT_RECIPE("圖種", "散點與線", "斷開的線（NaN）",
     for (int i = 30; i < 45; ++i) ys[i] = std::numeric_limits<double>::quiet_NaN();
     auto* s = plot.addScatter(gen::consecutive(100), ys);
     s->marker = MarkerStyle::none();
-    plot.addAnnotation(QStringLiteral("index 30–44 是 NaN"), Qt::AlignRight | Qt::AlignTop);
+    plot.addAnnotation(RT("index 30–44 是 NaN"), Qt::AlignRight | Qt::AlignTop);
 }
 
 QTPLOT_RECIPE("圖種", "散點與線", "已排序的長序列（SignalXY）",
               "X 遞增但不等間距時用 SignalXY：會用二分搜尋只處理可視範圍，"
               "並在點太密時抽樣。") {
     plot.addSignalXY(gen::randomSample(200'000, 0, 1000), gen::randomWalk(200'000));
-    plot.title.text = QStringLiteral("200,000 點，X 不等間距");
+    plot.title.text = RT("200,000 點，X 不等間距");
 }
 
 // ───────────────────── 長條與統計 ─────────────────────
@@ -71,8 +71,8 @@ QTPLOT_RECIPE("圖種", "長條與統計", "長條加誤差線與標籤",
     QVector<Bar> bars;
     const QVector<double> values{23, 41, 18, 35};
     const QVector<double> errors{3, 5, 2, 4};
-    const QStringList names{QStringLiteral("甲"), QStringLiteral("乙"),
-                            QStringLiteral("丙"), QStringLiteral("丁")};
+    const QStringList names{RT("甲"), RT("乙"),
+                            RT("丙"), RT("丁")};
     for (int i = 0; i < values.size(); ++i) {
         Bar b;
         b.position = i;
@@ -88,7 +88,7 @@ QTPLOT_RECIPE("圖種", "長條與統計", "長條加誤差線與標籤",
     auto manual = std::make_shared<ManualTickGenerator>();
     for (int i = 0; i < names.size(); ++i) manual->ticks.append({double(i), names[i], true});
     plot.bottomAxis()->tickGenerator = manual;
-    plot.leftAxis()->label.text = QStringLiteral("數量");
+    plot.leftAxis()->label.text = RT("數量");
 }
 
 QTPLOT_RECIPE("圖種", "長條與統計", "水平長條",
@@ -116,8 +116,8 @@ QTPLOT_RECIPE("圖種", "長條與統計", "堆疊長條",
         y.fillColor = plot.style.palette.color(1);
         b.append(y);
     }
-    plot.addBars(a)->legendText = QStringLiteral("第一層");
-    plot.addBars(b)->legendText = QStringLiteral("第二層");
+    plot.addBars(a)->legendText = RT("第一層");
+    plot.addBars(b)->legendText = RT("第二層");
     plot.legend.isVisible = true;
 }
 
@@ -125,8 +125,8 @@ QTPLOT_RECIPE("圖種", "長條與統計", "直方圖",
               "Histogram::fromValues 會分箱（箱數不給就用 Sturges 公式），"
               "再轉成長條。") {
     plot.addHistogram(gen::randomNormal(2000, 50, 12), 25);
-    plot.title.text = QStringLiteral("常態分布 2000 筆，25 個箱");
-    plot.leftAxis()->label.text = QStringLiteral("次數");
+    plot.title.text = RT("常態分布 2000 筆，25 個箱");
+    plot.leftAxis()->label.text = RT("次數");
 }
 
 QTPLOT_RECIPE("圖種", "長條與統計", "誤差線",
@@ -146,7 +146,7 @@ QTPLOT_RECIPE("圖種", "熱圖", "熱圖",
               "比逐格畫矩形快一個數量級。") {
     const int n = 40;
     plot.addHeatmap(gen::gaussian2D(n, n, 0.25), n, n);
-    plot.title.text = QStringLiteral("2D 高斯");
+    plot.title.text = RT("2D 高斯");
 }
 
 QTPLOT_RECIPE("圖種", "熱圖", "色階與平滑",
@@ -201,7 +201,7 @@ QTPLOT_RECIPE("圖種", "熱圖", "上下左右翻轉",
         h->flipHorizontally = p.flipH;
         h->flipVertically = p.flipV;
 
-        auto* t = plot.addText(QString::fromUtf8(p.name), p.at.left + 0.3, p.at.top - 0.3);
+        auto* t = plot.addText(RT(p.name), p.at.left + 0.3, p.at.top - 0.3);
         t->alignment = Qt::AlignLeft | Qt::AlignTop;
         t->label.font.color = Qt::white;
         t->label.font.bold = true;
@@ -271,8 +271,8 @@ QTPLOT_RECIPE("圖種", "等角投影", "等角金字塔",
               "所以金字塔、圓柱、圓錐都是同一個類別。\n"
               "側面拆成 n 片各自上明暗（Lambert），而不是整片同色："
               "同色的話圓錐看起來會是一個平的三角形。") {
-    const QStringList names{QStringLiteral("願景"), QStringLiteral("策略"),
-                            QStringLiteral("戰術"), QStringLiteral("執行")};
+    const QStringList names{RT("願景"), RT("策略"),
+                            RT("戰術"), RT("執行")};
     const QVector<QColor> colors{QColor(235, 90, 110), QColor(250, 190, 70),
                                  QColor(60, 190, 180), QColor(110, 200, 110)};
 
@@ -352,8 +352,8 @@ QTPLOT_RECIPE("圖種", "商務圖表", "群組長條",
     const QStringList names{QStringLiteral("Q1"), QStringLiteral("Q2"), QStringLiteral("Q3"),
                             QStringLiteral("Q4")};
     const QVector<QVector<double>> series{{18, 24, 20, 29}, {12, 19, 25, 22}, {9, 7, 14, 16}};
-    const QStringList seriesNames{QStringLiteral("北區"), QStringLiteral("中區"),
-                                  QStringLiteral("南區")};
+    const QStringList seriesNames{RT("北區"), RT("中區"),
+                                  RT("南區")};
     const Palette palette(Palette::Category10);
 
     const int g = series.size();
@@ -380,9 +380,9 @@ QTPLOT_RECIPE("圖種", "商務圖表", "分歧長條",
               "同一根軸上同時有正負值，向左向右分開。"
               "用兩種顏色區分方向，再把 0 那條基準線畫出來 —— "
               "沒有基準線的話，讀者得自己找正負的分界在哪。") {
-    const QStringList names{QStringLiteral("交通"), QStringLiteral("住房"),
-                            QStringLiteral("食品"), QStringLiteral("能源"),
-                            QStringLiteral("醫療"), QStringLiteral("教育")};
+    const QStringList names{RT("交通"), RT("住房"),
+                            RT("食品"), RT("能源"),
+                            RT("醫療"), RT("教育")};
     const QVector<double> values{-4.2, 6.8, 2.1, -7.5, 3.4, -1.2};
 
     QVector<Bar> bars;
@@ -399,7 +399,7 @@ QTPLOT_RECIPE("圖種", "商務圖表", "分歧長條",
 
     setCategoryTicks(plot, names, Edge::Left);
     plot.addVerticalLine(0)->line = LineStyle(QColor(0, 0, 0, 160), 1.5);
-    plot.bottomAxis()->label.text = QStringLiteral("年增率 (%)");
+    plot.bottomAxis()->label.text = RT("年增率 (%)");
 }
 
 QTPLOT_RECIPE("圖種", "商務圖表", "漏斗圖",
@@ -407,9 +407,9 @@ QTPLOT_RECIPE("圖種", "商務圖表", "漏斗圖",
               "這種圖容易被誤讀：讀者會把「面積」當成數量，但梯形的面積和它代表的值"
               "並不成正比（上下底不同）。要比較數量請用長條圖；"
               "漏斗圖的用途是表達「一層一層篩下來」這件事本身。") {
-    const QStringList names{QStringLiteral("造訪"), QStringLiteral("瀏覽商品"),
-                            QStringLiteral("加入購物車"), QStringLiteral("結帳"),
-                            QStringLiteral("完成付款")};
+    const QStringList names{RT("造訪"), RT("瀏覽商品"),
+                            RT("加入購物車"), RT("結帳"),
+                            RT("完成付款")};
     auto* f = plot.addFunnel({10000, 6200, 3100, 1400, 920}, names);
     f->extent = CoordinateRect(0, 10, 0, 10);
     f->labelFont.size = 11;
@@ -420,9 +420,9 @@ QTPLOT_RECIPE("圖種", "商務圖表", "漏斗圖",
 QTPLOT_RECIPE("圖種", "商務圖表", "金字塔圖",
               "和漏斗圖是同一個類別：widthMode 改成 Linear（寬度線性遞減、與數值無關）、"
               "inverted 設 true（最寬的在下面），外廓就是三角形。") {
-    const QStringList names{QStringLiteral("自我實現"), QStringLiteral("尊重"),
-                            QStringLiteral("社交"), QStringLiteral("安全"),
-                            QStringLiteral("生理")};
+    const QStringList names{RT("自我實現"), RT("尊重"),
+                            RT("社交"), RT("安全"),
+                            RT("生理")};
     auto* f = plot.addFunnel({5, 4, 3, 2, 1}, names);
     f->widthMode = Funnel::WidthMode::Linear;
     f->inverted = true;
@@ -439,12 +439,12 @@ QTPLOT_RECIPE("圖種", "商務圖表", "瀑布圖",
               "isTotal 的那幾根從 0 畫起，代表小計或總計；"
               "它只改「從哪裡畫」，不改算術，所以期初餘額寫成 delta = 120 + isTotal。") {
     QVector<WaterfallStep> steps{
-        {120, QStringLiteral("期初"), true, QColor()},
-        {45, QStringLiteral("新客戶"), false, QColor()},
-        {18, QStringLiteral("加購"), false, QColor()},
-        {-22, QStringLiteral("流失"), false, QColor()},
-        {-13, QStringLiteral("降級"), false, QColor()},
-        {0, QStringLiteral("期末"), true, QColor()},
+        {120, RT("期初"), true, QColor()},
+        {45, RT("新客戶"), false, QColor()},
+        {18, RT("加購"), false, QColor()},
+        {-22, RT("流失"), false, QColor()},
+        {-13, RT("降級"), false, QColor()},
+        {0, RT("期末"), true, QColor()},
     };
     auto* w = plot.addWaterfall(steps);
     w->valueFont.bold = true;
@@ -452,7 +452,7 @@ QTPLOT_RECIPE("圖種", "商務圖表", "瀑布圖",
     QStringList names;
     for (const WaterfallStep& s : steps) names.append(s.label);
     setCategoryTicks(plot, names);
-    plot.leftAxis()->label.text = QStringLiteral("月費收入（萬）");
+    plot.leftAxis()->label.text = RT("月費收入（萬）");
     // 上限要留給最高那根的數值標籤，不然 autoScale 貼合資料之後標籤會被切掉
     plot.setAxisLimits(-0.6, 5.6, 0, 200);
 }
@@ -462,10 +462,10 @@ QTPLOT_RECIPE("圖種", "商務圖表", "靶心圖（Bullet）",
               "常用來取代儀表板上的量表 —— 量表佔一大塊地方卻只放得下一個數字，"
               "靶心圖一列就講完同樣的事，好幾列疊起來還可以直接互相比較。") {
     QVector<BulletRow> rows{
-        {QStringLiteral("營收"), 275, 250, {150, 225, 300}, QColor(40, 40, 40)},
-        {QStringLiteral("毛利"), 32, 38, {20, 28, 45}, QColor(40, 40, 40)},
-        {QStringLiteral("訂單數"), 1850, 2000, {1000, 1600, 2200}, QColor(40, 40, 40)},
-        {QStringLiteral("滿意度"), 88, 85, {60, 75, 95}, QColor(40, 40, 40)},
+        {RT("營收"), 275, 250, {150, 225, 300}, QColor(40, 40, 40)},
+        {RT("毛利"), 32, 38, {20, 28, 45}, QColor(40, 40, 40)},
+        {RT("訂單數"), 1850, 2000, {1000, 1600, 2200}, QColor(40, 40, 40)},
+        {RT("滿意度"), 88, 85, {60, 75, 95}, QColor(40, 40, 40)},
     };
     // 四列的量級差很多，各自除以自己的滿分換算成百分比才比得起來
     for (BulletRow& r : rows) {
@@ -479,7 +479,7 @@ QTPLOT_RECIPE("圖種", "商務圖表", "靶心圖（Bullet）",
     QStringList names;
     for (const BulletRow& r : rows) names.append(r.label);
     setCategoryTicks(plot, names, Edge::Left);
-    plot.bottomAxis()->label.text = QStringLiteral("達成率（%，以各自滿分正規化）");
+    plot.bottomAxis()->label.text = RT("達成率（%，以各自滿分正規化）");
     plot.setAxisLimits(0, 105, -0.6, rows.size() - 0.4);
 }
 
@@ -491,9 +491,9 @@ QTPLOT_RECIPE("圖種", "商務圖表", "氣泡圖",
     const QVector<double> gdp{1.9, 3.9, 2.6, 2.1, 1.4, 17.7, 3.4, 0.5};
     const QVector<double> life{82.9, 81.2, 83.0, 80.9, 83.5, 78.2, 84.6, 83.2};
     const QVector<double> pop{67, 84, 60, 48, 38, 334, 125, 5.5};
-    const QStringList names{QStringLiteral("英"), QStringLiteral("德"), QStringLiteral("義"),
-                            QStringLiteral("西"), QStringLiteral("波"), QStringLiteral("美"),
-                            QStringLiteral("日"), QStringLiteral("芬")};
+    const QStringList names{RT("英"), RT("德"), RT("義"),
+                            RT("西"), RT("波"), RT("美"),
+                            RT("日"), RT("芬")};
 
     auto* b = plot.addBubbles(gdp, life, pop);
     for (int i = 0; i < names.size(); ++i) b->bubbles[i].label = names[i];
@@ -501,9 +501,9 @@ QTPLOT_RECIPE("圖種", "商務圖表", "氣泡圖",
     b->maxDiameterPx = 90;
     b->minDiameterPx = 16;
 
-    plot.bottomAxis()->label.text = QStringLiteral("GDP（兆美元）");
-    plot.leftAxis()->label.text = QStringLiteral("平均壽命（歲）");
-    plot.title.text = QStringLiteral("泡泡大小 = 人口");
+    plot.bottomAxis()->label.text = RT("GDP（兆美元）");
+    plot.leftAxis()->label.text = RT("平均壽命（歲）");
+    plot.title.text = RT("泡泡大小 = 人口");
 }
 
 QTPLOT_RECIPE("圖種", "商務圖表", "面積正比 vs 直徑正比",
@@ -527,8 +527,8 @@ QTPLOT_RECIPE("圖種", "商務圖表", "面積正比 vs 直徑正比",
     d->maxDiameterPx = 70;
     d->minDiameterPx = 70.0 / 16;
 
-    QVector<Tick> ticks{{1, QStringLiteral("面積正比（對）")},
-                        {0, QStringLiteral("直徑正比（錯）")}};
+    QVector<Tick> ticks{{1, RT("面積正比（對）")},
+                        {0, RT("直徑正比（錯）")}};
     auto gen = std::make_shared<ManualTickGenerator>();
     gen->ticks = ticks;
     plot.leftAxis()->tickGenerator = gen;
@@ -557,13 +557,13 @@ QTPLOT_RECIPE("圖種", "商務圖表", "氣泡大小圖例",
 
     b->showSizeLegend = true;
     b->sizeLegendValues = {100, 50, 10};
-    b->sizeLegendTitle = QStringLiteral("成功機率");
+    b->sizeLegendTitle = RT("成功機率");
     b->sizeLegendCorner = Qt::AlignRight | Qt::AlignTop;
     b->sizeLegendFont.size = 9;
 
-    plot.bottomAxis()->label.text = QStringLiteral("投入成本（萬）");
-    plot.leftAxis()->label.text = QStringLiteral("預期營收（百萬）");
-    plot.title.text = QStringLiteral("Q1 機會的風險評估");
+    plot.bottomAxis()->label.text = RT("投入成本（萬）");
+    plot.leftAxis()->label.text = RT("預期營收（百萬）");
+    plot.title.text = RT("Q1 機會的風險評估");
     plot.setAxisLimits(0, 115, 0, 11);
 }
 
@@ -574,20 +574,20 @@ QTPLOT_RECIPE("圖種", "商務圖表", "瀑布圖加累計值",
               "累計值回答「到這一步為止是多少」—— 只有後者能和 Y 軸的刻度對起來。"
               "長條太矮塞不下時，增減量會自己退回長條外側。") {
     QVector<WaterfallStep> steps{
-        {4000, QStringLiteral("期初"), true, QColor(230, 215, 175)},
-        {1707, QStringLiteral("一月"), false, QColor()},
-        {-1425, QStringLiteral("二月"), false, QColor()},
-        {-1030, QStringLiteral("三月"), false, QColor()},
-        {1812, QStringLiteral("四月"), false, QColor()},
-        {-1067, QStringLiteral("五月"), false, QColor()},
-        {-1481, QStringLiteral("六月"), false, QColor()},
-        {1228, QStringLiteral("七月"), false, QColor()},
-        {1176, QStringLiteral("八月"), false, QColor()},
-        {1146, QStringLiteral("九月"), false, QColor()},
-        {1205, QStringLiteral("十月"), false, QColor()},
-        {-1388, QStringLiteral("十一月"), false, QColor()},
-        {1492, QStringLiteral("十二月"), false, QColor()},
-        {0, QStringLiteral("期末"), true, QColor(230, 215, 175)},
+        {4000, RT("期初"), true, QColor(230, 215, 175)},
+        {1707, RT("一月"), false, QColor()},
+        {-1425, RT("二月"), false, QColor()},
+        {-1030, RT("三月"), false, QColor()},
+        {1812, RT("四月"), false, QColor()},
+        {-1067, RT("五月"), false, QColor()},
+        {-1481, RT("六月"), false, QColor()},
+        {1228, RT("七月"), false, QColor()},
+        {1176, RT("八月"), false, QColor()},
+        {1146, RT("九月"), false, QColor()},
+        {1205, RT("十月"), false, QColor()},
+        {-1388, RT("十一月"), false, QColor()},
+        {1492, RT("十二月"), false, QColor()},
+        {0, RT("期末"), true, QColor(230, 215, 175)},
     };
     auto* w = plot.addWaterfall(steps);
     w->riseColor = QColor(135, 185, 150);
@@ -604,7 +604,7 @@ QTPLOT_RECIPE("圖種", "商務圖表", "瀑布圖加累計值",
     QStringList names;
     for (const WaterfallStep& s : steps) names.append(s.label);
     setCategoryTicks(plot, names);
-    plot.leftAxis()->label.text = QStringLiteral("金額");
+    plot.leftAxis()->label.text = RT("金額");
     plot.setAxisLimits(-0.7, steps.size() - 0.3, 0, 8600);
 }
 
@@ -614,13 +614,13 @@ QTPLOT_RECIPE("圖種", "商務圖表", "甘特圖",
               "同一列可以放好幾項不重疊的工作，列號由使用者指定。"
               "dependsOn 會畫一條折線箭頭連到前置工作。") {
     QVector<GanttTask> tasks{
-        {QStringLiteral("需求訪談"), 0, 8, 0, 1.0, QColor(), {}},
-        {QStringLiteral("系統設計"), 8, 20, 1, 0.8, QColor(), {0}},
-        {QStringLiteral("介面設計"), 10, 22, 2, 0.6, QColor(), {0}},
-        {QStringLiteral("後端開發"), 20, 44, 3, 0.35, QColor(), {1}},
-        {QStringLiteral("前端開發"), 24, 46, 4, 0.25, QColor(), {2}},
-        {QStringLiteral("整合測試"), 46, 58, 5, 0.0, QColor(), {3, 4}},
-        {QStringLiteral("上線"), 58, 62, 6, 0.0, QColor(), {5}},
+        {RT("需求訪談"), 0, 8, 0, 1.0, QColor(), {}},
+        {RT("系統設計"), 8, 20, 1, 0.8, QColor(), {0}},
+        {RT("介面設計"), 10, 22, 2, 0.6, QColor(), {0}},
+        {RT("後端開發"), 20, 44, 3, 0.35, QColor(), {1}},
+        {RT("前端開發"), 24, 46, 4, 0.25, QColor(), {2}},
+        {RT("整合測試"), 46, 58, 5, 0.0, QColor(), {3, 4}},
+        {RT("上線"), 58, 62, 6, 0.0, QColor(), {5}},
     };
     auto* g = plot.addGantt(tasks);
     g->labelFont.bold = true;
@@ -629,7 +629,7 @@ QTPLOT_RECIPE("圖種", "商務圖表", "甘特圖",
     for (const GanttTask& t : tasks) names.append(t.label);
     setCategoryTicks(plot, names, Edge::Left);
     plot.leftAxis()->inverted = true;  // 第一項排在最上面
-    plot.bottomAxis()->label.text = QStringLiteral("第幾天");
+    plot.bottomAxis()->label.text = RT("第幾天");
     plot.setAxisLimits(-2, 72, -0.6, tasks.size() - 0.4);
 }
 
@@ -639,16 +639,16 @@ QTPLOT_RECIPE("圖種", "商務圖表", "文氏圖",
               "為了一張示意圖不值得。\n"
               "要注意這是「示意」而不是「比例」：圓的大小與重疊面積都是固定版型。"
               "要讓面積正比於集合大小，在三個集合時通常無解。") {
-    auto* v = plot.addVenn({QStringLiteral("會寫程式"), QStringLiteral("懂統計"),
-                            QStringLiteral("懂領域知識")});
+    auto* v = plot.addVenn({RT("會寫程式"), RT("懂統計"),
+                            RT("懂領域知識")});
     // 鍵是位元遮罩：1 = 只有第一個，3 = 第一∩第二，7 = 三個都有
-    v->regionLabels = {{1, QStringLiteral("工程師")},
-                       {2, QStringLiteral("統計學家")},
-                       {4, QStringLiteral("領域專家")},
-                       {3, QStringLiteral("機器學習")},
-                       {5, QStringLiteral("資料工程")},
-                       {6, QStringLiteral("傳統研究")},
-                       {7, QStringLiteral("資料科學")}};
+    v->regionLabels = {{1, RT("工程師")},
+                       {2, RT("統計學家")},
+                       {4, RT("領域專家")},
+                       {3, RT("機器學習")},
+                       {5, RT("資料工程")},
+                       {6, RT("傳統研究")},
+                       {7, RT("資料科學")}};
     v->countLabelFont.size = 9;
     v->countLabelFont.bold = true;
     plot.equalAxisScale = true;
@@ -660,9 +660,9 @@ QTPLOT_RECIPE("圖種", "商務圖表", "兩集合文氏圖",
               "兩個集合時版型比較單純：左右擺，圓心距取半徑，"
               "交集大約佔每個圓的三分之一。") {
     auto* v = plot.addVenn({QStringLiteral("A"), QStringLiteral("B")});
-    v->regionLabels = {{1, QStringLiteral("只有 A\n120")},
-                       {2, QStringLiteral("只有 B\n85")},
-                       {3, QStringLiteral("兩者皆有\n45")}};
+    v->regionLabels = {{1, RT("只有 A\n120")},
+                       {2, RT("只有 B\n85")},
+                       {3, RT("兩者皆有\n45")}};
     v->countLabelFont.bold = true;
     plot.equalAxisScale = true;
     plot.grid.isVisible = false;
@@ -674,10 +674,10 @@ QTPLOT_RECIPE("圖種", "商務圖表", "柏拉圖（Pareto）",
               "用途是找出「少數幾項造成多數問題」的那幾項 —— "
               "累計線穿過 80% 的位置之前的項目就是重點。\n"
               "排序是重點而不是裝飾：沒排序的話累計線會上上下下，看不出轉折。") {
-    QStringList names{QStringLiteral("刮傷"), QStringLiteral("尺寸不符"),
-                      QStringLiteral("色差"),  QStringLiteral("毛邊"),
-                      QStringLiteral("變形"),  QStringLiteral("污漬"),
-                      QStringLiteral("其他")};
+    QStringList names{RT("刮傷"), RT("尺寸不符"),
+                      RT("色差"),  RT("毛邊"),
+                      RT("變形"),  RT("污漬"),
+                      RT("其他")};
     QVector<double> counts{142, 96, 58, 31, 18, 11, 7};
 
     // 由大到小排。資料本來就排好了，但實務上不會，所以示範怎麼排。
@@ -694,7 +694,7 @@ QTPLOT_RECIPE("圖種", "商務圖表", "柏拉圖（Pareto）",
 
     auto* bars = plot.addBars(sortedCounts, QColor(70, 120, 185));
     for (Bar& b : bars->bars) b.size = 0.75;
-    plot.leftAxis()->label.text = QStringLiteral("件數");
+    plot.leftAxis()->label.text = RT("件數");
 
     double total = 0;
     for (double v : sortedCounts) total += v;
@@ -709,7 +709,7 @@ QTPLOT_RECIPE("圖種", "商務圖表", "柏拉圖（Pareto）",
     auto* right = plot.addAxis(Edge::Right);
     right->showTickLabels = true;
     right->majorTickLength = 5;
-    right->label.text = QStringLiteral("累計百分比");
+    right->label.text = RT("累計百分比");
     right->setRange(0, 105);
 
     auto* line = plot.addScatter(xs, cumPercent, QColor(214, 39, 40));
@@ -732,9 +732,9 @@ QTPLOT_RECIPE("圖種", "商務圖表", "微型走勢圖（Sparkline）",
               "它不是用來讀數值的，是用來在一堆指標裡快速找出「哪一條不對勁」。"
               "要讀數值請用一般的折線圖。") {
     gen::setSeed(3);
-    const QStringList names{QStringLiteral("營收"), QStringLiteral("訂單"),
-                            QStringLiteral("退貨"), QStringLiteral("客訴"),
-                            QStringLiteral("庫存")};
+    const QStringList names{RT("營收"), RT("訂單"),
+                            RT("退貨"), RT("客訴"),
+                            RT("庫存")};
     const int n = 40;
     const double rowGap = 1.0;
 
@@ -788,10 +788,10 @@ QTPLOT_RECIPE("圖種", "商務圖表", "馬賽克圖（Marimekko）",
               "一般的堆疊圖每欄一樣寬，看不出哪一欄本身比較大。\n"
               "代價是很難比較不同欄之間的同一段：它們寬度不同、起點也不同。"
               "要逐段比較請用分組長條圖。") {
-    const QStringList cats{QStringLiteral("牛肉"), QStringLiteral("海鮮"),
-                           QStringLiteral("蔬果"), QStringLiteral("乾貨"),
-                           QStringLiteral("其他肉"), QStringLiteral("乳製品"),
-                           QStringLiteral("特殊品"), QStringLiteral("其他")};
+    const QStringList cats{RT("牛肉"), RT("海鮮"),
+                           RT("蔬果"), RT("乾貨"),
+                           RT("其他肉"), RT("乳製品"),
+                           RT("特殊品"), RT("其他")};
     const QVector<QVector<double>> data{
         {141658, 82634, 44268, 26561}, {105358, 87798, 30102, 27594},
         {177072, 35414, 23610},        {86323, 47957, 28774, 28774},
@@ -818,7 +818,7 @@ QTPLOT_RECIPE("圖種", "商務圖表", "馬賽克圖（Marimekko）",
     plot.grid.isVisible = false;
     for (Axis* a : plot.axes()) a->isVisible = false;
     plot.setAxisLimits(-0.4, 10.4, -1.1, 11.2);
-    plot.title.text = QStringLiteral("各類別的採購金額（寬度 = 該類別佔比）");
+    plot.title.text = RT("各類別的採購金額（寬度 = 該類別佔比）");
 }
 
 QTPLOT_RECIPE("圖種", "商務圖表", "人口金字塔",
@@ -865,10 +865,10 @@ QTPLOT_RECIPE("圖種", "商務圖表", "人口金字塔",
         return formatTickLabel(std::abs(v), spacing, std::abs(v));
     };
     plot.bottomAxis()->tickGenerator = xgen;
-    plot.bottomAxis()->label.text = QStringLiteral("人口（百萬）");
+    plot.bottomAxis()->label.text = RT("人口（百萬）");
 
     plot.addVerticalLine(0)->line = LineStyle(QColor(0, 0, 0, 120), 1.0);
-    plot.title.text = QStringLiteral("高齡層女性明顯多於男性");
+    plot.title.text = RT("高齡層女性明顯多於男性");
     plot.setAxisLimits(-30, 30, -0.7, ages.size() - 0.3);
 }
 
@@ -895,11 +895,11 @@ QTPLOT_RECIPE("圖種", "階層與多變量", "六角分箱（Hexbin）",
 
     auto* h = plot.addHexbin(xs, ys, 34);
     h->colormap = Colormap(Colormap::Viridis);
-    plot.addColorbar(*h)->label.text = QStringLiteral("點數");
+    plot.addColorbar(*h)->label.text = RT("點數");
 
     plot.bottomAxis()->label.text = QStringLiteral("X");
     plot.leftAxis()->label.text = QStringLiteral("Y");
-    plot.title.text = QStringLiteral("三萬筆散點的密度");
+    plot.title.text = RT("三萬筆散點的密度");
 }
 
 QTPLOT_RECIPE("圖種", "階層與多變量", "啞鈴圖",
@@ -907,9 +907,9 @@ QTPLOT_RECIPE("圖種", "階層與多變量", "啞鈴圖",
               "比前後兩根長條好讀：長條要比較兩個「長度」，啞鈴比較的是兩個「位置」"
               "加中間那段「距離」—— 而變化量正是那段距離，直接看得到。"
               "代價是看不出絕對量的大小感，那是長條面積的作用。") {
-    const QStringList items{QStringLiteral("行動裝置"), QStringLiteral("桌機"),
-                            QStringLiteral("平板"),     QStringLiteral("電視"),
-                            QStringLiteral("穿戴"),     QStringLiteral("主機")};
+    const QStringList items{RT("行動裝置"), RT("桌機"),
+                            RT("平板"),     RT("電視"),
+                            RT("穿戴"),     RT("主機")};
     const QVector<double> before{38, 52, 21, 14, 6, 11};
     const QVector<double> after{61, 44, 25, 17, 19, 9};
 
@@ -926,7 +926,7 @@ QTPLOT_RECIPE("圖種", "階層與多變量", "啞鈴圖",
     db->valueFont.size = 9;
 
     setCategoryTicks(plot, items, Edge::Left);
-    plot.bottomAxis()->label.text = QStringLiteral("使用率 (%)");
+    plot.bottomAxis()->label.text = RT("使用率 (%)");
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignRight | Qt::AlignBottom;
     plot.setAxisLimits(0, 72, -0.6, items.size() - 0.4);
@@ -938,9 +938,9 @@ QTPLOT_RECIPE("圖種", "階層與多變量", "斜率圖",
               "斜率圖把全部項目疊在兩根軸之間，名次的交叉一眼看得到。\n"
               "項目名稱直接標在線的兩端，不用圖例 —— "
               "線一多的話，圖例要來回對照顏色反而更慢。") {
-    const QStringList items{QStringLiteral("日本"), QStringLiteral("德國"),
-                            QStringLiteral("英國"), QStringLiteral("法國"),
-                            QStringLiteral("韓國"), QStringLiteral("加拿大")};
+    const QStringList items{RT("日本"), RT("德國"),
+                            RT("英國"), RT("法國"),
+                            RT("韓國"), RT("加拿大")};
     const QVector<double> y2015{78, 71, 66, 62, 54, 49};
     const QVector<double> y2025{59, 74, 58, 65, 72, 46};
     const Palette palette(Palette::Category10);
@@ -968,7 +968,7 @@ QTPLOT_RECIPE("圖種", "階層與多變量", "斜率圖",
     plot.leftAxis()->isVisible = false;
     plot.grid.isVisible = false;
     plot.setAxisLimits(-0.42, 1.42, 40, 84);
-    plot.title.text = QStringLiteral("十年間的名次變化");
+    plot.title.text = RT("十年間的名次變化");
 }
 
 // ───────────────────── 階層與多變量 ─────────────────────
@@ -979,24 +979,24 @@ QTPLOT_RECIPE("圖種", "階層與多變量", "樹狀圖（Treemap）",
               "長條狀的矩形很難比較面積 —— 讀者會改用長邊去比，那就讀錯了。\n"
               "和旭日圖的分工：項目多、要比大小用樹狀圖；層級深、要看結構用旭日圖。") {
     QVector<TreemapNode> roots{
-        {QStringLiteral("亞洲"), 0, QColor(60, 120, 200), {
-            {QStringLiteral("中國"), 1760, QColor(), {}},
-            {QStringLiteral("日本"), 420, QColor(), {}},
-            {QStringLiteral("印度"), 350, QColor(), {}},
-            {QStringLiteral("韓國"), 180, QColor(), {}},
-            {QStringLiteral("其他"), 310, QColor(), {}}}},
-        {QStringLiteral("歐洲"), 0, QColor(220, 110, 50), {
-            {QStringLiteral("德國"), 430, QColor(), {}},
-            {QStringLiteral("英國"), 310, QColor(), {}},
-            {QStringLiteral("法國"), 290, QColor(), {}},
-            {QStringLiteral("其他"), 480, QColor(), {}}}},
-        {QStringLiteral("北美"), 0, QColor(70, 160, 90), {
-            {QStringLiteral("美國"), 2100, QColor(), {}},
-            {QStringLiteral("加拿大"), 220, QColor(), {}}}},
-        {QStringLiteral("其他"), 0, QColor(150, 110, 190), {
-            {QStringLiteral("巴西"), 190, QColor(), {}},
-            {QStringLiteral("澳洲"), 160, QColor(), {}},
-            {QStringLiteral("其餘"), 240, QColor(), {}}}},
+        {RT("亞洲"), 0, QColor(60, 120, 200), {
+            {RT("中國"), 1760, QColor(), {}},
+            {RT("日本"), 420, QColor(), {}},
+            {RT("印度"), 350, QColor(), {}},
+            {RT("韓國"), 180, QColor(), {}},
+            {RT("其他"), 310, QColor(), {}}}},
+        {RT("歐洲"), 0, QColor(220, 110, 50), {
+            {RT("德國"), 430, QColor(), {}},
+            {RT("英國"), 310, QColor(), {}},
+            {RT("法國"), 290, QColor(), {}},
+            {RT("其他"), 480, QColor(), {}}}},
+        {RT("北美"), 0, QColor(70, 160, 90), {
+            {RT("美國"), 2100, QColor(), {}},
+            {RT("加拿大"), 220, QColor(), {}}}},
+        {RT("其他"), 0, QColor(150, 110, 190), {
+            {RT("巴西"), 190, QColor(), {}},
+            {RT("澳洲"), 160, QColor(), {}},
+            {RT("其餘"), 240, QColor(), {}}}},
     };
 
     auto* tm = plot.addTreemap(roots);
@@ -1007,7 +1007,7 @@ QTPLOT_RECIPE("圖種", "階層與多變量", "樹狀圖（Treemap）",
     plot.grid.isVisible = false;
     for (Axis* a : plot.axes()) a->isVisible = false;
     plot.setAxisLimits(-0.2, 16.2, -0.2, 10.2);
-    plot.title.text = QStringLiteral("各區營收（面積 = 金額）");
+    plot.title.text = RT("各區營收（面積 = 金額）");
 }
 
 QTPLOT_RECIPE("圖種", "階層與多變量", "平行座標圖",
@@ -1016,11 +1016,11 @@ QTPLOT_RECIPE("圖種", "階層與多變量", "平行座標圖",
               "限制要知道：只看得出「相鄰」兩軸之間的關係，不相鄰的要自己換軸順序；"
               "線一多就糊成一片，要靠半透明與分群著色才讀得出來。") {
     gen::setSeed(31);
-    const QStringList dims{QStringLiteral("排氣量"), QStringLiteral("馬力"),
-                           QStringLiteral("車重"),   QStringLiteral("加速"),
-                           QStringLiteral("油耗")};
-    const QStringList groups{QStringLiteral("4 缸"), QStringLiteral("6 缸"),
-                             QStringLiteral("8 缸")};
+    const QStringList dims{RT("排氣量"), RT("馬力"),
+                           RT("車重"),   RT("加速"),
+                           RT("油耗")};
+    const QStringList groups{RT("4 缸"), RT("6 缸"),
+                             RT("8 缸")};
     const QVector<QColor> groupColors{QColor(60, 150, 90), QColor(220, 150, 40),
                                       QColor(200, 60, 70)};
 
@@ -1068,9 +1068,9 @@ QTPLOT_RECIPE("圖種", "流量與關係", "河流圖（Streamgraph）",
               "不適合讀絕對值。") {
     gen::setSeed(52);
     const int n = 60;
-    const QStringList genres{QStringLiteral("動作"), QStringLiteral("喜劇"),
-                             QStringLiteral("劇情"), QStringLiteral("科幻"),
-                             QStringLiteral("恐怖"), QStringLiteral("動畫")};
+    const QStringList genres{RT("動作"), RT("喜劇"),
+                             RT("劇情"), RT("科幻"),
+                             RT("恐怖"), RT("動畫")};
     const Colormap cmap(Colormap::Turbo);
 
     QVector<double> xs;
@@ -1101,7 +1101,7 @@ QTPLOT_RECIPE("圖種", "流量與關係", "河流圖（Streamgraph）",
     plot.legend.horizontal = true;
     plot.legend.alignment = Qt::AlignHCenter | Qt::AlignBottom;
     plot.bottomAxis()->tickGenerator = std::make_shared<AutomaticTickGenerator>();
-    plot.title.text = QStringLiteral("各類型片的消長");
+    plot.title.text = RT("各類型片的消長");
 }
 
 QTPLOT_RECIPE("圖種", "流量與關係", "弧線圖（Arc diagram）",
@@ -1162,16 +1162,16 @@ QTPLOT_RECIPE("圖種", "流量與關係", "桑基圖",
               "會得到很奇怪的結果。") {
     const Palette palette(Palette::Category10);
     QVector<SankeyNode> nodes{
-        {QStringLiteral("煤"),     0, QColor(90, 90, 90)},
-        {QStringLiteral("天然氣"), 0, QColor(237, 139, 0)},
-        {QStringLiteral("再生"),   0, QColor(60, 160, 90)},
-        {QStringLiteral("核能"),   0, QColor(150, 80, 170)},
-        {QStringLiteral("發電"),   1, QColor(70, 120, 180)},
-        {QStringLiteral("直接使用"), 1, QColor(170, 150, 110)},
-        {QStringLiteral("工業"),   2, QColor(200, 70, 70)},
-        {QStringLiteral("住商"),   2, QColor(80, 160, 200)},
-        {QStringLiteral("運輸"),   2, QColor(120, 170, 70)},
-        {QStringLiteral("損耗"),   2, QColor(160, 160, 160)},
+        {RT("煤"),     0, QColor(90, 90, 90)},
+        {RT("天然氣"), 0, QColor(237, 139, 0)},
+        {RT("再生"),   0, QColor(60, 160, 90)},
+        {RT("核能"),   0, QColor(150, 80, 170)},
+        {RT("發電"),   1, QColor(70, 120, 180)},
+        {RT("直接使用"), 1, QColor(170, 150, 110)},
+        {RT("工業"),   2, QColor(200, 70, 70)},
+        {RT("住商"),   2, QColor(80, 160, 200)},
+        {RT("運輸"),   2, QColor(120, 170, 70)},
+        {RT("損耗"),   2, QColor(160, 160, 160)},
     };
     QVector<SankeyLink> links{
         {0, 4, 28, QColor()}, {0, 5, 6, QColor()},
@@ -1195,9 +1195,9 @@ QTPLOT_RECIPE("圖種", "流量與關係", "網路圖",
               "版面用自己的亂數引擎而不是 DataGen 的全域引擎：圖的樣子必須只取決於"
               "資料與 seed，不能被「前面跑過什麼」影響，否則同一張圖每次畫出來都不一樣。\n"
               "限制也要知道：節點超過一兩百個之後會變成一團毛球，看不出任何結構。") {
-    const QStringList brands{QStringLiteral("集團"),  QStringLiteral("Audi"),
-                             QStringLiteral("保時捷"), QStringLiteral("Škoda"),
-                             QStringLiteral("SEAT"),  QStringLiteral("蘭博基尼"),
+    const QStringList brands{RT("集團"),  QStringLiteral("Audi"),
+                             RT("保時捷"), QStringLiteral("Škoda"),
+                             QStringLiteral("SEAT"),  RT("蘭博基尼"),
                              QStringLiteral("Ducati"), QStringLiteral("Scania"),
                              QStringLiteral("MAN"),   QStringLiteral("CUPRA")};
     QVector<GraphNode> nodes;
@@ -1240,8 +1240,8 @@ QTPLOT_RECIPE("圖種", "流量與關係", "沖積比較圖",
                              QStringLiteral("Boris"), QStringLiteral("Lewis")};
     const QVector<QColor> colors{QColor(150, 195, 230), QColor(165, 190, 165),
                                  QColor(240, 160, 130), QColor(225, 225, 150)};
-    const QStringList months{QStringLiteral("三月"), QStringLiteral("四月"),
-                             QStringLiteral("五月")};
+    const QStringList months{RT("三月"), RT("四月"),
+                             RT("五月")};
     // [期間][人]
     const QVector<QVector<double>> sales{{90, 82, 72, 66}, {85, 62, 73, 50}, {40, 60, 76, 80}};
 
@@ -1298,7 +1298,7 @@ QTPLOT_RECIPE("圖種", "流量與關係", "沖積比較圖",
     plot.grid.isVisible = false;
     for (Axis* a : plot.axes()) a->isVisible = false;
     plot.setAxisLimits(-0.4, 10.4, -0.3, 11.4);
-    plot.title.text = QStringLiteral("業務員月對月訂單排名");
+    plot.title.text = RT("業務員月對月訂單排名");
 }
 
 QTPLOT_RECIPE("圖種", "流量與關係", "環形版面的網路圖",
@@ -1306,10 +1306,10 @@ QTPLOT_RECIPE("圖種", "流量與關係", "環形版面的網路圖",
               "排成一個圓反而看得清楚每一條連線。"
               "layout 換成 Circular 即可，其餘設定都一樣。") {
     const QStringList cities{
-        QStringLiteral("首爾"), QStringLiteral("釜山"), QStringLiteral("濟州"),
-        QStringLiteral("大邱"), QStringLiteral("光州"), QStringLiteral("蔚山"),
-        QStringLiteral("浦項"), QStringLiteral("原州"), QStringLiteral("群山"),
-        QStringLiteral("清州")};
+        RT("首爾"), RT("釜山"), RT("濟州"),
+        RT("大邱"), RT("光州"), RT("蔚山"),
+        RT("浦項"), RT("原州"), RT("群山"),
+        RT("清州")};
     const QVector<double> sizes{9, 7, 10, 4, 3, 3, 5, 2, 2, 4};
 
     QVector<GraphNode> nodes;
@@ -1345,9 +1345,9 @@ QTPLOT_RECIPE("圖種", "流量與關係", "弦圖",
               "緞帶的控制點放在圓心，所以中間會收束成一束。\n"
               "和桑基圖的分工：桑基圖適合有方向、有階段的流程；"
               "弦圖適合兩兩互有往來、沒有明顯先後的關係（貿易、遷徙、轉換矩陣）。") {
-    const QStringList regions{QStringLiteral("北美"), QStringLiteral("歐洲"),
-                              QStringLiteral("東亞"), QStringLiteral("南亞"),
-                              QStringLiteral("非洲")};
+    const QStringList regions{RT("北美"), RT("歐洲"),
+                              RT("東亞"), RT("南亞"),
+                              RT("非洲")};
     // matrix[i][j] = i 流向 j。不對稱代表兩個方向的量不同。
     const QVector<QVector<double>> flow{
         {0,  32, 28, 11,  6},
@@ -1529,10 +1529,10 @@ QTPLOT_RECIPE("圖種", "參考線與區間", "水平與垂直線",
     plot.addSignal(gen::randomWalk(200));
     auto* h = plot.addHorizontalLine(0, QColor(200, 0, 0));
     h->line.pattern = LinePattern::Dashed;
-    h->text.text = QStringLiteral("基準");
+    h->text.text = RT("基準");
     h->text.font.color = QColor(200, 0, 0);
     auto* v = plot.addVerticalLine(100, QColor(0, 140, 0));
-    v->text.text = QStringLiteral("事件");
+    v->text.text = RT("事件");
     v->text.font.color = QColor(0, 140, 0);
 }
 
@@ -1540,8 +1540,8 @@ QTPLOT_RECIPE("圖種", "參考線與區間", "區間標示",
               "AxisSpan 用來標出一段範圍，例如異常時段或可接受區間。") {
     plot.addSignal(gen::randomWalk(300));
     auto* span = plot.addHorizontalSpan(-5, 5, QColor(0, 150, 0));
-    span->legendText = QStringLiteral("可接受範圍");
-    plot.addVerticalSpan(120, 160, QColor(200, 0, 0))->legendText = QStringLiteral("異常時段");
+    span->legendText = RT("可接受範圍");
+    plot.addVerticalSpan(120, 160, QColor(200, 0, 0))->legendText = RT("異常時段");
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignLeft | Qt::AlignBottom;
 }
@@ -1560,13 +1560,13 @@ QTPLOT_RECIPE("圖種", "形狀與標註", "矩形、橢圓、多邊形",
 QTPLOT_RECIPE("圖種", "形狀與標註", "文字與箭頭",
               "Text 釘在資料座標上（隨縮放移動），Annotation 釘在繪圖區角落（不動）。") {
     plot.addSignal(gen::sin(100, 1.0, 2.0));
-    auto* t = plot.addText(QStringLiteral("波峰在這"), 25, 1.0);
+    auto* t = plot.addText(RT("波峰在這"), 25, 1.0);
     t->alignment = Qt::AlignHCenter | Qt::AlignBottom;
     t->offsetY = -8;
     t->background = FillStyle(QColor(255, 255, 200));
     t->border = LineStyle(QColor(120, 120, 80), 1.0);
     plot.addArrow(25, 1.0, 40, 0.6, QColor(200, 0, 0));
-    plot.addAnnotation(QStringLiteral("Annotation 固定在角落"),
+    plot.addAnnotation(RT("Annotation 固定在角落"),
                        Qt::AlignRight | Qt::AlignBottom);
 }
 
@@ -1588,23 +1588,23 @@ QTPLOT_RECIPE("圖種", "流程與結構", "魚骨圖（石川圖）",
               "這是一張結構圖，沒有數值也沒有刻度 —— 版面完全由 extent 決定，"
               "要調大小請改 extent，不要去縮座標軸。") {
     QVector<FishboneCategory> cats = Fishbone::sixM();
-    cats[0].causes = {{QStringLiteral("新人未受訓"), {QStringLiteral("輪班交接")}},
-                      {QStringLiteral("作業手勢不一"), {}}};
-    cats[1].causes = {{QStringLiteral("主軸軸承磨耗"), {QStringLiteral("潤滑週期過長")}},
-                      {QStringLiteral("夾具鬆動"), {}}};
-    cats[2].causes = {{QStringLiteral("來料厚度超差"), {QStringLiteral("供應商換線")}},
-                      {QStringLiteral("批次混料"), {}}};
-    cats[3].causes = {{QStringLiteral("切削參數未更新"), {}},
-                      {QStringLiteral("抽檢頻率不足"), {QStringLiteral("SOP 未修訂")}}};
-    cats[4].causes = {{QStringLiteral("車間溫差大"), {}},
-                      {QStringLiteral("粉塵沉積"), {}}};
-    cats[5].causes = {{QStringLiteral("量規未校正"), {QStringLiteral("校期逾期")}},
-                      {QStringLiteral("量測者差異"), {}}};
+    cats[0].causes = {{RT("新人未受訓"), {RT("輪班交接")}},
+                      {RT("作業手勢不一"), {}}};
+    cats[1].causes = {{RT("主軸軸承磨耗"), {RT("潤滑週期過長")}},
+                      {RT("夾具鬆動"), {}}};
+    cats[2].causes = {{RT("來料厚度超差"), {RT("供應商換線")}},
+                      {RT("批次混料"), {}}};
+    cats[3].causes = {{RT("切削參數未更新"), {}},
+                      {RT("抽檢頻率不足"), {RT("SOP 未修訂")}}};
+    cats[4].causes = {{RT("車間溫差大"), {}},
+                      {RT("粉塵沉積"), {}}};
+    cats[5].causes = {{RT("量規未校正"), {RT("校期逾期")}},
+                      {RT("量測者差異"), {}}};
 
-    auto* fb = plot.addFishbone(QStringLiteral("外徑尺寸\n不良率偏高"), cats);
+    auto* fb = plot.addFishbone(RT("外徑尺寸\n不良率偏高"), cats);
     fb->extent = {0, 10, 0, 6};
 
-    plot.title.text = QStringLiteral("魚骨圖：外徑不良的可能原因");
+    plot.title.text = RT("魚骨圖：外徑不良的可能原因");
     plot.setAxisLimits(-0.3, 10.3, -0.4, 6.4);
 }
 
@@ -1616,21 +1616,21 @@ QTPLOT_RECIPE("圖種", "流程與結構", "魚骨圖的版面參數",
               "showSubCauses 在原因一多的時候關掉 —— 第二層會擠到看不清楚，"
               "與其畫出來看不懂，不如不畫。") {
     QVector<FishboneCategory> cats{
-        {QStringLiteral("流程"), {{QStringLiteral("步驟過多"), {}},
-                                  {QStringLiteral("缺少覆核"), {}}}, QColor()},
-        {QStringLiteral("系統"), {{QStringLiteral("介面難用"), {}},
-                                  {QStringLiteral("回應太慢"), {}}}, QColor()},
-        {QStringLiteral("人員"), {{QStringLiteral("訓練不足"), {}},
-                                  {QStringLiteral("人力吃緊"), {}}}, QColor()},
+        {RT("流程"), {{RT("步驟過多"), {}},
+                                  {RT("缺少覆核"), {}}}, QColor()},
+        {RT("系統"), {{RT("介面難用"), {}},
+                                  {RT("回應太慢"), {}}}, QColor()},
+        {RT("人員"), {{RT("訓練不足"), {}},
+                                  {RT("人力吃緊"), {}}}, QColor()},
     };
 
-    auto* fb = plot.addFishbone(QStringLiteral("結案時間過長"), cats);
+    auto* fb = plot.addFishbone(RT("結案時間過長"), cats);
     fb->extent = {0, 10, 0, 6};
     fb->boneAngleDegrees = 75;      // 骨頭立起來，左右不會互相擠
     fb->alternateSides = false;     // 三根全部排在上面
     fb->boneLengthFraction = 0.85;
     fb->boxCategoryLabels = true;
 
-    plot.title.text = QStringLiteral("立起來的骨頭、全部排在同一側");
+    plot.title.text = RT("立起來的骨頭、全部排在同一側");
     plot.setAxisLimits(-0.3, 10.3, -0.4, 6.4);
 }

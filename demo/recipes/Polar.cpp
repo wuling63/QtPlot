@@ -8,17 +8,17 @@ QTPLOT_RECIPE("極座標", "圓餅與玫瑰", "圓餅圖",
               "扇形角度正比於數值。addPie 會自動把圖切成極座標模式："
               "等比例軸、不畫直角刻度與格線。") {
     plot.addPie({38, 27, 18, 12, 5},
-                {QStringLiteral("台北"), QStringLiteral("台中"), QStringLiteral("高雄"),
-                 QStringLiteral("台南"), QStringLiteral("其他")});
-    plot.title.text = QStringLiteral("各地佔比");
+                {RT("台北"), RT("台中"), RT("高雄"),
+                 RT("台南"), RT("其他")});
+    plot.title.text = RT("各地佔比");
 }
 
 QTPLOT_RECIPE("極座標", "圓餅與玫瑰", "標籤模式與分離扇形",
               "labelMode 可以印名稱、數值或百分比；labelDistance 大於 1 會把標籤畫到圓外。"
               "單一扇形設 explode 就會沿著自己的中線往外推。") {
     auto* pie = plot.addPie({45, 25, 20, 10},
-                            {QStringLiteral("已完成"), QStringLiteral("進行中"),
-                             QStringLiteral("待處理"), QStringLiteral("已取消")});
+                            {RT("已完成"), RT("進行中"),
+                             RT("待處理"), RT("已取消")});
     pie->labelMode = Pie::LabelMode::LabelAndPercent;
     pie->labelDistance = 1.18;
     pie->slices[1].explode = 0.12;
@@ -28,12 +28,12 @@ QTPLOT_RECIPE("極座標", "圓餅與玫瑰", "標籤模式與分離扇形",
 QTPLOT_RECIPE("極座標", "圓餅與玫瑰", "甜甜圈圖",
               "donutFraction 挖出中間的洞，centerLabel 可以在洞裡放總計之類的字。") {
     auto* pie = plot.addDonut({52, 23, 15, 10},
-                              {QStringLiteral("行動"), QStringLiteral("桌機"),
-                               QStringLiteral("平板"), QStringLiteral("其他")},
+                              {RT("行動"), RT("桌機"),
+                               RT("平板"), RT("其他")},
                               0.55);
     pie->labelMode = Pie::LabelMode::Percent;
     pie->labelDistance = 0.5;
-    pie->centerLabel.text = QStringLiteral("12,480\n造訪");
+    pie->centerLabel.text = RT("12,480\n造訪");
     pie->centerLabel.font.size = 13;
     pie->centerLabel.font.bold = true;
     pie->legendText = QStringLiteral("x");  // 讓圖例收集到扇形
@@ -45,12 +45,12 @@ QTPLOT_RECIPE("極座標", "圓餅與玫瑰", "玫瑰圖（Nightingale）",
               "每塊扇形角度相同，改用半徑表示大小。areaProportional 預設為 true："
               "半徑取 sqrt(值)，所以「面積」才正比於數值 —— "
               "半徑直接正比會把大的值誇大成平方倍。") {
-    const QStringList months{QStringLiteral("一月"), QStringLiteral("二月"), QStringLiteral("三月"),
-                             QStringLiteral("四月"), QStringLiteral("五月"), QStringLiteral("六月"),
-                             QStringLiteral("七月"), QStringLiteral("八月"), QStringLiteral("九月"),
-                             QStringLiteral("十月"), QStringLiteral("十一月"), QStringLiteral("十二月")};
+    const QStringList months{RT("一月"), RT("二月"), RT("三月"),
+                             RT("四月"), RT("五月"), RT("六月"),
+                             RT("七月"), RT("八月"), RT("九月"),
+                             RT("十月"), RT("十一月"), RT("十二月")};
     plot.addCoxcomb({18, 22, 35, 48, 62, 78, 95, 90, 70, 50, 32, 20}, months);
-    plot.title.text = QStringLiteral("月平均用電量");
+    plot.title.text = RT("月平均用電量");
 }
 
 QTPLOT_RECIPE("極座標", "圓餅與玫瑰", "半徑正比 vs 面積正比",
@@ -66,17 +66,17 @@ QTPLOT_RECIPE("極座標", "圓餅與玫瑰", "半徑正比 vs 面積正比",
     auto* right = plot.addCoxcomb(v, lab);
     right->center = {1.3, 0};
 
-    plot.addText(QStringLiteral("半徑正比（誇大）"), -1.3, -1.35)->alignment =
+    plot.addText(RT("半徑正比（誇大）"), -1.3, -1.35)->alignment =
         Qt::AlignHCenter | Qt::AlignTop;
-    plot.addText(QStringLiteral("面積正比（正確）"), 1.3, -1.35)->alignment =
+    plot.addText(RT("面積正比（正確）"), 1.3, -1.35)->alignment =
         Qt::AlignHCenter | Qt::AlignTop;
 }
 
 QTPLOT_RECIPE("極座標", "雷達與量表", "雷達圖",
               "每個維度一條放射軸，一組資料畫成一個多邊形。"
               "背景的網格是獨立的 PolarAxis 圖元，疊在資料下面。") {
-    const QStringList dims{QStringLiteral("攻擊"), QStringLiteral("防禦"), QStringLiteral("速度"),
-                           QStringLiteral("耐力"), QStringLiteral("技巧"), QStringLiteral("智力")};
+    const QStringList dims{RT("攻擊"), RT("防禦"), RT("速度"),
+                           RT("耐力"), RT("技巧"), RT("智力")};
     auto* grid = plot.addPolarAxis(1.0, dims.size());
     grid->spokeLabels = dims;
     grid->labelFont.color = QColor(0, 0, 0, 0);  // 標籤交給 Radar 畫，避免重複
@@ -87,8 +87,8 @@ QTPLOT_RECIPE("極座標", "雷達與量表", "雷達圖",
                                  {50, 90, 45, 85, 60, 75}},
                                 dims);
     radar->maxValue = 100;
-    radar->series[0].legendText = QStringLiteral("角色 A");
-    radar->series[1].legendText = QStringLiteral("角色 B");
+    radar->series[0].legendText = RT("角色 A");
+    radar->series[1].legendText = RT("角色 B");
     radar->marker = MarkerStyle(MarkerShape::FilledCircle, 6, QColor());
     plot.legend.isVisible = true;
 }
@@ -96,9 +96,9 @@ QTPLOT_RECIPE("極座標", "雷達與量表", "雷達圖",
 QTPLOT_RECIPE("極座標", "雷達與量表", "各維度獨立正規化",
               "維度的單位不同時（分數、秒數、公斤…），用同一個上限正規化沒有意義。"
               "independentAxes 會讓每個維度各自以自己的最大值為滿格。") {
-    const QStringList dims{QStringLiteral("營收(億)"), QStringLiteral("員工數"),
-                           QStringLiteral("毛利率(%)"), QStringLiteral("客戶數"),
-                           QStringLiteral("專利數")};
+    const QStringList dims{RT("營收(億)"), RT("員工數"),
+                           RT("毛利率(%)"), RT("客戶數"),
+                           RT("專利數")};
     auto* grid = plot.addPolarAxis(1.0, dims.size());
     grid->spokeLabels = dims;
     grid->labelFont.color = QColor(0, 0, 0, 0);
@@ -108,8 +108,8 @@ QTPLOT_RECIPE("極座標", "雷達與量表", "各維度獨立正規化",
                                  {95, 5100, 28, 62000, 410}},
                                 dims);
     radar->independentAxes = true;
-    radar->series[0].legendText = QStringLiteral("甲公司");
-    radar->series[1].legendText = QStringLiteral("乙公司");
+    radar->series[0].legendText = RT("甲公司");
+    radar->series[1].legendText = RT("乙公司");
     plot.legend.isVisible = true;
 }
 
@@ -117,39 +117,39 @@ QTPLOT_RECIPE("極座標", "雷達與量表", "環形量表",
               "每個值一個同心環，從十二點鐘開始順時針走。"
               "底下的淡色環是滿刻度，看得出還差多少。") {
     auto* g = plot.addRadialGauge({82, 64, 45, 91},
-                                  {QStringLiteral("CPU"), QStringLiteral("記憶體"),
-                                   QStringLiteral("磁碟"), QStringLiteral("網路")},
+                                  {QStringLiteral("CPU"), RT("記憶體"),
+                                   RT("磁碟"), RT("網路")},
                                   100);
     g->valueMode = RadialGauge::ValueMode::Percent;
     g->labelFont.size = 10;
-    plot.title.text = QStringLiteral("系統負載");
+    plot.title.text = RT("系統負載");
 }
 
 QTPLOT_RECIPE("極座標", "雷達與量表", "量表的底環",
               "showBackground 畫出每個環的滿刻度，一眼看得出還差多少。"
               "值小的時候名稱塞不進弧裡，會自動改畫到弧的外側並換回一般文字色。") {
     auto* g = plot.addRadialGauge({12, 8, 23, 5},
-                                  {QStringLiteral("錯誤"), QStringLiteral("逾時"),
-                                   QStringLiteral("重試"), QStringLiteral("丟棄")},
+                                  {RT("錯誤"), RT("逾時"),
+                                   RT("重試"), RT("丟棄")},
                                   100);
     g->valueMode = RadialGauge::ValueMode::Value;
     g->backgroundColor = QColor(0, 0, 0, 22);
     g->labelFont.size = 10;
-    plot.title.text = QStringLiteral("每分鐘事件數（滿刻度 100）");
+    plot.title.text = RT("每分鐘事件數（滿刻度 100）");
 }
 
 QTPLOT_RECIPE("極座標", "雷達與量表", "堆疊量表",
               "Stacked 模式把所有值畫在同一個環上依序接續，"
               "適合表示「一個總量怎麼被分掉」。") {
     auto* g = plot.addRadialGauge({35, 25, 20, 12},
-                                  {QStringLiteral("運算"), QStringLiteral("儲存"),
-                                   QStringLiteral("網路"), QStringLiteral("其他")},
+                                  {RT("運算"), RT("儲存"),
+                                   RT("網路"), RT("其他")},
                                   100);
     g->mode = RadialGauge::Mode::Stacked;
     g->innerRadius = 0.6;
     g->roundCaps = false;
     g->valueMode = RadialGauge::ValueMode::None;
-    plot.addText(QStringLiteral("92%\n已使用"), 0, 0)->alignment =
+    plot.addText(RT("92%\n已使用"), 0, 0)->alignment =
         Qt::AlignHCenter | Qt::AlignVCenter;
     plot.legend.isVisible = true;
 }
@@ -548,9 +548,9 @@ QTPLOT_RECIPE("極座標", "玫瑰圖", "堆疊玫瑰圖",
     gen::setSeed(42);
     const int spokes = 24;
     const int layers = 6;
-    const QStringList layerNames{QStringLiteral("資金揭露"), QStringLiteral("利益衝突"),
-                                 QStringLiteral("跨領域團隊"), QStringLiteral("文獻檢索"),
-                                 QStringLiteral("證據分級"), QStringLiteral("外部審查")};
+    const QStringList layerNames{RT("資金揭露"), RT("利益衝突"),
+                                 RT("跨領域團隊"), RT("文獻檢索"),
+                                 RT("證據分級"), RT("外部審查")};
     const Colormap cmap(Colormap::Viridis);
 
     QVector<PieSlice> slices;
@@ -586,10 +586,10 @@ QTPLOT_RECIPE("極座標", "玫瑰圖", "南丁格爾圖",
               "原圖的半徑取平方根（面積正比），所以這裡 areaProportional 開著 —— "
               "代價是各段的厚度不能逐段比較，只能看總量。") {
     const QStringList months{
-        QStringLiteral("四月"), QStringLiteral("五月"), QStringLiteral("六月"),
-        QStringLiteral("七月"), QStringLiteral("八月"), QStringLiteral("九月"),
-        QStringLiteral("十月"), QStringLiteral("十一月"), QStringLiteral("十二月"),
-        QStringLiteral("一月"), QStringLiteral("二月"), QStringLiteral("三月")};
+        RT("四月"), RT("五月"), RT("六月"),
+        RT("七月"), RT("八月"), RT("九月"),
+        RT("十月"), RT("十一月"), RT("十二月"),
+        RT("一月"), RT("二月"), RT("三月")};
     // 1854-04 到 1855-03：可預防疾病／戰傷／其他（每千人月死亡率）
     const QVector<double> zymotic{1.0, 1.2, 1.1, 1.5, 1.8, 11.0, 23.0, 32.0,
                                   48.0, 57.0, 60.0, 17.0};
@@ -608,8 +608,8 @@ QTPLOT_RECIPE("極座標", "玫瑰圖", "南丁格爾圖",
     auto* rose = plot.addCoxcomb(slices);
     rose->stacks = stacks;
     rose->stackColors = {QColor(120, 190, 235), QColor(210, 40, 40), QColor(30, 30, 30)};
-    rose->stackLabels = {QStringLiteral("可預防疾病"), QStringLiteral("戰傷"),
-                         QStringLiteral("其他")};
+    rose->stackLabels = {RT("可預防疾病"), RT("戰傷"),
+                         RT("其他")};
     rose->areaProportional = true;
     rose->clockwise = true;
     rose->sliceBorder = LineStyle(QColor(255, 255, 255), 1.0);
@@ -617,7 +617,7 @@ QTPLOT_RECIPE("極座標", "玫瑰圖", "南丁格爾圖",
 
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignLeft | Qt::AlignBottom;
-    plot.title.text = QStringLiteral("1854-55 年克里米亞戰爭英軍死因");
+    plot.title.text = RT("1854-55 年克里米亞戰爭英軍死因");
     plot.equalAxisScale = true;
 }
 
@@ -681,7 +681,7 @@ QTPLOT_RECIPE("極座標", "玫瑰圖", "風花圖",
     rose->showValueLabels = true;
     rose->valueLabelSuffix = QStringLiteral("%");
     rose->valueLabelFont.size = 7;
-    rose->centerLabel.text = QStringLiteral("無風\n10.99%");
+    rose->centerLabel.text = RT("無風\n10.99%");
     rose->centerLabel.font.bold = true;
     rose->centerLabel.font.size = 11;
     rose->donutFraction = 0.13;
@@ -721,7 +721,7 @@ QTPLOT_RECIPE("極座標", "玫瑰圖", "風花圖",
     degrees->labelPaddingPx = 42;
     degrees->labelFont.size = 8;
 
-    plot.title.text = QStringLiteral("風花圖：某地三月 1973–2022");
+    plot.title.text = RT("風花圖：某地三月 1973–2022");
     plot.legend.isVisible = true;
     plot.legend.horizontal = true;
     // 擺左上角：下方被 S / SSE / SSW 那幾個方位標籤佔著了
@@ -768,9 +768,9 @@ QTPLOT_RECIPE("極座標", "雷達與量表", "雙尺度雷達圖",
               "要小心這種圖很容易誤導：兩個多邊形疊在一起，讀者會直覺比較"
               "「誰的面積大」，但它們根本不在同一個尺度上。"
               "一定要把兩套刻度都標出來，而且說明各自代表什麼。") {
-    const QStringList subjects{QStringLiteral("物理"), QStringLiteral("化學"),
-                               QStringLiteral("數學"), QStringLiteral("生物"),
-                               QStringLiteral("英文")};
+    const QStringList subjects{RT("物理"), RT("化學"),
+                               RT("數學"), RT("生物"),
+                               RT("英文")};
     const QVector<double> enrolment{56, 48, 40, 52, 66};   // 人數
     const QVector<double> passRate{96, 98, 72, 95, 70};    // 及格率 %
 
@@ -783,9 +783,9 @@ QTPLOT_RECIPE("極座標", "雷達與量表", "雙尺度雷達圖",
     auto* radar = plot.addRadar({enrolment, passRate}, subjects);
     radar->independentAxes = true;
     radar->series[0].lineColor = QColor(60, 90, 220);
-    radar->series[0].legendText = QStringLiteral("修課人數");
+    radar->series[0].legendText = RT("修課人數");
     radar->series[1].lineColor = QColor(60, 160, 80);
-    radar->series[1].legendText = QStringLiteral("及格率 (%)");
+    radar->series[1].legendText = RT("及格率 (%)");
 
     // 兩套刻度各標一邊：人數沿著正上方，百分比沿著右下
     auto* left = plot.addPolarAxis(1.0, subjects.size());
@@ -809,7 +809,7 @@ QTPLOT_RECIPE("極座標", "雷達與量表", "雙尺度雷達圖",
     plot.legend.isVisible = true;
     plot.legend.horizontal = true;
     plot.legend.alignment = Qt::AlignHCenter | Qt::AlignBottom;
-    plot.title.text = QStringLiteral("學生表現分析");
+    plot.title.text = RT("學生表現分析");
     plot.equalAxisScale = true;
 }
 
@@ -822,37 +822,37 @@ QTPLOT_RECIPE("極座標", "旭日圖", "風味輪（徑向文字）",
               "判斷「放不放得下」要看文字排的方向：沿弧排就比弧長、沿半徑排就比環的厚度。"
               "用錯方向的話，外圈的長標籤會被誤判成放得下，然後整段溢出去壓到隔壁。") {
     QVector<SunburstNode> roots{
-        {QStringLiteral("酸味"), 0, QColor(120, 170, 70), {
-            {QStringLiteral("花香"), 0, QColor(), {
-                {QStringLiteral("茶玫瑰"), 1, QColor(), {}},
-                {QStringLiteral("咖啡花"), 1, QColor(), {}}}},
-            {QStringLiteral("果香"), 0, QColor(), {
-                {QStringLiteral("檸檬"), 1, QColor(), {}},
-                {QStringLiteral("蘋果"), 1, QColor(), {}},
-                {QStringLiteral("莓果"), 1, QColor(), {}}}},
-            {QStringLiteral("草本"), 0, QColor(), {
-                {QStringLiteral("洋蔥"), 1, QColor(), {}},
-                {QStringLiteral("豌豆"), 1, QColor(), {}}}}}},
-        {QStringLiteral("焦糖"), 0, QColor(225, 150, 50), {
-            {QStringLiteral("堅果"), 0, QColor(), {
-                {QStringLiteral("花生"), 1, QColor(), {}},
-                {QStringLiteral("核桃"), 1, QColor(), {}}}},
-            {QStringLiteral("麥芽"), 0, QColor(), {
-                {QStringLiteral("吐司"), 1, QColor(), {}},
-                {QStringLiteral("榛果"), 1, QColor(), {}}}},
-            {QStringLiteral("糖香"), 0, QColor(), {
-                {QStringLiteral("蜂蜜"), 1, QColor(), {}},
-                {QStringLiteral("楓糖"), 1, QColor(), {}}}}}},
-        {QStringLiteral("乾餾"), 0, QColor(150, 80, 160), {
-            {QStringLiteral("樹脂"), 0, QColor(), {
-                {QStringLiteral("松木"), 1, QColor(), {}},
-                {QStringLiteral("黑醋栗"), 1, QColor(), {}}}},
-            {QStringLiteral("辛香"), 0, QColor(), {
-                {QStringLiteral("肉桂"), 1, QColor(), {}},
-                {QStringLiteral("丁香"), 1, QColor(), {}}}},
-            {QStringLiteral("炭燒"), 0, QColor(), {
-                {QStringLiteral("菸草"), 1, QColor(), {}},
-                {QStringLiteral("焦炭"), 1, QColor(), {}}}}}},
+        {RT("酸味"), 0, QColor(120, 170, 70), {
+            {RT("花香"), 0, QColor(), {
+                {RT("茶玫瑰"), 1, QColor(), {}},
+                {RT("咖啡花"), 1, QColor(), {}}}},
+            {RT("果香"), 0, QColor(), {
+                {RT("檸檬"), 1, QColor(), {}},
+                {RT("蘋果"), 1, QColor(), {}},
+                {RT("莓果"), 1, QColor(), {}}}},
+            {RT("草本"), 0, QColor(), {
+                {RT("洋蔥"), 1, QColor(), {}},
+                {RT("豌豆"), 1, QColor(), {}}}}}},
+        {RT("焦糖"), 0, QColor(225, 150, 50), {
+            {RT("堅果"), 0, QColor(), {
+                {RT("花生"), 1, QColor(), {}},
+                {RT("核桃"), 1, QColor(), {}}}},
+            {RT("麥芽"), 0, QColor(), {
+                {RT("吐司"), 1, QColor(), {}},
+                {RT("榛果"), 1, QColor(), {}}}},
+            {RT("糖香"), 0, QColor(), {
+                {RT("蜂蜜"), 1, QColor(), {}},
+                {RT("楓糖"), 1, QColor(), {}}}}}},
+        {RT("乾餾"), 0, QColor(150, 80, 160), {
+            {RT("樹脂"), 0, QColor(), {
+                {RT("松木"), 1, QColor(), {}},
+                {RT("黑醋栗"), 1, QColor(), {}}}},
+            {RT("辛香"), 0, QColor(), {
+                {RT("肉桂"), 1, QColor(), {}},
+                {RT("丁香"), 1, QColor(), {}}}},
+            {RT("炭燒"), 0, QColor(), {
+                {RT("菸草"), 1, QColor(), {}},
+                {RT("焦炭"), 1, QColor(), {}}}}}},
     };
 
     auto* sb = plot.addSunburst(roots);
@@ -864,7 +864,7 @@ QTPLOT_RECIPE("極座標", "旭日圖", "風味輪（徑向文字）",
     sb->border = LineStyle(QColor(80, 80, 80), 0.8);
     sb->minLabelArcPx = 10;
 
-    plot.title.text = QStringLiteral("咖啡風味輪");
+    plot.title.text = RT("咖啡風味輪");
     plot.equalAxisScale = true;
 }
 
@@ -876,18 +876,18 @@ QTPLOT_RECIPE("極座標", "旭日圖", "沿弧彎曲的分類帶",
     struct Holding { QString name; double amount; QColor color; };
     struct Category { QString name; QVector<Holding> items; QColor color; };
     const QVector<Category> cats{
-        {QStringLiteral("英國股票"), {{QStringLiteral("A"), 5, QColor()},
+        {RT("英國股票"), {{QStringLiteral("A"), 5, QColor()},
                                       {QStringLiteral("B"), 6, QColor()},
                                       {QStringLiteral("C"), 6, QColor()},
                                       {QStringLiteral("D"), 7, QColor()}},
          QColor(215, 60, 45)},
-        {QStringLiteral("全球股票"), {{QStringLiteral("E"), 7, QColor()},
+        {RT("全球股票"), {{QStringLiteral("E"), 7, QColor()},
                                       {QStringLiteral("F"), 4, QColor()},
                                       {QStringLiteral("G"), 4, QColor()},
                                       {QStringLiteral("H"), 4, QColor()},
                                       {QStringLiteral("I"), 6, QColor()}},
          QColor(45, 125, 200)},
-        {QStringLiteral("固定收益"), {{QStringLiteral("J"), 5, QColor()},
+        {RT("固定收益"), {{QStringLiteral("J"), 5, QColor()},
                                       {QStringLiteral("K"), 4, QColor()},
                                       {QStringLiteral("L"), 5, QColor()},
                                       {QStringLiteral("M"), 4, QColor()},
@@ -896,11 +896,11 @@ QTPLOT_RECIPE("極座標", "旭日圖", "沿弧彎曲的分類帶",
                                       {QStringLiteral("P"), 4, QColor()},
                                       {QStringLiteral("Q"), 4, QColor()}},
          QColor(95, 175, 85)},
-        {QStringLiteral("不動產"), {{QStringLiteral("R"), 5, QColor()}}, QColor(130, 85, 60)},
-        {QStringLiteral("另類投資"), {{QStringLiteral("S"), 5, QColor()},
+        {RT("不動產"), {{QStringLiteral("R"), 5, QColor()}}, QColor(130, 85, 60)},
+        {RT("另類投資"), {{QStringLiteral("S"), 5, QColor()},
                                       {QStringLiteral("T"), 5, QColor()}},
          QColor(140, 90, 180)},
-        {QStringLiteral("現金"), {{QStringLiteral("U"), 1, QColor()}}, QColor(150, 150, 150)},
+        {RT("現金"), {{QStringLiteral("U"), 1, QColor()}}, QColor(150, 150, 150)},
     };
 
     QVector<SunburstNode> roots;
@@ -926,7 +926,7 @@ QTPLOT_RECIPE("極座標", "旭日圖", "沿弧彎曲的分類帶",
     sb->labelFont.bold = true;
     sb->lightenPerLevel = 0;   // 子項沿用分類色，分類帶才和內容對得上
 
-    auto* center = plot.addText(QStringLiteral("組合\n£%1k").arg(grand), 0, 0);
+    auto* center = plot.addText(RT("組合\n£%1k").arg(grand), 0, 0);
     center->alignment = Qt::AlignHCenter | Qt::AlignVCenter;
     center->label.font.size = 15;
     center->label.font.bold = true;
@@ -950,7 +950,7 @@ QTPLOT_RECIPE("極座標", "旭日圖", "沿弧彎曲的分類帶",
         cursor += sweep;
     }
 
-    plot.title.text = QStringLiteral("投資組合（外圈為資產類別）");
+    plot.title.text = RT("投資組合（外圈為資產類別）");
     plot.equalAxisScale = true;
     plot.setAxisLimits(-1.35, 1.35, -1.35, 1.35);
 }

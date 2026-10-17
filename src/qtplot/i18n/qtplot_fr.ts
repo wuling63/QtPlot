@@ -6,7 +6,7 @@
     <message>
         <source>人</source>
         <comment>fishbone 6M: Man</comment>
-        <translation>Main-d'œuvre</translation>
+        <translation>Main-d&apos;œuvre</translation>
     </message>
     <message>
         <source>機</source>
@@ -75,7 +75,7 @@
     </message>
     <message>
         <source>樣本分位數</source>
-        <translation>Quantiles de l'échantillon</translation>
+        <translation>Quantiles de l&apos;échantillon</translation>
     </message>
     <message>
         <source>存活機率</source>
@@ -102,11 +102,11 @@
     </message>
     <message>
         <source>複製圖片(&amp;C)</source>
-        <translation>&amp;Copier l'image</translation>
+        <translation>&amp;Copier l&apos;image</translation>
     </message>
     <message>
         <source>另存圖片(&amp;S)…</source>
-        <translation>&amp;Enregistrer l'image…</translation>
+        <translation>&amp;Enregistrer l&apos;image…</translation>
     </message>
     <message>
         <source>列印(&amp;P)…</source>
@@ -134,7 +134,7 @@
     </message>
     <message>
         <source>另存圖片</source>
-        <translation>Enregistrer l'image</translation>
+        <translation>Enregistrer l&apos;image</translation>
     </message>
     <message>
         <source>PNG 圖片 (*.png);;SVG 向量圖 (*.svg);;PDF 文件 (*.pdf);;JPEG 圖片 (*.jpg)</source>
@@ -142,7 +142,7 @@
     </message>
     <message>
         <source>寫入失敗：%1</source>
-        <translation>Échec de l'écriture : %1</translation>
+        <translation>Échec de l&apos;écriture : %1</translation>
     </message>
     <message>
         <source>預覽列印</source>

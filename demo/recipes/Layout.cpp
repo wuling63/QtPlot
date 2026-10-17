@@ -13,17 +13,17 @@ QTPLOT_RECIPE_MULTI("版面", "子圖", "2×2 子圖",
                     "再把同一欄（列）補到一樣寬。不補的話，Y 軸刻度位數不同的兩張圖，"
                     "繪圖區左緣會差上幾十個像素 —— 並排比較時那個錯位比資料的差異還顯眼。") {
     mp.resize(2, 2);
-    mp.title.text = QStringLiteral("四種分布的樣子");
+    mp.title.text = RT("四種分布的樣子");
     mp.title.font.size = 14;
     mp.title.font.bold = true;
 
     gen::setSeed(12);
     struct Panel { QString name; QVector<double> data; QColor color; };
     const QVector<Panel> panels{
-        {QStringLiteral("常態"), gen::randomNormal(400, 0, 1), QColor(45, 110, 185)},
-        {QStringLiteral("均勻"), gen::randomUniform(400, -2, 2), QColor(200, 80, 50)},
-        {QStringLiteral("右偏"), {}, QColor(90, 150, 80)},
-        {QStringLiteral("雙峰"), {}, QColor(150, 100, 180)},
+        {RT("常態"), gen::randomNormal(400, 0, 1), QColor(45, 110, 185)},
+        {RT("均勻"), gen::randomUniform(400, -2, 2), QColor(200, 80, 50)},
+        {RT("右偏"), {}, QColor(90, 150, 80)},
+        {RT("雙峰"), {}, QColor(150, 100, 180)},
     };
     QVector<double> skewed;
     for (double x : gen::randomNormal(400, 0, 1)) skewed.append(std::exp(x * 0.6) - 1);
@@ -36,7 +36,7 @@ QTPLOT_RECIPE_MULTI("版面", "子圖", "2×2 子圖",
         p->addHistogram(data, 28, panels[i].color);
         p->title.text = panels[i].name;
         p->title.font.size = 11;
-        p->leftAxis()->label.text = QStringLiteral("次數");
+        p->leftAxis()->label.text = RT("次數");
     }
 }
 
@@ -47,13 +47,13 @@ QTPLOT_RECIPE_MULTI("版面", "子圖", "共用座標軸",
                     "上排共用 Y、下排各自縮放，同一份資料畫兩次 —— "
                     "下排看起來三個廠的表現差不多，上排才看得出來丙廠只有甲廠的三分之一。") {
     mp.resize(2, 3);
-    mp.title.text = QStringLiteral("同一份資料：共用 Y 軸（上）與各自縮放（下）");
+    mp.title.text = RT("同一份資料：共用 Y 軸（上）與各自縮放（下）");
     mp.title.font.size = 13;
     mp.title.font.bold = true;
     mp.rowWeights = {1.0, 1.0};
 
-    const QStringList names{QStringLiteral("甲廠"), QStringLiteral("乙廠"),
-                            QStringLiteral("丙廠")};
+    const QStringList names{RT("甲廠"), RT("乙廠"),
+                            RT("丙廠")};
     const QVector<QVector<double>> output{{92, 88, 95, 90, 97, 94},
                                           {61, 58, 66, 63, 60, 64},
                                           {31, 28, 34, 30, 33, 29}};
@@ -64,13 +64,13 @@ QTPLOT_RECIPE_MULTI("版面", "子圖", "共用座標軸",
     for (int c = 0; c < 3; ++c) {
         Plot* top = mp.at(0, c);
         top->addBars(output[c], colors[c]);
-        top->title.text = names[c] + QStringLiteral("（共用 Y）");
+        top->title.text = names[c] + RT("（共用 Y）");
         top->title.font.size = 10;
         topRow.append(top);
 
         Plot* bottom = mp.at(1, c);
         bottom->addBars(output[c], colors[c]);
-        bottom->title.text = names[c] + QStringLiteral("（各自縮放）");
+        bottom->title.text = names[c] + RT("（各自縮放）");
         bottom->title.font.size = 10;
     }
     mp.shareY(topRow);
@@ -84,7 +84,7 @@ QTPLOT_RECIPE_MULTI("版面", "子圖", "跨格與權重",
                     "留著的話兩張圖會畫在同一塊畫布上互相覆蓋，而且是後畫的贏。") {
     mp.resize(2, 2);
     mp.rowWeights = {2.0, 1.0};
-    mp.title.text = QStringLiteral("主圖大、附圖小");
+    mp.title.text = RT("主圖大、附圖小");
     mp.title.font.size = 13;
     mp.title.font.bold = true;
 
@@ -92,21 +92,21 @@ QTPLOT_RECIPE_MULTI("版面", "子圖", "跨格與權重",
     Plot* main = mp.span(0, 0, 1, 2);
     const QVector<double> xs = gen::consecutive(60);
     main->addScatter(xs, gen::randomWalk(60, 1.0, 100))->marker = MarkerStyle::none();
-    main->title.text = QStringLiteral("月營收走勢");
+    main->title.text = RT("月營收走勢");
     main->title.font.size = 11;
-    main->leftAxis()->label.text = QStringLiteral("百萬元");
+    main->leftAxis()->label.text = RT("百萬元");
 
     Plot* left = mp.at(1, 0);
     left->addPie({42, 28, 18, 12},
-                 {QStringLiteral("北"), QStringLiteral("中"), QStringLiteral("南"),
-                  QStringLiteral("東")});
-    left->title.text = QStringLiteral("區域佔比");
+                 {RT("北"), RT("中"), RT("南"),
+                  RT("東")});
+    left->title.text = RT("區域佔比");
     left->title.font.size = 10;
 
     Plot* right = mp.at(1, 1);
     auto* bars = right->addBars({18, 24, 31, 27});
     for (Bar& b : bars->bars) b.label = QString::number(b.value, 'f', 0);
-    right->title.text = QStringLiteral("各季毛利");
+    right->title.text = RT("各季毛利");
     right->title.font.size = 10;
 }
 
@@ -177,8 +177,8 @@ QTPLOT_RECIPE("版面", "嵌入小圖", "放大局部",
     auto* main = plot.addScatter(xs, ys, QColor(45, 110, 185));
     main->marker = MarkerStyle::none();
     main->line.width = 1.0;
-    plot.title.text = QStringLiteral("整體看不出來的那一小段");
-    plot.bottomAxis()->label.text = QStringLiteral("時間（秒）");
+    plot.title.text = RT("整體看不出來的那一小段");
+    plot.bottomAxis()->label.text = RT("時間（秒）");
 
     auto* inset = addInset(plot);
     inset->rectFraction = QRectF(0.08, 0.06, 0.40, 0.34);
@@ -210,12 +210,12 @@ QTPLOT_RECIPE("版面", "嵌入小圖", "黏在資料上的小圖",
     inset->showSourceRegion = false;
 
     inset->inner().addPie({38, 27, 21, 14});
-    inset->inner().title.text = QStringLiteral("第 20 期的組成");
+    inset->inner().title.text = RT("第 20 期的組成");
     inset->inner().title.font.size = 8;
 
     auto* arrow = plot.addArrow(xs[20], ys[20], 15.5, 46);
     arrow->line.color = QColor(120, 120, 120);
 
-    plot.title.text = QStringLiteral("小圖跟著資料座標走");
+    plot.title.text = RT("小圖跟著資料座標走");
     plot.setAxisLimits(-1, 36, 28, 60);
 }

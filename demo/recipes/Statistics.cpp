@@ -17,8 +17,10 @@ QVector<QVector<double>> sampleGroups() {
     return {a, b, c, d};
 }
 
-const QStringList kGroupNames{QStringLiteral("對照組"), QStringLiteral("低劑量"),
-                              QStringLiteral("中劑量"), QStringLiteral("高劑量")};
+// 用函式而不是檔案層級的常數：常數只在程式啟動時建一次，換語言之後還是舊的
+QStringList groupNames() {
+    return {RT("對照組"), RT("低劑量"), RT("中劑量"), RT("高劑量")};
+}
 
 }  // namespace
 
@@ -26,9 +28,9 @@ QTPLOT_RECIPE("統計", "箱型與分布", "箱型圖",
               "箱是四分位數、中間粗線是中位數、鬚延伸到 1.5 倍 IQR 之內最遠的資料點，"
               "超出的畫成離群值 —— 這是 Tukey 的原始定義。"
               "四分位數用線性內插法，和 R 的 type 7、numpy.percentile 的預設一致。") {
-    plot.addBoxPlot(sampleGroups(), kGroupNames);
-    plot.leftAxis()->label.text = QStringLiteral("量測值");
-    plot.title.text = QStringLiteral("四組樣本的分布");
+    plot.addBoxPlot(sampleGroups(), groupNames());
+    plot.leftAxis()->label.text = RT("量測值");
+    plot.title.text = RT("四組樣本的分布");
 }
 
 QTPLOT_RECIPE("統計", "箱型與分布", "橫向箱型圖與平均值",
@@ -40,11 +42,11 @@ QTPLOT_RECIPE("統計", "箱型與分布", "橫向箱型圖與平均值",
     bp->meanMarker = MarkerStyle(MarkerShape::FilledDiamond, 9, QColor(220, 20, 20));
 
     auto manual = std::make_shared<ManualTickGenerator>();
-    for (int i = 0; i < kGroupNames.size(); ++i)
-        manual->ticks.append({double(i), kGroupNames[i], true});
+    for (int i = 0; i < groupNames().size(); ++i)
+        manual->ticks.append({double(i), groupNames()[i], true});
     plot.leftAxis()->tickGenerator = manual;
     plot.bottomAxis()->tickGenerator = std::make_shared<AutomaticTickGenerator>();
-    plot.addAnnotation(QStringLiteral("紅色菱形 = 平均值"), Qt::AlignRight | Qt::AlignBottom);
+    plot.addAnnotation(RT("紅色菱形 = 平均值"), Qt::AlignRight | Qt::AlignBottom);
 }
 
 QTPLOT_RECIPE("統計", "箱型與分布", "小提琴圖",
@@ -54,8 +56,8 @@ QTPLOT_RECIPE("統計", "箱型與分布", "小提琴圖",
               "注意核密度估計的頻寬：預設的 Silverman 經驗法則是為單峰分布設計的，"
               "兩個峰靠得近時它會把中間的谷抹平，看起來就像單峰。"
               "懷疑有多峰時要自己把頻寬調小再看一次。") {
-    plot.addViolin(sampleGroups(), kGroupNames);
-    plot.leftAxis()->label.text = QStringLiteral("量測值");
+    plot.addViolin(sampleGroups(), groupNames());
+    plot.leftAxis()->label.text = RT("量測值");
 }
 
 QTPLOT_RECIPE("統計", "箱型與分布", "分布圖的成分組合",
@@ -70,7 +72,7 @@ QTPLOT_RECIPE("統計", "箱型與分布", "分布圖的成分組合",
     pop->showErrorBar = true;
     pop->errorKind = Population::ErrorKind::StdErr;
     pop->jitter = 0.5;
-    plot.addAnnotation(QStringLiteral("點 = 原始資料，箱 = 四分位數，線 = 平均 ± 標準誤"),
+    plot.addAnnotation(RT("點 = 原始資料，箱 = 四分位數，線 = 平均 ± 標準誤"),
                        Qt::AlignLeft | Qt::AlignTop);
 }
 
@@ -98,32 +100,32 @@ QTPLOT_RECIPE("統計", "箱型與分布", "核密度估計",
     auto* curve = plot.addScatter(xs, counts, QColor(200, 30, 30));
     curve->marker = MarkerStyle::none();
     curve->line.width = 2;
-    curve->legendText = QStringLiteral("核密度估計");
+    curve->legendText = RT("核密度估計");
     plot.legend.isVisible = true;
-    plot.leftAxis()->label.text = QStringLiteral("次數");
+    plot.leftAxis()->label.text = RT("次數");
 }
 
 QTPLOT_RECIPE("統計", "棒棒糖與排名", "棒棒糖圖",
               "細桿加一個圓頭。類別多但數值差異小時比長條圖好讀 —— "
               "長條那一大片顏色會把差異蓋掉。") {
-    const QStringList names{QStringLiteral("甲"), QStringLiteral("乙"), QStringLiteral("丙"),
-                            QStringLiteral("丁"), QStringLiteral("戊"), QStringLiteral("己"),
-                            QStringLiteral("庚"), QStringLiteral("辛")};
+    const QStringList names{RT("甲"), RT("乙"), RT("丙"),
+                            RT("丁"), RT("戊"), RT("己"),
+                            RT("庚"), RT("辛")};
     plot.addLollipop({82, 79, 88, 75, 91, 84, 77, 86});
 
     auto manual = std::make_shared<ManualTickGenerator>();
     for (int i = 0; i < names.size(); ++i) manual->ticks.append({double(i), names[i], true});
     plot.bottomAxis()->tickGenerator = manual;
-    plot.leftAxis()->label.text = QStringLiteral("分數");
+    plot.leftAxis()->label.text = RT("分數");
 }
 
 QTPLOT_RECIPE("統計", "棒棒糖與排名", "橫向排名",
               "horizontal 加上排序過的資料就是排名圖。baseline 可以移到別的值，"
               "例如以平均為基準看誰高於平均。") {
     QVector<double> values{8.2, -3.1, 5.4, -6.8, 2.3, 9.1, -1.5};
-    const QStringList names{QStringLiteral("北區"), QStringLiteral("南區"), QStringLiteral("中區"),
-                            QStringLiteral("東區"), QStringLiteral("西區"), QStringLiteral("離島"),
-                            QStringLiteral("海外")};
+    const QStringList names{RT("北區"), RT("南區"), RT("中區"),
+                            RT("東區"), RT("西區"), RT("離島"),
+                            RT("海外")};
     QVector<LollipopItem> items;
     for (int i = 0; i < values.size(); ++i) {
         LollipopItem it;
@@ -142,7 +144,7 @@ QTPLOT_RECIPE("統計", "棒棒糖與排名", "橫向排名",
     for (int i = 0; i < names.size(); ++i) manual->ticks.append({double(i), names[i], true});
     plot.leftAxis()->tickGenerator = manual;
     plot.addVerticalLine(0, QColor(120, 120, 120));
-    plot.bottomAxis()->label.text = QStringLiteral("年增率 (%)");
+    plot.bottomAxis()->label.text = RT("年增率 (%)");
 }
 
 QTPLOT_RECIPE("統計", "迴歸", "線性迴歸",
@@ -154,12 +156,12 @@ QTPLOT_RECIPE("統計", "迴歸", "線性迴歸",
     for (double x : xs) ys.append(0.8 * x + 12);
     ys = gen::addNoise(ys, 9);
 
-    plot.addMarkers(xs, ys)->legendText = QStringLiteral("觀測值");
+    plot.addMarkers(xs, ys)->legendText = RT("觀測值");
 
     LinearFit fit;
     auto* line = plot.addRegressionLine(xs, ys, &fit, QColor(214, 39, 40));
     line->line.width = 2;
-    line->legendText = QStringLiteral("最小平方擬合");
+    line->legendText = RT("最小平方擬合");
 
     plot.addAnnotation(QStringLiteral("y = %1x + %2\nR² = %3")
                            .arg(fit.slope, 0, 'f', 3)
@@ -185,9 +187,9 @@ QTPLOT_RECIPE("統計", "迴歸", "殘差圖",
 
     plot.addMarkers(xs, residuals, QColor(31, 119, 180));
     plot.addHorizontalLine(0, QColor(80, 80, 80))->line.pattern = LinePattern::Dashed;
-    plot.leftAxis()->label.text = QStringLiteral("殘差");
+    plot.leftAxis()->label.text = RT("殘差");
     plot.bottomAxis()->label.text = QStringLiteral("x");
-    plot.addAnnotation(QStringLiteral("殘差呈 U 形 → 線性模型不適合（R² = %1 仍然偏高）")
+    plot.addAnnotation(RT("殘差呈 U 形 → 線性模型不適合（R² = %1 仍然偏高）")
                            .arg(fit.rSquared, 0, 'f', 3),
                        Qt::AlignHCenter | Qt::AlignTop);
 }
@@ -218,8 +220,8 @@ QTPLOT_RECIPE("統計", "箱型與分布", "分組箱型圖加平均標記",
             b.size = 0.34;
             b.stats = BoxStats::fromValues(samples);
             b.fillColor = which == 0 ? currentColor : previousColor;
-            if (i == 0) b.legendText = which == 0 ? QStringLiteral("本期訂單")
-                                                  : QStringLiteral("上期訂單");
+            if (i == 0) b.legendText = which == 0 ? RT("本期訂單")
+                                                  : RT("上期訂單");
             boxes.append(b);
         }
     }
@@ -241,12 +243,12 @@ QTPLOT_RECIPE("統計", "箱型與分布", "分組箱型圖加平均標記",
     auto gen2 = std::make_shared<ManualTickGenerator>();
     gen2->ticks = ticks;
     plot.bottomAxis()->tickGenerator = gen2;
-    plot.bottomAxis()->label.text = QStringLiteral("業務員");
-    plot.leftAxis()->label.text = QStringLiteral("訂單數");
+    plot.bottomAxis()->label.text = RT("業務員");
+    plot.leftAxis()->label.text = RT("訂單數");
     plot.legend.isVisible = true;
     plot.legend.horizontal = true;
     plot.legend.alignment = Qt::AlignHCenter | Qt::AlignBottom;
-    plot.title.text = QStringLiteral("員工訂單分析");
+    plot.title.text = RT("員工訂單分析");
 }
 
 QTPLOT_RECIPE("統計", "箱型與分布", "Likert 量表圖",
@@ -256,10 +258,10 @@ QTPLOT_RECIPE("統計", "箱型與分布", "Likert 量表圖",
               "每一列的總寬不同是正常的：各題的回收樣本數本來就不一樣，"
               "這裡畫的是百分比。") {
     const QStringList questions{
-        QStringLiteral("整體 (2.93k)"),
-        QStringLiteral("清潔人員態度 (1.01k)"),
-        QStringLiteral("清潔服務品質 (761)"),
-        QStringLiteral("是否會推薦 (1.16k)")};
+        RT("整體 (2.93k)"),
+        RT("清潔人員態度 (1.01k)"),
+        RT("清潔服務品質 (761)"),
+        RT("是否會推薦 (1.16k)")};
     // 七個等級：非常不同意 → 非常同意，中間第 4 級是中性
     const QVector<QVector<double>> pct{
         {18, 7, 12, 18, 13, 15, 17},
@@ -309,7 +311,7 @@ QTPLOT_RECIPE("統計", "箱型與分布", "Likert 量表圖",
 
     plot.addVerticalLine(0)->line = LineStyle(QColor(90, 90, 90), 1.5);
     plot.setAxisLimits(-62, 62, -0.6, questions.size() - 0.4);
-    plot.title.text = QStringLiteral("滿意度調查");
+    plot.title.text = RT("滿意度調查");
 }
 
 QTPLOT_RECIPE("統計", "箱型與分布", "蜂群圖",
@@ -326,8 +328,8 @@ QTPLOT_RECIPE("統計", "箱型與分布", "蜂群圖",
     for (int i = 0; i < 70; ++i)
         groups[2].append(gen::randomNormal(1, (i % 2) ? 36 : 70, 6).first());
 
-    const QStringList names{QStringLiteral("A 組"), QStringLiteral("B 組"),
-                            QStringLiteral("C 組（雙峰）")};
+    const QStringList names{RT("A 組"), RT("B 組"),
+                            RT("C 組（雙峰）")};
 
     // 底下先放淡色的箱型圖當對照
     auto* bx = plot.addBoxPlot(groups, names);
@@ -341,8 +343,8 @@ QTPLOT_RECIPE("統計", "箱型與分布", "蜂群圖",
     sw->marker.outline = LineStyle(QColor(255, 255, 255, 180), 0.8);
     sw->spacingPx = 1.2;
 
-    plot.leftAxis()->label.text = QStringLiteral("分數");
-    plot.title.text = QStringLiteral("箱型圖藏住的東西");
+    plot.leftAxis()->label.text = RT("分數");
+    plot.title.text = RT("箱型圖藏住的東西");
 }
 
 QTPLOT_RECIPE("統計", "分群", "樹狀聚類圖",
@@ -352,10 +354,10 @@ QTPLOT_RECIPE("統計", "分群", "樹狀聚類圖",
               "照原始索引排的話，同一群的葉子會散在兩端，看起來像分群失敗。\n"
               "colorThreshold 在指定的距離把樹切開，切出來的每一群各一個顏色。") {
     const QStringList cities{
-        QStringLiteral("台北"), QStringLiteral("桃園"), QStringLiteral("新竹"),
-        QStringLiteral("台中"), QStringLiteral("彰化"), QStringLiteral("台南"),
-        QStringLiteral("高雄"), QStringLiteral("屏東"), QStringLiteral("花蓮"),
-        QStringLiteral("台東")};
+        RT("台北"), RT("桃園"), RT("新竹"),
+        RT("台中"), RT("彰化"), RT("台南"),
+        RT("高雄"), RT("屏東"), RT("花蓮"),
+        RT("台東")};
     // 沿著西岸由北到南的大致位置，東岸另成一群
     const QVector<QPair<double, double>> coords{
         {0, 0},   {0.4, 0.3}, {0.6, 0.9}, {1.0, 2.4}, {1.1, 2.9},
@@ -374,7 +376,7 @@ QTPLOT_RECIPE("統計", "分群", "樹狀聚類圖",
     dg->labelFont.bold = true;
 
     plot.bottomAxis()->isVisible = false;
-    plot.leftAxis()->label.text = QStringLiteral("群間距離");
+    plot.leftAxis()->label.text = RT("群間距離");
     plot.grid.isVisible = false;
     plot.setAxisLimits(-0.7, cities.size() - 0.3, -0.45, dg->maxDistance() * 1.08);
 }
@@ -438,7 +440,7 @@ QTPLOT_RECIPE("統計", "分群", "三種連結方式的差別",
     }
 
     plot.bottomAxis()->isVisible = false;
-    plot.leftAxis()->label.text = QStringLiteral("群間距離");
+    plot.leftAxis()->label.text = RT("群間距離");
     plot.grid.isVisible = false;
     plot.setAxisLimits(mainLo, mainHi, -0.5, maxD * 1.14);
 }

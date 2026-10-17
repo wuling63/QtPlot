@@ -30,7 +30,7 @@ QTPLOT_RECIPE("統計", "診斷圖", "Bland–Altman 一致性圖",
 
     auto* bias = plot.addHorizontalLine(ba.bias, QColor(60, 60, 60));
     bias->line.width = 1.5;
-    bias->text.text = QStringLiteral("偏差 %1").arg(ba.bias, 0, 'f', 2);
+    bias->text.text = RT("偏差 %1").arg(ba.bias, 0, 'f', 2);
 
     for (double y : {ba.lowerLimit, ba.upperLimit}) {
         auto* l = plot.addHorizontalLine(y, QColor(200, 70, 50));
@@ -38,9 +38,9 @@ QTPLOT_RECIPE("統計", "診斷圖", "Bland–Altman 一致性圖",
         l->text.text = QStringLiteral("%1").arg(y, 0, 'f', 2);
     }
 
-    plot.bottomAxis()->label.text = QStringLiteral("兩法的平均");
-    plot.leftAxis()->label.text = QStringLiteral("兩法的差（A − B）");
-    plot.title.text = QStringLiteral("Bland–Altman：差隨著數值放大");
+    plot.bottomAxis()->label.text = RT("兩法的平均");
+    plot.leftAxis()->label.text = RT("兩法的差（A − B）");
+    plot.title.text = RT("Bland–Altman：差隨著數值放大");
 }
 
 // ───────────────────── 後設分析的漏斗圖 ─────────────────────
@@ -85,16 +85,16 @@ QTPLOT_RECIPE("統計", "後設分析", "漏斗圖（發表偏倚）",
     pts->marker.size = 8;
 
     auto* note = plot.addAnnotation(
-        QStringLiteral("合併效應 %1\nEgger 截距 %2（離 0 愈遠愈不對稱）")
+        RT("合併效應 %1\nEgger 截距 %2（離 0 愈遠愈不對稱）")
             .arg(fc.pooledEffect, 0, 'f', 3)
             .arg(fc.eggerIntercept, 0, 'f', 2),
         Qt::AlignLeft | Qt::AlignBottom);
     note->label.font.size = 9;
 
     plot.leftAxis()->inverted = true;
-    plot.leftAxis()->label.text = QStringLiteral("標準誤");
-    plot.bottomAxis()->label.text = QStringLiteral("效應量");
-    plot.title.text = QStringLiteral("左下角缺了一塊：小而無效的研究沒被發表");
+    plot.leftAxis()->label.text = RT("標準誤");
+    plot.bottomAxis()->label.text = RT("效應量");
+    plot.title.text = RT("左下角缺了一塊：小而無效的研究沒被發表");
 }
 
 // ───────────────────────── 勞倫茲曲線 ─────────────────────────
@@ -115,8 +115,8 @@ QTPLOT_RECIPE("統計", "診斷圖", "勞倫茲曲線與吉尼係數",
     }
 
     const QVector<Case> cases{
-        {QStringLiteral("較平均"), even, QColor(70, 150, 90)},
-        {QStringLiteral("較集中"), skewed, QColor(200, 80, 50)},
+        {RT("較平均"), even, QColor(70, 150, 90)},
+        {RT("較集中"), skewed, QColor(200, 80, 50)},
     };
     for (const Case& c : cases) {
         const LorenzCurve lc = lorenzCurve(c.values);
@@ -127,17 +127,17 @@ QTPLOT_RECIPE("統計", "診斷圖", "勞倫茲曲線與吉尼係數",
         QColor f = c.color;
         f.setAlpha(35);
         line->fill = FillStyle(f);
-        line->legendText = QStringLiteral("%1（吉尼 %2）").arg(c.name).arg(lc.gini, 0, 'f', 3);
+        line->legendText = RT("%1（吉尼 %2）").arg(c.name).arg(lc.gini, 0, 'f', 3);
     }
 
     auto* diag = plot.addScatter({0, 1}, {0, 1}, QColor(120, 120, 120));
     diag->marker = MarkerStyle::none();
     diag->line.pattern = LinePattern::Dashed;
-    diag->legendText = QStringLiteral("完全平均（吉尼 0）");
+    diag->legendText = RT("完全平均（吉尼 0）");
 
-    plot.bottomAxis()->label.text = QStringLiteral("累積人口比例");
-    plot.leftAxis()->label.text = QStringLiteral("累積所得比例");
-    plot.title.text = QStringLiteral("勞倫茲曲線");
+    plot.bottomAxis()->label.text = RT("累積人口比例");
+    plot.leftAxis()->label.text = RT("累積所得比例");
+    plot.title.text = RT("勞倫茲曲線");
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignLeft | Qt::AlignTop;
     plot.setAxisLimits(0, 1, 0, 1);
@@ -166,7 +166,7 @@ QTPLOT_RECIPE("統計", "診斷圖", "Weibull 機率紙",
     const ProbabilityPlot pp = probabilityPlot(hours, ProbabilityPaper::Weibull);
     auto* pts = plot.addMarkers(pp.xs, pp.ys, QColor(45, 110, 185));
     pts->marker.size = 6;
-    pts->legendText = QStringLiteral("壽命樣本（n = 60）");
+    pts->legendText = RT("壽命樣本（n = 60）");
 
     if (pp.referenceLine.isValid()) {
         CoordinateRange xr(pp.xs.first(), pp.xs.last());
@@ -177,11 +177,11 @@ QTPLOT_RECIPE("統計", "診斷圖", "Weibull 機率紙",
             QColor(200, 70, 50));
         ref->marker = MarkerStyle::none();
         ref->line.pattern = LinePattern::Dashed;
-        ref->legendText = QStringLiteral("四分位參考線");
+        ref->legendText = RT("四分位參考線");
     }
 
     auto* note = plot.addAnnotation(
-        QStringLiteral("估計 β = %1（真值 %2）\n估計 η = %3（真值 %4）\nβ > 1：磨耗型失效")
+        RT("估計 β = %1（真值 %2）\n估計 η = %3（真值 %4）\nβ > 1：磨耗型失效")
             .arg(pp.weibullShape, 0, 'f', 2)
             .arg(trueBeta, 0, 'f', 1)
             .arg(pp.weibullScale, 0, 'f', 0)
@@ -189,9 +189,9 @@ QTPLOT_RECIPE("統計", "診斷圖", "Weibull 機率紙",
         Qt::AlignLeft | Qt::AlignTop);
     note->label.font.size = 9;
 
-    plot.bottomAxis()->label.text = QStringLiteral("ln(壽命小時)");
+    plot.bottomAxis()->label.text = RT("ln(壽命小時)");
     plot.leftAxis()->label.text = QStringLiteral("ln(−ln(1 − F))");
-    plot.title.text = QStringLiteral("Weibull 機率紙：斜率就是形狀參數");
+    plot.title.text = RT("Weibull 機率紙：斜率就是形狀參數");
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignRight | Qt::AlignBottom;
 }
@@ -245,7 +245,7 @@ QTPLOT_RECIPE("圖種", "等角投影", "線框與格點",
     s->mode = Surface3D::Mode::Wireframe;
     s->mesh = LineStyle(QColor(60, 90, 160, 170), 0.9);
 
-    plot.title.text = QStringLiteral("線框的馬鞍面（看得到背面）");
+    plot.title.text = RT("線框的馬鞍面（看得到背面）");
 }
 
 // ───────────────────────── 互動 ─────────────────────────
@@ -259,8 +259,8 @@ QTPLOT_RECIPE_WIDGET("互動", "視野與圖例", "點圖例切換顯示",
     Plot& plot = widget.plot();
     gen::setSeed(15);
     const QVector<double> xs = gen::consecutive(60);
-    const QStringList names{QStringLiteral("感測器 A"), QStringLiteral("感測器 B"),
-                            QStringLiteral("感測器 C"), QStringLiteral("感測器 D")};
+    const QStringList names{RT("感測器 A"), RT("感測器 B"),
+                            RT("感測器 C"), RT("感測器 D")};
     for (int i = 0; i < names.size(); ++i) {
         auto* s = plot.addScatter(xs, gen::randomWalk(60, 1.0, 20 + i * 12));
         s->marker = MarkerStyle::none();
@@ -268,8 +268,8 @@ QTPLOT_RECIPE_WIDGET("互動", "視野與圖例", "點圖例切換顯示",
     }
     plot.legend.isVisible = true;
     plot.legend.alignment = Qt::AlignRight | Qt::AlignTop;
-    plot.title.text = QStringLiteral("點圖例把某一條關掉");
-    plot.leftAxis()->label.text = QStringLiteral("讀值");
+    plot.title.text = RT("點圖例把某一條關掉");
+    plot.leftAxis()->label.text = RT("讀值");
 
     widget.legendToggleEnabled = true;
 }
@@ -287,8 +287,8 @@ QTPLOT_RECIPE_WIDGET("互動", "視野與圖例", "視野的復原與重做",
     gen::setSeed(26);
     auto* s = plot.addScatter(gen::consecutive(500), gen::randomWalk(500, 1.0, 100));
     s->marker = MarkerStyle::none();
-    plot.title.text = QStringLiteral("縮放之後按 Ctrl + Z 回上一個視野");
-    plot.leftAxis()->label.text = QStringLiteral("數值");
+    plot.title.text = RT("縮放之後按 Ctrl + Z 回上一個視野");
+    plot.leftAxis()->label.text = RT("數值");
 
     widget.viewHistoryEnabled = true;
     widget.setFocusPolicy(Qt::StrongFocus);  // 要收得到鍵盤才按得到 Ctrl+Z

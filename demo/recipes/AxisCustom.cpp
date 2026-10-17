@@ -20,8 +20,8 @@ QTPLOT_RECIPE("座標軸", "刻度畫在哪幾邊", "左右兩側都有刻度",
     right->majorTickLength = 5;
     right->minorTickLength = 2;
 
-    plot.leftAxis()->label.text = QStringLiteral("振幅");
-    plot.title.text = QStringLiteral("左右鏡像刻度");
+    plot.leftAxis()->label.text = RT("振幅");
+    plot.title.text = RT("左右鏡像刻度");
 }
 
 QTPLOT_RECIPE("座標軸", "刻度畫在哪幾邊", "上下兩側都有刻度",
@@ -35,7 +35,7 @@ QTPLOT_RECIPE("座標軸", "刻度畫在哪幾邊", "上下兩側都有刻度",
     }
     plot.bottomAxis()->label.text = QStringLiteral("X");
     plot.leftAxis()->label.text = QStringLiteral("Y");
-    plot.title.text = QStringLiteral("四邊都有刻度");
+    plot.title.text = RT("四邊都有刻度");
 }
 
 QTPLOT_RECIPE("座標軸", "刻度畫在哪幾邊", "刻度朝內",
@@ -61,13 +61,13 @@ QTPLOT_RECIPE("座標軸", "刻度畫在哪幾邊", "同一側兩根軸",
     auto* s = plot.addScatter(xs, celsius);
     s->marker = MarkerStyle::none();
 
-    plot.leftAxis()->label.text = QStringLiteral("攝氏 (°C)");
+    plot.leftAxis()->label.text = RT("攝氏 (°C)");
 
     // 第二根左軸：同一筆資料，只是換個單位刻度
     auto* fahrenheit = plot.addAxis(Edge::Left);
     fahrenheit->showTickLabels = true;
     fahrenheit->majorTickLength = 5;
-    fahrenheit->label.text = QStringLiteral("華氏 (°F)");
+    fahrenheit->label.text = RT("華氏 (°F)");
     fahrenheit->label.font.color = QColor(200, 80, 0);
     fahrenheit->tickFont.color = QColor(200, 80, 0);
     fahrenheit->majorTickLine.color = QColor(200, 80, 0);
@@ -85,26 +85,26 @@ QTPLOT_RECIPE("座標軸", "刻度畫在哪幾邊", "同一側兩根軸（不同
 
     auto* base = plot.addScatter(xs, gen::sin(100, 1.0, 2.0));
     base->marker = MarkerStyle::none();
-    base->legendText = QStringLiteral("訊號（左軸）");
-    plot.leftAxis()->label.text = QStringLiteral("訊號");
+    base->legendText = RT("訊號（左軸）");
+    plot.leftAxis()->label.text = RT("訊號");
 
     auto* axis1 = plot.addAxis(Edge::Right);
     axis1->showTickLabels = true;
     axis1->majorTickLength = 5;
-    axis1->label.text = QStringLiteral("壓力 (kPa)");
+    axis1->label.text = RT("壓力 (kPa)");
     auto* p1 = plot.addScatter(xs, gen::randomWalk(100, 8, 300));
     p1->yAxis = axis1;
     p1->marker = MarkerStyle::none();
-    p1->legendText = QStringLiteral("壓力（右軸 1）");
+    p1->legendText = RT("壓力（右軸 1）");
 
     auto* axis2 = plot.addAxis(Edge::Right);
     axis2->showTickLabels = true;
     axis2->majorTickLength = 5;
-    axis2->label.text = QStringLiteral("流量 (L/min)");
+    axis2->label.text = RT("流量 (L/min)");
     auto* p2 = plot.addScatter(xs, gen::randomWalk(100, 0.4, 12));
     p2->yAxis = axis2;
     p2->marker = MarkerStyle::none();
-    p2->legendText = QStringLiteral("流量（右軸 2）");
+    p2->legendText = RT("流量（右軸 2）");
 
     // 顏色對應到各自的軸，才看得出哪條線配哪根刻度
     axis1->tickFont.color = p1->line.color;
@@ -137,7 +137,7 @@ QTPLOT_RECIPE("座標軸", "調整刻度", "刻度的疏密與長度",
     plot.bottomAxis()->minorTickLine = LineStyle(QColor(0, 0, 0, 110), 1.0);
 
     plot.grid.minorLine = LineStyle(QColor(0, 0, 0, 18), 1.0);
-    plot.addAnnotation(QStringLiteral("底軸：主刻度變疏、次刻度十等分"),
+    plot.addAnnotation(RT("底軸：主刻度變疏、次刻度十等分"),
                        Qt::AlignLeft | Qt::AlignTop);
 }
 
@@ -151,11 +151,11 @@ QTPLOT_RECIPE("座標軸", "調整刻度", "刻度文字的格式",
         return QStringLiteral("%1%").arg(v * 100, 0, 'f', 0);
     };
     plot.leftAxis()->tickGenerator = pct;
-    plot.leftAxis()->label.text = QStringLiteral("完成率");
+    plot.leftAxis()->label.text = RT("完成率");
 
     auto unit = std::make_shared<AutomaticTickGenerator>();
     unit->labelFormatter = [](double v, double) {
-        return QStringLiteral("%1 秒").arg(v, 0, 'f', 0);
+        return RT("%1 秒").arg(v, 0, 'f', 0);
     };
     plot.bottomAxis()->tickGenerator = unit;
 }
@@ -169,7 +169,7 @@ QTPLOT_RECIPE("座標軸", "調整刻度", "刻度字型與顏色",
     left->tickFont.size = 12;
     left->tickFont.bold = true;
     left->tickFont.color = QColor(30, 90, 160);
-    left->label.text = QStringLiteral("數值");
+    left->label.text = RT("數值");
     left->label.font.size = 14;
     left->label.font.italic = true;
     left->label.font.color = QColor(30, 90, 160);
@@ -179,11 +179,11 @@ QTPLOT_RECIPE("座標軸", "調整刻度", "刻度字型與顏色",
     Axis* bottom = plot.bottomAxis();
     bottom->tickFont.size = 11;
     bottom->tickFont.color = QColor(150, 60, 0);
-    bottom->label.text = QStringLiteral("取樣");
+    bottom->label.text = RT("取樣");
     bottom->label.font.color = QColor(150, 60, 0);
     bottom->frameLine = LineStyle(QColor(150, 60, 0), 2.0);
 
-    plot.title.text = QStringLiteral("刻度與標題各自的字型");
+    plot.title.text = RT("刻度與標題各自的字型");
     plot.title.font.size = 17;
     plot.title.font.color = QColor(60, 60, 60);
 }
@@ -201,7 +201,7 @@ QTPLOT_RECIPE("座標軸", "調整範圍", "設定範圍的四種方式",
     plot.leftAxis()->setRange(-2, 2);
 
     plot.addAnnotation(
-        QStringLiteral("leftAxis()->setRange(-2, 2)　X 交給 autoScale\n"
+        RT("leftAxis()->setRange(-2, 2)　X 交給 autoScale\n"
                        "setRange 設過的軸不會被 autoScale 蓋掉，但仍然可以拖曳縮放"),
         Qt::AlignLeft | Qt::AlignTop);
 }
@@ -214,10 +214,10 @@ QTPLOT_RECIPE("座標軸", "調整範圍", "自動範圍的邊距",
 
     auto* tight = plot.addScatter(xs, ys, QColor(31, 119, 180));
     tight->marker = MarkerStyle::none();
-    tight->legendText = QStringLiteral("autoScale(0.0) 緊貼資料");
+    tight->legendText = RT("autoScale(0.0) 緊貼資料");
 
     plot.autoScale(0.0);
-    plot.addAnnotation(QStringLiteral("兩端完全沒有留白，線貼在框線上"),
+    plot.addAnnotation(RT("兩端完全沒有留白，線貼在框線上"),
                        Qt::AlignHCenter | Qt::AlignBottom);
     plot.legend.isVisible = true;
 }
@@ -229,8 +229,8 @@ QTPLOT_RECIPE("座標軸", "調整範圍", "反向與鎖定",
     plot.leftAxis()->inverted = true;
     plot.leftAxis()->setRange(0, 100);
     plot.leftAxis()->locked = true;
-    plot.leftAxis()->label.text = QStringLiteral("排名（1 在上）");
-    plot.addAnnotation(QStringLiteral("Y 軸已反向並鎖定"), Qt::AlignRight | Qt::AlignTop);
+    plot.leftAxis()->label.text = RT("排名（1 在上）");
+    plot.addAnnotation(RT("Y 軸已反向並鎖定"), Qt::AlignRight | Qt::AlignTop);
 }
 
 // ───────────────────── 整體外觀 ─────────────────────
@@ -241,7 +241,7 @@ QTPLOT_RECIPE("樣式", "版面與框線", "標題、背景與框線",
     plot.addSignal(gen::sin(120, 1.0, 2.0));
     plot.addSignal(gen::cos(120, 0.7, 2.0));
 
-    plot.title.text = QStringLiteral("量測結果");
+    plot.title.text = RT("量測結果");
     plot.title.font.size = 18;
     plot.title.font.bold = true;
 
@@ -299,8 +299,8 @@ QTPLOT_RECIPE("座標軸", "截斷", "截斷 Y 軸",
     plot.addBars({3, 7, 5, 1006, 9, 4, 1002, 6});
     plot.leftAxis()->addBreak(12, 995);
     plot.setAxisLimits(-0.6, 7.6, 0, 1010);
-    plot.leftAxis()->label.text = QStringLiteral("數量");
-    plot.title.text = QStringLiteral("截斷 Y 軸（12–995）");
+    plot.leftAxis()->label.text = RT("數量");
+    plot.title.text = RT("截斷 Y 軸（12–995）");
 }
 
 QTPLOT_RECIPE("座標軸", "截斷", "截斷 X 軸（跳過空檔）",
@@ -322,6 +322,6 @@ QTPLOT_RECIPE("座標軸", "截斷", "截斷 X 軸（跳過空檔）",
     x->addBreak(63, 497);
     x->setBreakGapPx(14);
     x->breakMarkLine = LineStyle(QColor(200, 40, 40), 1.5);
-    x->label.text = QStringLiteral("時間 (min)");
-    plot.title.text = QStringLiteral("截斷 X 軸");
+    x->label.text = RT("時間 (min)");
+    plot.title.text = RT("截斷 X 軸");
 }

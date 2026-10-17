@@ -35,10 +35,10 @@ QTPLOT_RECIPE_LIVE("即時", "累積記錄", "DataLogger：顯示全部",
     if (frame == 0) {
         auto* log = plot.addDataLogger();
         log->view = LiveView::Full;
-        log->legendText = QStringLiteral("感測器讀值");
+        log->legendText = RT("感測器讀值");
         plot.legend.isVisible = true;
-        plot.leftAxis()->label.text = QStringLiteral("溫度 (°C)");
-        plot.bottomAxis()->label.text = QStringLiteral("取樣點");
+        plot.leftAxis()->label.text = RT("溫度 (°C)");
+        plot.bottomAxis()->label.text = RT("取樣點");
         return;
     }
     if (auto* log = firstOf<DataLogger>(plot)) log->add(sensorValue(frame));
@@ -52,9 +52,9 @@ QTPLOT_RECIPE_LIVE("即時", "累積記錄", "DataLogger：連續捲動",
         auto* log = plot.addDataLogger();
         log->view = LiveView::Slide;
         log->viewWidth = 150;
-        log->legendText = QStringLiteral("Slide（連續捲動）");
+        log->legendText = RT("Slide（連續捲動）");
         plot.legend.isVisible = true;
-        plot.leftAxis()->label.text = QStringLiteral("溫度 (°C)");
+        plot.leftAxis()->label.text = RT("溫度 (°C)");
         return;
     }
     if (auto* log = firstOf<DataLogger>(plot)) {
@@ -73,9 +73,9 @@ QTPLOT_RECIPE_LIVE("即時", "累積記錄", "DataLogger：跳頁",
         log->view = LiveView::Jump;
         log->viewWidth = 150;
         log->jumpFraction = 0.6;
-        log->legendText = QStringLiteral("Jump（整段跳）");
+        log->legendText = RT("Jump（整段跳）");
         plot.legend.isVisible = true;
-        plot.leftAxis()->label.text = QStringLiteral("溫度 (°C)");
+        plot.leftAxis()->label.text = RT("溫度 (°C)");
         return;
     }
     if (auto* log = firstOf<DataLogger>(plot)) log->add(sensorValue(frame));
@@ -89,9 +89,9 @@ QTPLOT_RECIPE_LIVE("即時", "波形", "DataStreamer：掃描模式",
         // 容量刻意設小一點，匯出的靜態圖才來得及繞過一輪，看得到寫入點的紅線
         auto* s = plot.addDataStreamer(150);
         s->mode = DataStreamer::Mode::Wipe;
-        s->legendText = QStringLiteral("訊號");
+        s->legendText = RT("訊號");
         plot.legend.isVisible = true;
-        plot.bottomAxis()->label.text = QStringLiteral("緩衝位置");
+        plot.bottomAxis()->label.text = RT("緩衝位置");
         return;
     }
     if (auto* s = firstOf<DataStreamer>(plot)) {
@@ -106,9 +106,9 @@ QTPLOT_RECIPE_LIVE("即時", "波形", "DataStreamer：捲動模式",
     if (frame == 0) {
         auto* s = plot.addDataStreamer(300, QColor(44, 160, 44));
         s->mode = DataStreamer::Mode::Scroll;
-        s->legendText = QStringLiteral("訊號");
+        s->legendText = RT("訊號");
         plot.legend.isVisible = true;
-        plot.bottomAxis()->label.text = QStringLiteral("取樣點");
+        plot.bottomAxis()->label.text = RT("取樣點");
         return;
     }
     if (auto* s = firstOf<DataStreamer>(plot)) {
@@ -121,8 +121,8 @@ QTPLOT_RECIPE_LIVE("即時", "波形", "多軌波形",
                    "三個 DataStreamer 各自加上固定偏移，疊在同一張圖上，"
                    "就是多軌的記錄器畫面。", 20) {
     if (frame == 0) {
-        const QStringList names{QStringLiteral("通道 1"), QStringLiteral("通道 2"),
-                                QStringLiteral("通道 3")};
+        const QStringList names{RT("通道 1"), RT("通道 2"),
+                                RT("通道 3")};
         for (int i = 0; i < 3; ++i) {
             auto* s = plot.addDataStreamer(150);
             s->mode = DataStreamer::Mode::Wipe;
