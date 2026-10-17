@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- QtPlot 的 C# 包裝：Plot（不需要畫面也能用）與 PlotControl（WinForms 控制項）。 -->
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>QtPlot</RootNamespace>
+    <AssemblyName>QtPlot.Net</AssemblyName>
+    <!-- qtplot_c.dll 只有 x64 版本，AnyCPU 會在 32 位元行程裡載入失敗 -->
+    <PlatformTarget>x64</PlatformTarget>
+    <Platforms>x64</Platforms>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+
+  <!--
+    原生 DLL：qtplot_c.dll 與它要的 Qt 執行期檔案。預設從 CMake 的建置輸出拿，
+    放在別處就用 dotnet build -p:QtPlotNativeDir=路徑 覆寫。
+    這些項目會一路複製到「參考這個專案的應用程式」的輸出目錄。
+  -->
+  <PropertyGroup>
+    <QtPlotNativeDir Condition="'$(QtPlotNativeDir)' == ''">$(MSBuildThisFileDirectory)..\..\..\build\bin</QtPlotNativeDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <QtPlotNative Include="$(QtPlotNativeDir)\qtplot_c.dll;
+                           $(QtPlotNativeDir)\Qt6Core.dll;
+                           $(QtPlotNativeDir)\Qt6Gui.dll;
+                           $(QtPlotNativeDir)\Qt6Widgets.dll;
+                           $(QtPlotNativeDir)\Qt6Svg.dll;
+                           $(QtPlotNativeDir)\Qt6PrintSupport.dll" />
+    <QtPlotNativePlugin Include="$(QtPlotNativeDir)\platforms\qwindows.dll" />
+    <None Include="@(QtPlotNative)" Link="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <None Include="@(QtPlotNativePlugin)" Link="platforms\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+  </ItemGroup>
+
+  <Target Name="CheckQtPlotNative" BeforeTargets="Build">
+    <Error Condition="!Exists('$(QtPlotNativeDir)\qtplot_c.dll')"
+           Text="找不到 $(QtPlotNativeDir)\qtplot_c.dll。請先在專案根目錄執行 build.ps1，或用 -p:QtPlotNativeDir= 指定位置。" />
+  </Target>
+
+</Project>

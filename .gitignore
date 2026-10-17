@@ -1,0 +1,14 @@
+# 建置輸出（build.ps1 / cmake -B build）
+/build/
+/out/
+
+# 編輯器與工具的暫存
+/.vscode/
+/.vs/
+*.user
+.mypy_cache/
+__pycache__/
+
+# .NET 建置輸出
+bin/
+obj/

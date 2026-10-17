@@ -1,0 +1,29 @@
+<!DOCTYPE RCC>
+<!-- 範例的原始碼編進執行檔，Cookbook 才能把程式原樣顯示出來。 -->
+<RCC version="1.0">
+  <qresource prefix="/recipes">
+    <file alias="Quickstart.cpp">recipes/Quickstart.cpp</file>
+    <file alias="PlotTypes.cpp">recipes/PlotTypes.cpp</file>
+    <file alias="AxesLayout.cpp">recipes/AxesLayout.cpp</file>
+    <file alias="Styling.cpp">recipes/Styling.cpp</file>
+    <file alias="Polar.cpp">recipes/Polar.cpp</file>
+    <file alias="Statistics.cpp">recipes/Statistics.cpp</file>
+    <file alias="Finance.cpp">recipes/Finance.cpp</file>
+    <file alias="Field.cpp">recipes/Field.cpp</file>
+    <file alias="Live.cpp">recipes/Live.cpp</file>
+    <file alias="Specialty.cpp">recipes/Specialty.cpp</file>
+    <file alias="Interaction.cpp">recipes/Interaction.cpp</file>
+    <file alias="AxisCustom.cpp">recipes/AxisCustom.cpp</file>
+    <file alias="Decorations.cpp">recipes/Decorations.cpp</file>
+    <file alias="Selection.cpp">recipes/Selection.cpp</file>
+    <file alias="Advanced.cpp">recipes/Advanced.cpp</file>
+    <file alias="Layout.cpp">recipes/Layout.cpp</file>
+    <file alias="MoreTypes.cpp">recipes/MoreTypes.cpp</file>
+    <file alias="Diagnostics.cpp">recipes/Diagnostics.cpp</file>
+    <file alias="Analysis.cpp">recipes/Analysis.cpp</file>
+    <file alias="Supplement.cpp">recipes/Supplement.cpp</file>
+    <file alias="Supplement2.cpp">recipes/Supplement2.cpp</file>
+    <file alias="Supplement3.cpp">recipes/Supplement3.cpp</file>
+    <file alias="Supplement4.cpp">recipes/Supplement4.cpp</file>
+  </qresource>
+</RCC>

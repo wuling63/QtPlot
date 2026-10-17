@@ -1,0 +1,5 @@
+# 文字檔一律用 LF 存進版本庫，取出時交給 core.autocrlf 決定
+* text=auto
+# PowerShell 腳本維持 CRLF（Windows PowerShell 5.1 對 LF 偶爾會出問題）
+*.ps1 text eol=crlf
+*.png binary
