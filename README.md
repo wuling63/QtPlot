@@ -1,11 +1,40 @@
 # QtPlot
 
+[English](README.en.md) | **繁體中文**
+
 用 **Qt Widgets + QPainter 自製的互動式繪圖函式庫**，加上一個 Cookbook 範例瀏覽器。
-功能對標 [ScottPlot](https://scottplot.net/)（`D:\ScotPlot\net8.0-windows` 那套 .NET 的 Demo）。
+功能對標 [ScottPlot](https://scottplot.net/)。
 
 繪圖核心**不使用 Qt Charts**：座標換算、刻度產生、版面計算、圖例與滑鼠互動全部自己實作。
 這是刻意的選擇 —— Qt Charts 的座標軸與互動被框死，做不出百萬點的 Signal 抽樣、
 自訂刻度產生器、多軸綁定這些 ScottPlot 的招牌行為。
+
+## 範例圖
+
+以下都是 `QtPlotDemo --export` 直接畫出來的，451 支範例裡的 12 支：
+
+<table>
+<tr>
+<td align="center"><img src="docs/images/zh/01-signal.png" width="260"><br><sub>百萬點訊號（每像素抽樣）</sub></td>
+<td align="center"><img src="docs/images/zh/02-control.png" width="260"><br><sub>管制圖與 Nelson 規則</sub></td>
+<td align="center"><img src="docs/images/zh/03-finance.png" width="260"><br><sub>K 線與成交量（雙 Y 軸）</sub></td>
+</tr>
+<tr>
+<td align="center"><img src="docs/images/zh/04-surface3d.png" width="260"><br><sub>3D 曲面</sub></td>
+<td align="center"><img src="docs/images/zh/05-sunburst.png" width="260"><br><sub>旭日圖</sub></td>
+<td align="center"><img src="docs/images/zh/06-sankey.png" width="260"><br><sub>桑基圖</sub></td>
+</tr>
+<tr>
+<td align="center"><img src="docs/images/zh/07-contour.png" width="260"><br><sub>等值線疊熱圖</sub></td>
+<td align="center"><img src="docs/images/zh/08-violin.png" width="260"><br><sub>小提琴圖</sub></td>
+<td align="center"><img src="docs/images/zh/09-joint.png" width="260"><br><sub>邊際分布（子圖）</sub></td>
+</tr>
+<tr>
+<td align="center"><img src="docs/images/zh/10-funnel.png" width="260"><br><sub>圓錐漏斗資訊圖</sub></td>
+<td align="center"><img src="docs/images/zh/11-axisbreak.png" width="260"><br><sub>截斷 Y 軸</sub></td>
+<td align="center"><img src="docs/images/zh/12-fishbone.png" width="260"><br><sub>魚骨圖（石川圖）</sub></td>
+</tr>
+</table>
 
 ## 現況
 
@@ -402,8 +431,10 @@ autoScale 的逐軸行為這些**純數值**的東西。看圖只能發現很離
 再跑視覺比對：`--export` 兩次到不同資料夾，再比對檔案雜湊：
 
 ```powershell
-QtPlotDemo --export before# ...改程式、重建...
-QtPlotDemo --export afterGet-ChildItem after\ -Filter *.png | Where-Object {
+QtPlotDemo --export before
+# ...改程式、重建...
+QtPlotDemo --export after
+Get-ChildItem after\ -Filter *.png | Where-Object {
     (Get-FileHash $_.FullName).Hash -ne (Get-FileHash "before\$($_.Name)").Hash
 } | Select-Object Name
 ```
