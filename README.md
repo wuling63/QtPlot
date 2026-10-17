@@ -438,3 +438,7 @@ build\bin\QtPlotDemo.exe --soak   # 沒有殘留回傳 0
 `PlotWidget` 記著懸停、拖曳、框選命中的 `IPlottable*`。直接呼叫 `plot().reset()`
 會讓那些指標指向已經釋放的圖元，下一次 `paintEvent` 就踩下去了。所以 widget 上換圖
 請走 `resetPlot()`。
+
+## 授權
+
+MIT，見 [LICENSE](LICENSE)。
