@@ -1492,6 +1492,34 @@
         <translation>用鼠标旋转 3D 图</translation>
     </message>
     <message>
+        <source>莫比烏斯帶（三角網格曲面）</source>
+        <translation>莫比乌斯带（三角网格曲面）</translation>
+    </message>
+    <message>
+        <source>隨機取樣的 3D 散點</source>
+        <translation>随机采样的 3D 散点</translation>
+    </message>
+    <message>
+        <source>散點直接三角剖分成曲面</source>
+        <translation>散点直接三角剖分成曲面</translation>
+    </message>
+    <message>
+        <source>黑色線框</source>
+        <translation>黑色线框</translation>
+    </message>
+    <message>
+        <source>3D 等值線</source>
+        <translation>3D 等值线</translation>
+    </message>
+    <message>
+        <source>改變視角</source>
+        <translation>改变视角</translation>
+    </message>
+    <message>
+        <source>3D 螺旋線加散點</source>
+        <translation>3D 螺旋线加散点</translation>
+    </message>
+    <message>
         <source>圖例標題</source>
         <translation>图例标题</translation>
     </message>
@@ -5098,6 +5126,30 @@ Egger 截距 %2（离 0 越远越不对称）</translation>
     <message>
         <source>按住左鍵拖曳旋轉</source>
         <translation>按住左键拖拽旋转</translation>
+    </message>
+    <message>
+        <source>莫比烏斯帶</source>
+        <translation>莫比乌斯带</translation>
+    </message>
+    <message>
+        <source>隨機取樣的散點</source>
+        <translation>随机采样的散点</translation>
+    </message>
+    <message>
+        <source>散點三角剖分</source>
+        <translation>散点三角剖分</translation>
+    </message>
+    <message>
+        <source>線框</source>
+        <translation>线框</translation>
+    </message>
+    <message>
+        <source>仰角 60°、方位角 35°</source>
+        <translation>仰角 60°、方位角 35°</translation>
+    </message>
+    <message>
+        <source>螺旋線與散點</source>
+        <translation>螺旋线与散点</translation>
     </message>
     <message>
         <source>A 區</source>

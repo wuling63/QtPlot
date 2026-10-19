@@ -11,7 +11,7 @@
 
 ## 範例圖
 
-以下都是 `QtPlotDemo --export` 直接畫出來的，451 支範例裡的 12 支：
+以下都是 `QtPlotDemo --export` 直接畫出來的，458 支範例裡的 12 支：
 
 <table>
 <tr>
@@ -43,7 +43,7 @@
 | 核心引擎（座標、刻度、版面、圖例、渲染） | 可用 |
 | 滑鼠互動（平移／縮放／框選／自動範圍） | 可用 |
 | 圖元種類 | 84 種（見下表） |
-| Cookbook 範例 | 451 支，15 個章節（10 支會動、10 支需要滑鼠互動、5 支是子圖） |
+| Cookbook 範例 | 458 支，15 個章節（10 支會動、10 支需要滑鼠互動、5 支是子圖） |
 | 數值自我檢查 | `qtplot_selftest`，851 項；另有 `--soak` 換圖測試與 `tools/check_fonts.py` |
 | 互動 | 平移／縮放／框選縮放、命中測試（二維／只比 X）、游標提示、吸附到資料點的十字線、框選資料點、拖曳圖元、兩張圖共用座標軸、**點圖例切換顯示**、**視野復原／重做（Ctrl+Z / Ctrl+Y）**、**觸控與觸控板手勢**、**視野切換動畫** |
 | 輸出 | PNG（可指定倍率）、SVG、**PDF**、剪貼簿、**列印（含預覽）** |
@@ -59,7 +59,7 @@
 | 商務圖表 | `Funnel`（漏斗／金字塔，可畫成圓錐資訊圖並附說明）、`Waterfall`（瀑布）、`Bullet`（靶心）、`Gantt`（甘特）、`Venn`（文氏）、`Mosaic`（馬賽克）、`Dumbbell`（啞鈴）、`Fishbone`（魚骨／石川）、`Pareto`（柏拉圖）、`Waffle`（鬆餅）、`Slope`（斜率／排名變化） |
 | 階層與多變量 | `Treemap`（樹狀）、`ParallelCoordinates`（平行座標）、`Hexbin`（六角分箱）、`Dumbbell`（啞鈴） |
 | 流量與關係 | `Sankey`（桑基）、`Chord`（弦圖）、`NetworkGraph`（網路圖／弧線圖）、河流圖（`addStream`）、`Horizon`（地平線） |
-| 3D 圖表 | `Chart3D`（可任意旋轉的座標盒：`Scatter3D`、`Line3D`、`SurfaceSeries3D`、`Waterfall3D`（可設厚度：3D 緞帶折線圖、3D 面積圖）、`Columns3D`；透視投影；`enableMouseRotation()` 用滑鼠拖曳旋轉） |
+| 3D 圖表 | `Chart3D`（可任意旋轉的座標盒：`Scatter3D`、`Line3D`、`SurfaceSeries3D`、`Waterfall3D`（可設厚度：3D 緞帶折線圖、3D 面積圖）、`Columns3D`、`Contour3D`（3D 等值線，每條抬到自己的高度）、`TriSurface3D`（三角網格曲面，畫莫比烏斯帶、環面這類參數曲面，等同 Matplotlib 的 `plot_trisurf`）；透視投影；`enableMouseRotation()` 用滑鼠拖曳旋轉） |
 | 等角投影（2.5D） | `IsoBars`（立體長條）、`IsoStack`（金字塔／圓柱／圓錐）、`Surface3D`（曲面／線框／格點）—— 簡報版型用，不適合精確讀數 |
 | 熱圖 | `Heatmap`（7 種色階、NaN 透明、雙線性插值）、`CalendarHeatmap`（日曆熱圖） |
 | 參考線與區間 | `AxisLine`（可只畫一段、標籤可壓在座標軸上）、`AxisSpan`（可拖邊改寬度）、`Crosshair`、`TrendLine`（兩點可拖的無限長趨勢線） |
@@ -125,14 +125,14 @@ Qt 的執行期檔案（DLL、平台外掛、影像格式、樣式）在建置�
 ```powershell
 QtPlotDemo                        # 開啟 Cookbook 瀏覽器
 QtPlotDemo --recipe "散點圖"       # 開啟並跳到指定範例
-QtPlotDemo --export out\          # 不開視窗，把 451 支範例全部存成 PNG
+QtPlotDemo --export out\          # 不開視窗，把 458 支範例全部存成 PNG
 QtPlotDemo --soak                 # 不開視窗，照 GUI 的方式連續換過每一支範例
 QtPlotDemo --lang en              # 指定介面語言（en zh_CN ja ko fr de it es zh_TW）
 ```
 
 `--export` 是無頭模式，可以拿來做視覺回歸：改完引擎重跑一次，比對前後的 PNG 就知道哪張圖變了。
 
-`--soak` 驗的是另一件事：**換圖**。它只開一個 `PlotWidget`，把 451 支範例一支接一支
+`--soak` 驗的是另一件事：**換圖**。它只開一個 `PlotWidget`，把 458 支範例一支接一支
 畫進去，每次換圖前檢查有沒有東西殘留。回傳 0 表示沒有。
 
 部署後的 `build\bin\` 約 36 MB、24 個檔案。windeployqt 還會帶上 Direct3D 的著色器編譯器

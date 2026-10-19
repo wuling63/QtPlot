@@ -1492,6 +1492,34 @@
         <translation>Ruotare il grafico 3D col mouse</translation>
     </message>
     <message>
+        <source>莫比烏斯帶（三角網格曲面）</source>
+        <translation>Nastro di Möbius (superficie triangolata)</translation>
+    </message>
+    <message>
+        <source>隨機取樣的 3D 散點</source>
+        <translation>Dispersione 3D di campioni casuali</translation>
+    </message>
+    <message>
+        <source>散點直接三角剖分成曲面</source>
+        <translation>Triangolare punti sparsi in una superficie</translation>
+    </message>
+    <message>
+        <source>黑色線框</source>
+        <translation>Wireframe nero</translation>
+    </message>
+    <message>
+        <source>3D 等值線</source>
+        <translation>Curve di livello 3D</translation>
+    </message>
+    <message>
+        <source>改變視角</source>
+        <translation>Cambiare l'angolo di vista</translation>
+    </message>
+    <message>
+        <source>3D 螺旋線加散點</source>
+        <translation>Elica 3D con punti sparsi</translation>
+    </message>
+    <message>
         <source>圖例標題</source>
         <translation>Titolo della legenda</translation>
     </message>
@@ -5098,6 +5126,30 @@ Integrale numerico (fino a |x| = 4) = %3</translation>
     <message>
         <source>按住左鍵拖曳旋轉</source>
         <translation>Tieni premuto il tasto sinistro e trascina per ruotare</translation>
+    </message>
+    <message>
+        <source>莫比烏斯帶</source>
+        <translation>Nastro di Möbius</translation>
+    </message>
+    <message>
+        <source>隨機取樣的散點</source>
+        <translation>Punti campionati a caso</translation>
+    </message>
+    <message>
+        <source>散點三角剖分</source>
+        <translation>Punti triangolati</translation>
+    </message>
+    <message>
+        <source>線框</source>
+        <translation>Wireframe</translation>
+    </message>
+    <message>
+        <source>仰角 60°、方位角 35°</source>
+        <translation>Elevazione 60°, azimut 35°</translation>
+    </message>
+    <message>
+        <source>螺旋線與散點</source>
+        <translation>Elica e punti</translation>
     </message>
     <message>
         <source>A 區</source>

@@ -1492,6 +1492,34 @@
         <translation>Rotate 3D plots with the mouse</translation>
     </message>
     <message>
+        <source>莫比烏斯帶（三角網格曲面）</source>
+        <translation>Möbius strip (triangulated surface)</translation>
+    </message>
+    <message>
+        <source>隨機取樣的 3D 散點</source>
+        <translation>3-D scatter of random samples</translation>
+    </message>
+    <message>
+        <source>散點直接三角剖分成曲面</source>
+        <translation>Triangulating scattered points into a surface</translation>
+    </message>
+    <message>
+        <source>黑色線框</source>
+        <translation>Black wireframe</translation>
+    </message>
+    <message>
+        <source>3D 等值線</source>
+        <translation>3-D contours</translation>
+    </message>
+    <message>
+        <source>改變視角</source>
+        <translation>Changing the viewing angle</translation>
+    </message>
+    <message>
+        <source>3D 螺旋線加散點</source>
+        <translation>3-D helix with scattered points</translation>
+    </message>
+    <message>
         <source>圖例標題</source>
         <translation>Legend title</translation>
     </message>
@@ -5098,6 +5126,30 @@ Numeric integral (to |x| = 4) = %3</translation>
     <message>
         <source>按住左鍵拖曳旋轉</source>
         <translation>Hold left button and drag to rotate</translation>
+    </message>
+    <message>
+        <source>莫比烏斯帶</source>
+        <translation>Möbius strip</translation>
+    </message>
+    <message>
+        <source>隨機取樣的散點</source>
+        <translation>Randomly sampled points</translation>
+    </message>
+    <message>
+        <source>散點三角剖分</source>
+        <translation>Triangulated scatter</translation>
+    </message>
+    <message>
+        <source>線框</source>
+        <translation>Wireframe</translation>
+    </message>
+    <message>
+        <source>仰角 60°、方位角 35°</source>
+        <translation>Elevation 60°, azimuth 35°</translation>
+    </message>
+    <message>
+        <source>螺旋線與散點</source>
+        <translation>Helix and points</translation>
     </message>
     <message>
         <source>A 區</source>

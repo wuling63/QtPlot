@@ -1492,6 +1492,34 @@
         <translation>마우스로 3D 그래프 회전</translation>
     </message>
     <message>
+        <source>莫比烏斯帶（三角網格曲面）</source>
+        <translation>뫼비우스 띠 (삼각형 메시 곡면)</translation>
+    </message>
+    <message>
+        <source>隨機取樣的 3D 散點</source>
+        <translation>무작위 표본의 3D 산점도</translation>
+    </message>
+    <message>
+        <source>散點直接三角剖分成曲面</source>
+        <translation>산점을 삼각 분할해 곡면 만들기</translation>
+    </message>
+    <message>
+        <source>黑色線框</source>
+        <translation>검은 와이어프레임</translation>
+    </message>
+    <message>
+        <source>3D 等值線</source>
+        <translation>3D 등고선</translation>
+    </message>
+    <message>
+        <source>改變視角</source>
+        <translation>시점 바꾸기</translation>
+    </message>
+    <message>
+        <source>3D 螺旋線加散點</source>
+        <translation>3D 나선과 산점</translation>
+    </message>
+    <message>
         <source>圖例標題</source>
         <translation>범례 제목</translation>
     </message>
@@ -5098,6 +5126,30 @@ Egger 절편 %2(0에서 멀수록 비대칭)</translation>
     <message>
         <source>按住左鍵拖曳旋轉</source>
         <translation>왼쪽 버튼을 누른 채 드래그하여 회전</translation>
+    </message>
+    <message>
+        <source>莫比烏斯帶</source>
+        <translation>뫼비우스 띠</translation>
+    </message>
+    <message>
+        <source>隨機取樣的散點</source>
+        <translation>무작위 표본점</translation>
+    </message>
+    <message>
+        <source>散點三角剖分</source>
+        <translation>산점 삼각 분할</translation>
+    </message>
+    <message>
+        <source>線框</source>
+        <translation>와이어프레임</translation>
+    </message>
+    <message>
+        <source>仰角 60°、方位角 35°</source>
+        <translation>고도각 60°, 방위각 35°</translation>
+    </message>
+    <message>
+        <source>螺旋線與散點</source>
+        <translation>나선과 점</translation>
     </message>
     <message>
         <source>A 區</source>

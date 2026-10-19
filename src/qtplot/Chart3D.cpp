@@ -1,5 +1,6 @@
 #include "Chart3D.h"
 
+#include "Field.h"  // marchingSquares
 #include "PlotWidget.h"
 
 #include <QMouseEvent>
@@ -202,6 +203,48 @@ CoordinateRange SurfaceSeries3D::colorRange() const {
     if (!fill || fillColor.isValid()) return {};
     CoordinateRange r;
     for (double v : zs) if (std::isfinite(v)) r.expand(v);
+    return r;
+}
+
+QVector<double> Contour3D::effectiveLevels() const {
+    if (!levels.isEmpty()) return levels;
+    CoordinateRange r;
+    for (double v : zs)
+        if (std::isfinite(v)) r.expand(v);
+    QVector<double> out;
+    if (!r.isValid() || !(r.span() > 0) || levelCount < 1) return out;
+    // 不含兩端：剛好等於最大值的等值線只是一個點
+    for (int i = 1; i <= levelCount; ++i) out.append(r.min + r.span() * i / (levelCount + 1));
+    return out;
+}
+void Contour3D::limits(CoordinateRange& x, CoordinateRange& y, CoordinateRange& z) const {
+    for (double v : xs) if (std::isfinite(v)) x.expand(v);
+    for (double v : ys) if (std::isfinite(v)) y.expand(v);
+    for (double v : zs) if (std::isfinite(v)) z.expand(v);
+}
+CoordinateRange Contour3D::colorRange() const {
+    if (!colorByLevel) return {};
+    CoordinateRange r;
+    for (double v : zs) if (std::isfinite(v)) r.expand(v);
+    return r;
+}
+
+void TriSurface3D::triangulateParameters(const QVector<Coordinates>& uv) {
+    triangles = delaunay(uv);
+}
+void TriSurface3D::limits(CoordinateRange& x, CoordinateRange& y, CoordinateRange& z) const {
+    for (const Point3D& v : vertices) {
+        if (!std::isfinite(v.x) || !std::isfinite(v.y) || !std::isfinite(v.z)) continue;
+        x.expand(v.x);
+        y.expand(v.y);
+        z.expand(v.z);
+    }
+}
+CoordinateRange TriSurface3D::colorRange() const {
+    if (!fill || fillColor.isValid()) return {};
+    CoordinateRange r;
+    for (const Point3D& v : vertices)
+        if (std::isfinite(v.z)) r.expand(v.z);
     return r;
 }
 
@@ -427,6 +470,47 @@ void Chart3D::render(RenderPack& rp) {
                     }});
                 }
             }
+        } else if (auto* ts = dynamic_cast<TriSurface3D*>(sp.get())) {
+            const int nv = static_cast<int>(ts->vertices.size());
+            for (const Triangle& tri : ts->triangles) {
+                if (tri.a < 0 || tri.b < 0 || tri.c < 0 || tri.a >= nv || tri.b >= nv || tri.c >= nv) continue;
+                const Point3D& A = ts->vertices[tri.a];
+                const Point3D& B = ts->vertices[tri.b];
+                const Point3D& C = ts->vertices[tri.c];
+                if (!std::isfinite(A.z) || !std::isfinite(B.z) || !std::isfinite(C.z)) continue;
+                double d0, d1, d2;
+                QPolygonF poly;
+                poly << proj.data(A.x, A.y, A.z, &d0) << proj.data(B.x, B.y, B.z, &d1) << proj.data(C.x, C.y, C.z, &d2);
+                QColor fill = ts->fillColor.isValid() ? ts->fillColor : mapColor((A.z + B.z + C.z) / 3);
+                if (ts->lighting) {
+                    // 法線在盒座標裡算（三軸長度不同時，資料座標的法線方向是歪的）；
+                    // 取絕對值 = 雙面打光，沒有正反面的曲面才不會有一半是黑的
+                    double ax, ay, az, bx, by, bz, cx, cy, cz;
+                    proj.normalize(A.x, A.y, A.z, ax, ay, az);
+                    proj.normalize(B.x, B.y, B.z, bx, by, bz);
+                    proj.normalize(C.x, C.y, C.z, cx, cy, cz);
+                    const double ux = bx - ax, uy = by - ay, uz = bz - az;
+                    const double vx = cx - ax, vy = cy - ay, vz = cz - az;
+                    const double nx3 = uy * vz - uz * vy, ny3 = uz * vx - ux * vz, nz3 = ux * vy - uy * vx;
+                    const double len = std::sqrt(nx3 * nx3 + ny3 * ny3 + nz3 * nz3);
+                    const double light = len > 0 ? (-0.4 * nx3 + 0.3 * ny3 + 0.87 * nz3) / len : 1;
+                    fill = shade(fill, 0.72 + 0.3 * std::abs(light));
+                }
+                const bool doFill = ts->fill;
+                const QColor edge = ts->edgeColor;
+                const double ew = ts->edgeWidth * sf;
+                prims.push_back({(d0 + d1 + d2) / 3, order++, [=](QPainter& pp) {
+                    if (doFill) {
+                        pp.setBrush(fill);
+                        // 不畫邊時用填色描一圈，相鄰三角形之間才不會透出反鋸齒的細縫
+                        pp.setPen(ew > 0 ? QPen(edge, ew) : QPen(fill, 0.5));
+                    } else {
+                        pp.setBrush(Qt::NoBrush);
+                        pp.setPen(QPen(edge.isValid() ? edge : fill, std::max(ew, 1.0)));
+                    }
+                    pp.drawPolygon(poly);
+                }});
+            }
         } else if (auto* tw = dynamic_cast<Waterfall3D*>(sp.get()); tw && tw->thickness > 0) {
             // 有厚度：緞帶（只有頂面）或實心板（後面、頂面、前面）
             const double baseZ = std::clamp(0.0, zr.min, zr.max);
@@ -536,6 +620,29 @@ void Chart3D::render(RenderPack& rp) {
                     pp.setBrush(shade(color, 1.1));  pp.drawPolygon(top);
                 }});
             }
+        } else if (auto* cs = dynamic_cast<Contour3D*>(sp.get())) {
+            const int nx = static_cast<int>(cs->xs.size()), ny = static_cast<int>(cs->ys.size());
+            if (nx >= 2 && ny >= 2 && cs->zs.size() >= static_cast<qsizetype>(nx) * ny) {
+                const CoordinateRect extent(cs->xs.first(), cs->xs.last(), cs->ys.first(), cs->ys.last());
+                const double lw = cs->width * sf;
+                for (double level : cs->effectiveLevels()) {
+                    const QColor color = cs->colorByLevel ? mapColor(level) : cs->color;
+                    for (const QVector<Coordinates>& path : marchingSquares(cs->zs, ny, nx, level, extent)) {
+                        // 一段一段排進畫家演算法：一整條一起排的話，繞到後面的那半圈會蓋在前面的曲線上
+                        for (int i = 0; i + 1 < path.size(); ++i) {
+                            double da, db;
+                            const QPointF pa = proj.data(path[i].x, path[i].y, level, &da);
+                            const QPointF pb = proj.data(path[i + 1].x, path[i + 1].y, level, &db);
+                            prims.push_back({(da + db) / 2, order++, [=](QPainter& pp) {
+                                QPen pen(color, lw);
+                                pen.setCapStyle(Qt::RoundCap);
+                                pp.setPen(pen);
+                                pp.drawLine(pa, pb);
+                            }});
+                        }
+                    }
+                }
+            }
         } else if (auto* l = dynamic_cast<Line3D*>(sp.get())) {
             for (int i = 0; i + 1 < l->points.size(); ++i) {
                 const Point3D a = l->points[i], b = l->points[i + 1];
@@ -551,10 +658,30 @@ void Chart3D::render(RenderPack& rp) {
                 }});
             }
         } else if (auto* sc = dynamic_cast<Scatter3D*>(sp.get())) {
+            // 依深度調淡要先知道這組點的深度範圍
+            double dNear = 0, dFar = 0;
+            if (sc->depthShade) {
+                bool first = true;
+                for (const Point3D& pt : sc->points) {
+                    double d;
+                    proj.data(pt.x, pt.y, pt.z, &d);
+                    if (first) { dNear = dFar = d; first = false; }
+                    dNear = std::min(dNear, d);
+                    dFar = std::max(dFar, d);
+                }
+            }
+            const double minAlpha = std::clamp(sc->depthShadeMinAlpha, 0.0, 1.0);
             for (const Point3D& pt : sc->points) {
                 double d;
                 const QPointF px = proj.data(pt.x, pt.y, pt.z, &d);
-                const QColor color = sc->colorByZ ? mapColor(pt.z) : sc->color;
+                QColor color = sc->colorByZ ? mapColor(pt.z) : sc->color;
+                QColor edge = sc->edgeColor;
+                if (sc->depthShade && dFar > dNear) {
+                    // depth 越大越遠（畫家演算法先畫大的）
+                    const double f = 1.0 - (1.0 - minAlpha) * (d - dNear) / (dFar - dNear);
+                    color.setAlphaF(color.alphaF() * f);
+                    edge.setAlphaF(edge.alphaF() * f);
+                }
                 if (sc->dropLines) {
                     const QPointF floor = proj.data(pt.x, pt.y, zr.min);
                     const QColor dc = sc->dropLineColor;
@@ -564,7 +691,7 @@ void Chart3D::render(RenderPack& rp) {
                     }});
                 }
                 MarkerStyle m(MarkerShape::FilledCircle, sc->markerSize * sf, color);
-                m.outline = LineStyle(QColor(255, 255, 255, 180), 0.6 * sf);
+                m.outline = sc->edgeWidth > 0 ? LineStyle(edge, sc->edgeWidth * sf) : LineStyle::none();
                 prims.push_back({d, order++, [=](QPainter& pp) { drawMarker(pp, px, m); }});
             }
         }

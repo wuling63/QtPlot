@@ -228,6 +228,187 @@ QTPLOT_RECIPE_WIDGET("圖種", "3D 圖表", "用滑鼠旋轉 3D 圖",
     enableMouseRotation(widget, chart);
 }
 
+QTPLOT_RECIPE_WIDGET("圖種", "3D 圖表", "莫比烏斯帶（三角網格曲面）",
+                     "莫比烏斯帶、環面、球面這類參數曲面不是 z = f(x, y)：同一個 (x, y) 可能對到好幾個高度，"
+                     "規則格網的 SurfaceSeries3D 畫不出來。做法和 Matplotlib 的 plot_trisurf 一樣："
+                     "先在參數 (w, θ) 上做 Delaunay 三角剖分（triangulateParameters），再把每個頂點算成 3D 座標。"
+                     "TriSurface3D 依每個三角形的平均高度上色、雙面打光並畫出網格。按住左鍵拖曳可以旋轉。") {
+    Plot& plot = widget.plot();
+    // 參數：θ 繞一圈，w 是帶子的寬度方向
+    const QVector<double> theta = gen::linspace(0, 2 * M_PI, 30);
+    const QVector<double> w = gen::linspace(-0.25, 0.25, 8);
+
+    auto s = std::make_unique<TriSurface3D>();
+    QVector<Coordinates> uv;
+    for (double t : theta) {
+        for (double ww : w) {
+            // 繞一圈的同時帶子轉半圈：這半圈就是莫比烏斯帶只有一個面的原因
+            const double r = 1 + ww * std::cos(t / 2);
+            s->vertices.append({r * std::cos(t), r * std::sin(t), ww * std::sin(t / 2)});
+            uv.append({ww, t});
+        }
+    }
+    s->triangulateParameters(uv);  // 在參數空間三角剖分，不是在 3D 空間
+    s->edgeWidth = 0.4;
+
+    auto* chart = plot.addChart3D();
+    chart->add(std::move(s));
+    chart->colormap = Colormap(Colormap::Viridis);
+    chart->xRange = {-1, 1};
+    chart->yRange = {-1, 1};
+    chart->zRange = {-1, 1};
+    chart->azimuth = -60;  // Matplotlib 的預設視角
+    chart->elevation = 30;
+    plot.title.text = RT("莫比烏斯帶");
+    enableMouseRotation(widget, chart);
+}
+
+// ───────── 《Python Data Science Handbook》的 3D 範例 ─────────
+
+namespace {
+/// 書裡的 f(x, y) = sin(√(x² + y²))：中間一個圓頂，外面一圈圈漣漪。
+double ripple(double x, double y) { return std::sin(std::sqrt(x * x + y * y)); }
+
+/// 在半徑 6 的圓盤裡隨機取 1000 點（極座標均勻取，所以中心比較密，和書上一樣）。
+QVector<Point3D> rippleSamples() {
+    const QVector<double> theta = gen::randomUniform(1000, 0, 2 * M_PI);
+    const QVector<double> r = gen::randomUniform(1000, 0, 6);
+    QVector<Point3D> pts;
+    for (int i = 0; i < theta.size(); ++i) {
+        const double x = r[i] * std::sin(theta[i]), y = r[i] * std::cos(theta[i]);
+        pts.append({x, y, ripple(x, y)});
+    }
+    return pts;
+}
+
+/// 30 × 30 的格網，給線框與等值線用。
+std::unique_ptr<SurfaceSeries3D> rippleGrid() {
+    auto s = std::make_unique<SurfaceSeries3D>();
+    s->xs = gen::linspace(-6, 6, 30);
+    s->ys = gen::linspace(-6, 6, 30);
+    for (double y : s->ys)
+        for (double x : s->xs) s->zs.append(ripple(x, y));
+    return s;
+}
+
+std::unique_ptr<Contour3D> rippleContours() {
+    const auto grid = rippleGrid();
+    auto c = std::make_unique<Contour3D>();
+    c->xs = grid->xs;
+    c->ys = grid->ys;
+    c->zs = grid->zs;
+    c->levelCount = 50;
+    return c;
+}
+}  // namespace
+
+QTPLOT_RECIPE_WIDGET("圖種", "3D 圖表", "隨機取樣的 3D 散點",
+                     "在圓盤裡隨機取 1000 點，算出 z = sin(√(x² + y²))，依高度上色。"
+                     "depthShade 讓越遠的點越淡，靜態的圖裡也分得出前後；edgeColor 給每個點一圈黑邊。"
+                     "只看散點很難想像曲面的形狀 —— 下一支範例把同一批點三角剖分成曲面。") {
+    Plot& plot = widget.plot();
+    auto s = std::make_unique<Scatter3D>();
+    s->points = rippleSamples();
+    s->colorByZ = true;
+    s->markerSize = 5;
+    s->edgeColor = QColor(0, 0, 0, 200);
+    s->edgeWidth = 0.5;
+    s->depthShade = true;
+    auto* chart = plot.addChart3D();
+    chart->add(std::move(s));
+    chart->colormap = Colormap(Colormap::Viridis);
+    plot.title.text = RT("隨機取樣的散點");
+    enableMouseRotation(widget, chart);
+}
+
+QTPLOT_RECIPE_WIDGET("圖種", "3D 圖表", "散點直接三角剖分成曲面",
+                     "和上一支同一批散點，這次在 (x, y) 平面上做 Delaunay 三角剖分，"
+                     "相鄰三點連成一個三角形（Matplotlib 的 plot_trisurf）。點不必排在格網上，"
+                     "量測點零散分布時就用這個。edgeWidth = 0 不畫邊，看起來就是一張連續的曲面。") {
+    Plot& plot = widget.plot();
+    auto s = std::make_unique<TriSurface3D>();
+    s->vertices = rippleSamples();
+    QVector<Coordinates> xy;
+    for (const Point3D& p : s->vertices) xy.append({p.x, p.y});
+    s->triangulateParameters(xy);  // 散點的「參數」就是它自己的 (x, y)
+    s->edgeWidth = 0;
+    auto* chart = plot.addChart3D();
+    chart->add(std::move(s));
+    chart->colormap = Colormap(Colormap::Viridis);
+    plot.title.text = RT("散點三角剖分");
+    enableMouseRotation(widget, chart);
+}
+
+QTPLOT_RECIPE_WIDGET("圖種", "3D 圖表", "黑色線框",
+                     "fill = false、wireColor 設成黑色，就是 Matplotlib 的 plot_wireframe。"
+                     "沒有填色擋住，前後的格線全部看得到，適合看曲面的走勢。") {
+    Plot& plot = widget.plot();
+    auto s = rippleGrid();
+    s->fill = false;
+    s->wireColor = QColor(0, 0, 0);
+    s->wireWidth = 1;
+    auto* chart = plot.addChart3D();
+    chart->add(std::move(s));
+    plot.title.text = RT("線框");
+    enableMouseRotation(widget, chart);
+}
+
+QTPLOT_RECIPE_WIDGET("圖種", "3D 圖表", "3D 等值線",
+                     "Contour3D 把每一條等值線抬到它自己的高度（Matplotlib 的 contour3D）。"
+                     "50 條等值線用由白到黑的色階：低的淡、高的深，疊起來就看得出曲面的形狀，"
+                     "又不像填色曲面那樣擋住後面。") {
+    Plot& plot = widget.plot();
+    auto* chart = plot.addChart3D();
+    chart->add(rippleContours());
+    chart->colormap = Colormap(Colormap::Grayscale).reversed();  // Matplotlib 的 'binary'
+    plot.title.text = RT("3D 等值線");
+    enableMouseRotation(widget, chart);
+}
+
+QTPLOT_RECIPE_WIDGET("圖種", "3D 圖表", "改變視角",
+                     "預設的視角不一定看得清楚。elevation 是視點在 x-y 平面上方幾度、"
+                     "azimuth 是繞 z 軸轉幾度（Matplotlib 的 view_init(60, 35)）。"
+                     "從高一點的地方往下看，中間的圓頂和外圈的漣漪就分開了。") {
+    Plot& plot = widget.plot();
+    auto* chart = plot.addChart3D();
+    chart->add(rippleContours());
+    chart->colormap = Colormap(Colormap::Grayscale).reversed();
+    chart->elevation = 60;
+    chart->azimuth = 35;
+    plot.title.text = RT("仰角 60°、方位角 35°");
+    enableMouseRotation(widget, chart);
+}
+
+QTPLOT_RECIPE_WIDGET("圖種", "3D 圖表", "3D 螺旋線加散點",
+                     "Line3D 畫一條螺旋線，Scatter3D 在它附近撒 100 個點、依高度用綠色系上色。"
+                     "Colormap::fromColors 可以自己組色階（這裡是 Matplotlib 的 'Greens'）。"
+                     "depthShade 讓後面的點變淡，看得出點繞著螺旋線前後分布。") {
+    Plot& plot = widget.plot();
+    auto line = std::make_unique<Line3D>();
+    for (double z : gen::linspace(0, 15, 1000)) line->points.append({std::sin(z), std::cos(z), z});
+    line->color = QColor(128, 128, 128);
+    line->width = 1;
+
+    auto dots = std::make_unique<Scatter3D>();
+    const QVector<double> zs = gen::randomUniform(100, 0, 15);
+    const QVector<double> nx = gen::randomNormal(100, 0, 0.1), ny = gen::randomNormal(100, 0, 0.1);
+    for (int i = 0; i < zs.size(); ++i) dots->points.append({std::sin(zs[i]) + nx[i], std::cos(zs[i]) + ny[i], zs[i]});
+    dots->colorByZ = true;
+    dots->markerSize = 6;
+    dots->edgeColor = QColor(0, 0, 0, 200);
+    dots->edgeWidth = 0.5;
+    dots->depthShade = true;
+
+    auto* chart = plot.addChart3D();
+    chart->add(std::move(line));
+    chart->add(std::move(dots));
+    chart->colormap = Colormap::fromColors({QColor(247, 252, 245), QColor(199, 233, 192), QColor(116, 196, 118),
+                                            QColor(35, 139, 69), QColor(0, 68, 27)});
+    chart->aspectZ = 1;
+    plot.title.text = RT("螺旋線與散點");
+    enableMouseRotation(widget, chart);
+}
+
 // ───────────────────────────── 圖例 ─────────────────────────────
 
 QTPLOT_RECIPE("樣式", "格線與圖例", "圖例標題",

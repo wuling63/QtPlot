@@ -1492,6 +1492,34 @@
         <translation>Rotar el 3D con el ratón</translation>
     </message>
     <message>
+        <source>莫比烏斯帶（三角網格曲面）</source>
+        <translation>Banda de Möbius (superficie triangulada)</translation>
+    </message>
+    <message>
+        <source>隨機取樣的 3D 散點</source>
+        <translation>Dispersión 3D de muestras aleatorias</translation>
+    </message>
+    <message>
+        <source>散點直接三角剖分成曲面</source>
+        <translation>Triangular puntos dispersos en una superficie</translation>
+    </message>
+    <message>
+        <source>黑色線框</source>
+        <translation>Malla de alambre negra</translation>
+    </message>
+    <message>
+        <source>3D 等值線</source>
+        <translation>Contornos 3D</translation>
+    </message>
+    <message>
+        <source>改變視角</source>
+        <translation>Cambiar el ángulo de visión</translation>
+    </message>
+    <message>
+        <source>3D 螺旋線加散點</source>
+        <translation>Hélice 3D con puntos dispersos</translation>
+    </message>
+    <message>
         <source>圖例標題</source>
         <translation>Título de la leyenda</translation>
     </message>
@@ -5098,6 +5126,30 @@ Integral numérica (hasta |x| = 4) = %3</translation>
     <message>
         <source>按住左鍵拖曳旋轉</source>
         <translation>Arrastre con el botón izquierdo para rotar</translation>
+    </message>
+    <message>
+        <source>莫比烏斯帶</source>
+        <translation>Banda de Möbius</translation>
+    </message>
+    <message>
+        <source>隨機取樣的散點</source>
+        <translation>Puntos muestreados al azar</translation>
+    </message>
+    <message>
+        <source>散點三角剖分</source>
+        <translation>Puntos triangulados</translation>
+    </message>
+    <message>
+        <source>線框</source>
+        <translation>Malla de alambre</translation>
+    </message>
+    <message>
+        <source>仰角 60°、方位角 35°</source>
+        <translation>Elevación 60°, azimut 35°</translation>
+    </message>
+    <message>
+        <source>螺旋線與散點</source>
+        <translation>Hélice y puntos</translation>
     </message>
     <message>
         <source>A 區</source>

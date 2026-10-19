@@ -11,7 +11,7 @@ million-point `Signal` decimation, custom tick generators, multiple bound axes, 
 
 ## Gallery
 
-Every image below was drawn by `QtPlotDemo --export --lang en` — 12 of the 451 recipes:
+Every image below was drawn by `QtPlotDemo --export --lang en` — 12 of the 458 recipes:
 
 <table>
 <tr>
@@ -43,7 +43,7 @@ Every image below was drawn by `QtPlotDemo --export --lang en` — 12 of the 451
 | Core engine (coordinates, ticks, layout, legend, rendering) | Working |
 | Mouse interaction (pan / zoom / box zoom / auto scale) | Working |
 | Plot types | 84 (see table below) |
-| Cookbook | 451 recipes in 15 chapters (10 animated, 10 that need mouse interaction, 5 multi-plot layouts) |
+| Cookbook | 458 recipes in 15 chapters (10 animated, 10 that need mouse interaction, 5 multi-plot layouts) |
 | Self-checks | `qtplot_selftest` (numeric checks), `--soak` plot-switching test, widget / C API / C# tests, all run by `ctest` |
 | Interaction | Pan / zoom / box zoom, hit testing (2-D or X-only), hover tooltips, crosshair snapping to data, box-selecting points, dragging plottables, shared axes between plots, **click legend to toggle series**, **view undo / redo (Ctrl+Z / Ctrl+Y)**, **touch and touchpad gestures**, **animated view transitions** |
 | Output | PNG (any scale), SVG, **PDF**, clipboard, **printing with preview** |
@@ -59,7 +59,7 @@ Every image below was drawn by `QtPlotDemo --export --lang en` — 12 of the 451
 | Business charts | `Funnel` (funnel / pyramid, can be drawn as a cone infographic with notes), `Waterfall`, `Bullet`, `Gantt`, `Venn`, `Mosaic`, `Dumbbell`, `Fishbone` (Ishikawa), `Pareto`, `Waffle`, `Slope` (slope / rank change) |
 | Hierarchy and multivariate | `Treemap`, `ParallelCoordinates`, `Hexbin`, `Dumbbell` |
 | Flow and relations | `Sankey`, `Chord`, `NetworkGraph` (network / arc diagram), streamgraph (`addStream`), `Horizon` |
-| 3-D charts | `Chart3D` (freely rotatable box: `Scatter3D`, `Line3D`, `SurfaceSeries3D`, `Waterfall3D` (with thickness: 3-D ribbon and area charts), `Columns3D`; perspective projection; `enableMouseRotation()` rotates by dragging) |
+| 3-D charts | `Chart3D` (freely rotatable box: `Scatter3D`, `Line3D`, `SurfaceSeries3D`, `Waterfall3D` (with thickness: 3-D ribbon and area charts), `Columns3D`, `Contour3D` (3-D contour lines, each lifted to its own height), `TriSurface3D` (triangulated surfaces for parametric shapes such as a Möbius strip or torus, like Matplotlib's `plot_trisurf`); perspective projection; `enableMouseRotation()` rotates by dragging) |
 | Isometric (2.5-D) | `IsoBars`, `IsoStack` (pyramid / cylinder / cone), `Surface3D` (surface / wireframe / grid) — for presentation layouts, not precise reading |
 | Heatmaps | `Heatmap` (7 colormaps, transparent NaN, bilinear interpolation), `CalendarHeatmap` |
 | Reference lines and spans | `AxisLine` (can cover a segment only, label can sit on the axis), `AxisSpan` (edges draggable to resize), `Crosshair`, `TrendLine` (infinite line through two draggable points) |
@@ -132,14 +132,14 @@ so **no PATH changes are needed and the whole `build\bin\` folder can be copied 
 ```powershell
 QtPlotDemo                        # open the Cookbook browser
 QtPlotDemo --recipe "散點圖"       # open and jump to a recipe (original or translated name)
-QtPlotDemo --export out\          # no window: save all 451 recipes as PNG
+QtPlotDemo --export out\          # no window: save all 458 recipes as PNG
 QtPlotDemo --soak                 # no window: switch through every recipe the way the GUI does
 QtPlotDemo --lang en              # UI language (en zh_CN ja ko fr de it es zh_TW)
 ```
 
 `--export` is headless and can be used for visual regression testing: re-run it after changing the engine and compare the PNGs.
 
-`--soak` checks something else: **switching plots**. It uses a single `PlotWidget`, draws all 451 recipes one after another,
+`--soak` checks something else: **switching plots**. It uses a single `PlotWidget`, draws all 458 recipes one after another,
 and checks before each switch that nothing from the previous plot remains. Exit code 0 means clean.
 
 ### Mouse and keyboard

@@ -7,6 +7,7 @@
 // 用法: qtplot_selftest        全部通過回傳 0，否則回傳失敗數
 #include "qtplot/Annotations.h"
 #include "qtplot/Business.h"
+#include "qtplot/Chart3D.h"
 #include "qtplot/DataGen.h"
 #include "qtplot/Decimation.h"
 #include "qtplot/Field.h"
@@ -424,6 +425,115 @@ void testPerformancePaths() {
               QStringLiteral("%1 / %2 / %3").arg(s->totalAdded()).arg(lg->count()).arg(fed.load()));
         check(s->dataVersion() > v0, "dataVersion 有前進");
     }
+}
+
+void testContour3DAndDepthShade() {
+    out() << "3D 等值線與依深度調淡\n";
+    auto c = std::make_unique<Contour3D>();
+    c->xs = gen::linspace(-1, 1, 21);
+    c->ys = gen::linspace(-1, 1, 21);
+    for (double y : c->ys)
+        for (double x : c->xs) c->zs.append(x * x + y * y);  // 0..2 的碗
+    c->levelCount = 4;
+    const QVector<double> lv = c->effectiveLevels();
+    check(lv.size() == 4, "levelCount = 4 給四條");
+    checkClose(lv.first(), 0.4, 1e-9, "等值在 Z 範圍內等距、不含兩端（第一條 = 2/5）");
+    checkClose(lv.last(), 1.6, 1e-9, "最後一條 = 8/5");
+    c->levels = {0.5};
+    check(c->effectiveLevels() == QVector<double>{0.5}, "指定 levels 時用指定的");
+    CoordinateRange x, y, z;
+    c->limits(x, y, z);
+    checkClose(z.max, 2, 1e-9, "Z 範圍來自格點值");
+    c->colorByLevel = false;
+    check(!c->colorRange().isValid(), "不依高度上色時不參與色階");
+    c->colorByLevel = true;
+
+    {
+        Plot plot;
+        auto* chart = plot.addChart3D();
+        chart->showBox = false;  // 只看等值線本身
+        chart->add(std::move(c));
+        const QImage img = plot.renderToImage(400, 300);
+        int dark = 0;
+        for (int yy = 0; yy < img.height(); ++yy)
+            for (int xx = 0; xx < img.width(); ++xx)
+                if (qGray(img.pixel(xx, yy)) < 200) ++dark;
+        check(dark > 200, "等值線有畫出來", QString::number(dark));
+    }
+
+    // 依深度調淡：同一張圖畫兩次，開了之後整體要變淡（遠的點變透明）
+    auto inkOf = [](bool shade) {
+        Plot plot;
+        auto s = std::make_unique<Scatter3D>();
+        for (int i = 0; i < 40; ++i) s->points.append({std::cos(i * 0.3), std::sin(i * 0.3), i * 0.1});
+        s->color = QColor(0, 0, 0);
+        s->edgeWidth = 0;
+        s->depthShade = shade;
+        auto* chart = plot.addChart3D();
+        chart->showBox = false;
+        chart->add(std::move(s));
+        const QImage img = plot.renderToImage(400, 300);
+        long ink = 0;
+        for (int yy = 0; yy < img.height(); ++yy)
+            for (int xx = 0; xx < img.width(); ++xx) ink += 255 - qGray(img.pixel(xx, yy));
+        return ink;
+    };
+    const long plain = inkOf(false), shaded = inkOf(true);
+    check(shaded < plain * 0.9 && shaded > plain * 0.3, "depthShade 讓遠的點變淡（但不是全部消失）",
+          QStringLiteral("%1 → %2").arg(plain).arg(shaded));
+}
+
+void testTriSurface() {
+    out() << "三角網格曲面（TriSurface3D）\n";
+    // 莫比烏斯帶：8 × 30 的參數格網
+    const int nw = 8, nt = 30;
+    auto s = std::make_unique<TriSurface3D>();
+    QVector<Coordinates> uv;
+    for (int i = 0; i < nt; ++i) {
+        const double t = 2 * M_PI * i / (nt - 1);
+        for (int j = 0; j < nw; ++j) {
+            const double w = -0.25 + 0.5 * j / (nw - 1);
+            const double r = 1 + w * std::cos(t / 2);
+            s->vertices.append({r * std::cos(t), r * std::sin(t), w * std::sin(t / 2)});
+            uv.append({w, t});
+        }
+    }
+    s->triangulateParameters(uv);
+    // 矩形格網的 Delaunay 剛好把每一格切成兩個三角形
+    check(s->triangles.size() == 2 * (nw - 1) * (nt - 1), "參數格網三角剖分：每格兩個三角形",
+          QString::number(s->triangles.size()));
+    bool indicesOk = true;
+    for (const Triangle& t : s->triangles)
+        if (t.a < 0 || t.b < 0 || t.c < 0 || t.a >= s->vertices.size() || t.b >= s->vertices.size() ||
+            t.c >= s->vertices.size())
+            indicesOk = false;
+    check(indicesOk, "三角形的索引都落在頂點範圍內");
+
+    CoordinateRange x, y, z;
+    s->limits(x, y, z);
+    checkClose(z.max, 0.25, 1e-3, "Z 上界是帶寬的一半");
+    checkClose(z.min, -0.25, 1e-3, "Z 下界");
+    checkClose(x.max, 1.25, 1e-3, "X 上界 = 1 + 半寬");
+    const CoordinateRange c = s->colorRange();
+    check(c.isValid() && std::abs(c.max - z.max) < 1e-12, "依高度上色的色階範圍就是 Z 範圍");
+    s->fillColor = QColor(200, 0, 0);
+    check(!s->colorRange().isValid(), "指定單一顏色時不參與色階");
+    s->fillColor = QColor();
+
+    // 壞掉的索引要跳過，不能當掉
+    s->triangles.append({0, 1, 99999});
+    s->triangles.append({-1, 0, 1});
+    Plot plot;
+    auto* chart = plot.addChart3D();
+    chart->add(std::move(s));
+    const QImage img = plot.renderToImage(400, 300);
+    int colored = 0;
+    for (int yy = 0; yy < img.height(); yy += 4)
+        for (int xx = 0; xx < img.width(); xx += 4) {
+            const QColor px = img.pixelColor(xx, yy);
+            if (px.saturation() > 80) ++colored;  // viridis 的顏色飽和度高，背景與座標盒是灰的
+        }
+    check(colored > 100, "曲面有畫出來（壞索引被跳過）", QString::number(colored));
 }
 
 void testAxisBreaks() {
@@ -4514,6 +4624,8 @@ int main(int argc, char* argv[]) {
     testSunburstAndPie();
     testInvertedAxis();
     testAxisBreaks();
+    testTriSurface();
+    testContour3DAndDepthShade();
     testPerformancePaths();
     testBubbleGanttVenn();
     testFlowCharts();

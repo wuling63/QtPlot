@@ -8,6 +8,7 @@
 #pragma once
 
 #include "Plottable.h"
+#include "Specialty.h"  // Triangle、delaunay()
 
 #include <QObject>
 #include <functional>
@@ -49,6 +50,15 @@ public:
     bool colorByZ = false;
     bool dropLines = false;
     QColor dropLineColor{128, 128, 128, 110};
+    /// 標記的外框。寬度 <= 0 不畫。
+    QColor edgeColor{255, 255, 255, 180};
+    double edgeWidth = 0.6;
+    /// 依深度調淡：越遠的點越透明（Matplotlib 的 depthshade）。
+    ///
+    /// 靜態的圖裡分不出點的前後，調淡之後一眼就看得出哪些點在後面。
+    bool depthShade = false;
+    /// 最遠的點剩下多少不透明度（0–1）。
+    double depthShadeMinAlpha = 0.3;
 
     void limits(CoordinateRange& x, CoordinateRange& y, CoordinateRange& z) const override;
     CoordinateRange colorRange() const override;
@@ -84,6 +94,58 @@ public:
     double wireWidth = 0.5;
 
     double z(int row, int col) const;
+    void limits(CoordinateRange& x, CoordinateRange& y, CoordinateRange& z) const override;
+    CoordinateRange colorRange() const override;
+};
+
+/// 三角網格曲面：任意的頂點加三角形（Matplotlib 的 plot_trisurf）。
+///
+/// 參數曲面（莫比烏斯帶、環面、球面、管子）要用這個：它們不是 z = f(x, y)，
+/// 同一個 (x, y) 可能對到好幾個高度，SurfaceSeries3D 的規則格網畫不出來。
+/// 做法和 Matplotlib 一樣：先在參數空間 (u, v) 做三角剖分（triangulateParameters），
+/// 再把每個頂點算成 3D 座標放進 vertices。
+///
+/// 每個三角形依三個頂點的平均高度取色、依朝向打光。打光是雙面的 ——
+/// 莫比烏斯帶這種曲面沒有正反面之分，只照一面的話有一半會是黑的。
+class TriSurface3D : public Series3D {
+public:
+    QVector<Point3D> vertices;
+    QVector<Triangle> triangles;  ///< 頂點索引
+    bool fill = true;
+    /// 單一填色（不用色階）。無效時用色階。
+    QColor fillColor;
+    bool lighting = true;
+    /// 三角形的邊。寬度 <= 0 時不畫邊。
+    QColor edgeColor{0, 0, 0, 110};
+    double edgeWidth = 0.4;
+
+    /// 在參數座標上做 Delaunay 三角剖分，結果放進 triangles。
+    /// uv 的第 i 點對應 vertices 的第 i 點（和 Matplotlib 的 Triangulation(u, v) 相同）。
+    void triangulateParameters(const QVector<Coordinates>& uv);
+
+    void limits(CoordinateRange& x, CoordinateRange& y, CoordinateRange& z) const override;
+    CoordinateRange colorRange() const override;
+};
+
+/// 3D 等值線：每一條等值線抬到它自己的高度（Matplotlib 的 contour3D）。
+///
+/// 格網和 SurfaceSeries3D 一樣：zs 是 row-major，大小 ys.size() × xs.size()，xs、ys 要等間距。
+/// 等值線多畫幾條（30–50 條）就看得出曲面的形狀，又不會像填色曲面那樣擋住後面。
+class Contour3D : public Series3D {
+public:
+    QVector<double> xs;
+    QVector<double> ys;
+    QVector<double> zs;
+    /// 等值線的條數（在 Z 的範圍內等距取）。levels 不是空的時候用 levels。
+    int levelCount = 10;
+    QVector<double> levels;
+    /// 依高度用色階上色；false 時一律用 color。
+    bool colorByLevel = true;
+    QColor color{31, 119, 180};
+    double width = 1;
+
+    /// 實際用的等值。
+    QVector<double> effectiveLevels() const;
     void limits(CoordinateRange& x, CoordinateRange& y, CoordinateRange& z) const override;
     CoordinateRange colorRange() const override;
 };

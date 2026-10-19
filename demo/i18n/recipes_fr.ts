@@ -1492,6 +1492,34 @@
         <translation>Faire pivoter la 3D à la souris</translation>
     </message>
     <message>
+        <source>莫比烏斯帶（三角網格曲面）</source>
+        <translation>Ruban de Möbius (surface triangulée)</translation>
+    </message>
+    <message>
+        <source>隨機取樣的 3D 散點</source>
+        <translation>Nuage 3D d'échantillons aléatoires</translation>
+    </message>
+    <message>
+        <source>散點直接三角剖分成曲面</source>
+        <translation>Trianguler un nuage de points en surface</translation>
+    </message>
+    <message>
+        <source>黑色線框</source>
+        <translation>Maillage filaire noir</translation>
+    </message>
+    <message>
+        <source>3D 等值線</source>
+        <translation>Contours 3D</translation>
+    </message>
+    <message>
+        <source>改變視角</source>
+        <translation>Changer l'angle de vue</translation>
+    </message>
+    <message>
+        <source>3D 螺旋線加散點</source>
+        <translation>Hélice 3D et nuage de points</translation>
+    </message>
+    <message>
         <source>圖例標題</source>
         <translation>Titre de légende</translation>
     </message>
@@ -5098,6 +5126,30 @@ Intégration numérique (jusqu'à |x| = 4) = %3</translation>
     <message>
         <source>按住左鍵拖曳旋轉</source>
         <translation>Clic gauche et glisser pour pivoter</translation>
+    </message>
+    <message>
+        <source>莫比烏斯帶</source>
+        <translation>Ruban de Möbius</translation>
+    </message>
+    <message>
+        <source>隨機取樣的散點</source>
+        <translation>Points tirés au hasard</translation>
+    </message>
+    <message>
+        <source>散點三角剖分</source>
+        <translation>Nuage triangulé</translation>
+    </message>
+    <message>
+        <source>線框</source>
+        <translation>Filaire</translation>
+    </message>
+    <message>
+        <source>仰角 60°、方位角 35°</source>
+        <translation>Élévation 60°, azimut 35°</translation>
+    </message>
+    <message>
+        <source>螺旋線與散點</source>
+        <translation>Hélice et points</translation>
     </message>
     <message>
         <source>A 區</source>
