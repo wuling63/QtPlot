@@ -333,6 +333,10 @@ public:
     bool flipHorizontally = false;
     /// NaN 的像素畫成透明（false 則畫成色階最低色）。
     bool transparentNaN = true;
+    /// 低於這個值的格子畫成透明（NaN 代表不用）。
+    ///
+    /// 異常熱圖疊在原圖上時用：只露出超過門檻的地方，其他部分看得到底下的影像。
+    double hideBelow = std::numeric_limits<double>::quiet_NaN();
 
     /// 整張熱圖的不透明度（0–1）。疊在影像或另一張圖上時調低。
     double opacity = 1.0;

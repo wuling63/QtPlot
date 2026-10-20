@@ -8,6 +8,7 @@
 //
 // 開視窗時用上次在「語言」選單選的（沒選過就跟著系統）；開著之後也能從選單列或圖上的右鍵選單換。
 // --export／--soak 預設不翻譯，產出的圖才不會因機器而異。
+#include "InspectionWindow.h"
 #include "MainWindow.h"
 #include "Recipe.h"
 #include "qtplot/Translation.h"
@@ -217,6 +218,16 @@ int main(int argc, char* argv[]) {
         out << (back ? "  ok   " : "  FAIL ") << "切回繁體中文（選單、清單、圖都回到原文）\n";
         out.flush();
         return failures + (back ? 0 : 1);
+    }
+
+    // --grab-inspection 檔名：把瑕疵檢測門檻示範視窗存成 PNG（給 README 截圖與檢查版面用）
+    const int grabIdx = args.indexOf(QStringLiteral("--grab-inspection"));
+    if (grabIdx >= 0 && grabIdx + 1 < args.size()) {
+        demo::InspectionWindow w(false);
+        w.setAttribute(Qt::WA_DontShowOnScreen);
+        w.show();
+        QApplication::processEvents();
+        return w.grab().save(args.at(grabIdx + 1)) ? 0 : 1;
     }
 
     demo::MainWindow window;

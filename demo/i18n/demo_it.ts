@@ -73,6 +73,14 @@
         <translation>8 punti consecutivi oltre 1σ</translation>
     </message>
     <message>
+        <source>預測</source>
+        <translation>Predetto</translation>
+    </message>
+    <message>
+        <source>實際</source>
+        <translation>Reale</translation>
+    </message>
+    <message>
         <source>累積百分比</source>
         <translation>Percentuale cumulativa</translation>
     </message>
@@ -161,6 +169,69 @@
     </message>
 </context>
 <context>
+    <name>qtplot::demo::InspectionWindow</name>
+    <message>
+        <source>良品 A</source>
+        <translation>Buono A</translation>
+    </message>
+    <message>
+        <source>良品 B</source>
+        <translation>Buono B</translation>
+    </message>
+    <message>
+        <source>刮痕</source>
+        <translation>Graffio</translation>
+    </message>
+    <message>
+        <source>黑點</source>
+        <translation>Macchia scura</translation>
+    </message>
+    <message>
+        <source>凹坑</source>
+        <translation>Buca</translation>
+    </message>
+    <message>
+        <source>瑕疵檢測門檻示範</source>
+        <translation>Demo della soglia di ispezione</translation>
+    </message>
+    <message>
+        <source>影像：</source>
+        <translation>Immagine:</translation>
+    </message>
+    <message>
+        <source>門檻：</source>
+        <translation>Soglia:</translation>
+    </message>
+    <message>
+        <source>分數分布（拖動虛線改門檻）</source>
+        <translation>Distribuzioni dei punteggi (trascina la linea tratteggiata)</translation>
+    </message>
+    <message>
+        <source>誤判率（OK 被判 NG）</source>
+        <translation>Tasso di falsi allarmi (OK giudicato NG)</translation>
+    </message>
+    <message>
+        <source>檢出率（NG 被抓到）</source>
+        <translation>Tasso di rilevamento (NG rilevato)</translation>
+    </message>
+    <message>
+        <source>ROC（AUC = %1）</source>
+        <translation>ROC (AUC = %1)</translation>
+    </message>
+    <message>
+        <source>%1：最高異常分數 %2 → 判定 %3</source>
+        <translation>%1: punteggio di anomalia massimo %2 → giudicato %3</translation>
+    </message>
+    <message>
+        <source>混淆矩陣（%1 片 OK、%2 片 NG）</source>
+        <translation>Matrice di confusione (%1 OK, %2 NG)</translation>
+    </message>
+    <message>
+        <source>門檻 &lt;b&gt;%1&lt;/b&gt;&#x3000;&#x3000;漏檢率 &lt;b style=&apos;color:#d62728&apos;&gt;%2%&lt;/b&gt;（%3 片 NG 被放過）&#x3000;&#x3000;誤判率 &lt;b&gt;%4%&lt;/b&gt;（%5 片 OK 被打掉）&#x3000;&#x3000;精確率 %6%&#x3000;&#x3000;正確率 %7%</source>
+        <translation>Soglia &lt;b&gt;%1&lt;/b&gt;　　Mancati &lt;b style='color:#d62728'&gt;%2%&lt;/b&gt; (%3 NG accettati)　　Falsi allarmi &lt;b&gt;%4%&lt;/b&gt; (%5 OK scartati)　　Precisione %6%　　Accuratezza %7%</translation>
+    </message>
+</context>
+<context>
     <name>qtplot::demo::MainWindow</name>
     <message>
         <source>QtPlot Cookbook — Qt/QPainter 互動式繪圖</source>
@@ -176,7 +247,7 @@
     </message>
     <message>
         <source>共 %1 支範例。滑鼠：左鍵拖曳平移、右鍵拖曳縮放、中鍵框選、滾輪縮放、左鍵雙擊自動範圍。</source>
-        <translation>%1 esempi. Mouse: trascina col sinistro per spostare, col destro per lo zoom, col centrale per lo zoom su un'area, rotellina per lo zoom, doppio clic per la scala automatica.</translation>
+        <translation>%1 esempi. Mouse: trascina col sinistro per spostare, col destro per lo zoom, col centrale per lo zoom su un&apos;area, rotellina per lo zoom, doppio clic per la scala automatica.</translation>
     </message>
     <message>
         <source>跟隨系統</source>
@@ -231,6 +302,10 @@
         <translation>&amp;Aiuto</translation>
     </message>
     <message>
+        <source>瑕疵檢測門檻示範(&amp;I)…</source>
+        <translation>Demo soglia di &amp;ispezione…</translation>
+    </message>
+    <message>
         <source>關於(&amp;A)…</source>
         <translation>&amp;Informazioni…</translation>
     </message>
@@ -283,7 +358,7 @@ Il motore di disegno non dipende da Qt Charts: conversione delle coordinate, tac
     </message>
     <message>
         <source>在任一張圖上平移或縮放，另一張會同步。常見用途是上圖看價格、下圖看成交量，兩者的時間軸必須對齊。</source>
-        <translation>Sposta o ingrandisci un grafico e l'altro lo segue. Uso tipico: prezzo sopra e volume sotto, con gli assi temporali allineati.</translation>
+        <translation>Sposta o ingrandisci un grafico e l&apos;altro lo segue. Uso tipico: prezzo sopra e volume sotto, con gli assi temporali allineati.</translation>
     </message>
     <message>
         <source>上圖</source>

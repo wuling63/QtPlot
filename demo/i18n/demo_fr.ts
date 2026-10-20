@@ -13,7 +13,7 @@
     <message>
         <source>人</source>
         <comment>fishbone 6M: Man</comment>
-        <translation>Main-d'œuvre</translation>
+        <translation>Main-d&apos;œuvre</translation>
     </message>
     <message>
         <source>機</source>
@@ -73,6 +73,14 @@
         <translation>8 points consécutifs au-delà de 1σ</translation>
     </message>
     <message>
+        <source>預測</source>
+        <translation>Prédit</translation>
+    </message>
+    <message>
+        <source>實際</source>
+        <translation>Réel</translation>
+    </message>
+    <message>
         <source>累積百分比</source>
         <translation>Pourcentage cumulé</translation>
     </message>
@@ -82,7 +90,7 @@
     </message>
     <message>
         <source>樣本分位數</source>
-        <translation>Quantiles de l'échantillon</translation>
+        <translation>Quantiles de l&apos;échantillon</translation>
     </message>
     <message>
         <source>存活機率</source>
@@ -109,11 +117,11 @@
     </message>
     <message>
         <source>複製圖片(&amp;C)</source>
-        <translation>&amp;Copier l'image</translation>
+        <translation>&amp;Copier l&apos;image</translation>
     </message>
     <message>
         <source>另存圖片(&amp;S)…</source>
-        <translation>&amp;Enregistrer l'image…</translation>
+        <translation>&amp;Enregistrer l&apos;image…</translation>
     </message>
     <message>
         <source>列印(&amp;P)…</source>
@@ -141,7 +149,7 @@
     </message>
     <message>
         <source>另存圖片</source>
-        <translation>Enregistrer l'image</translation>
+        <translation>Enregistrer l&apos;image</translation>
     </message>
     <message>
         <source>PNG 圖片 (*.png);;SVG 向量圖 (*.svg);;PDF 文件 (*.pdf);;JPEG 圖片 (*.jpg)</source>
@@ -149,7 +157,7 @@
     </message>
     <message>
         <source>寫入失敗：%1</source>
-        <translation>Échec de l'écriture : %1</translation>
+        <translation>Échec de l&apos;écriture : %1</translation>
     </message>
     <message>
         <source>預覽列印</source>
@@ -158,6 +166,69 @@
     <message>
         <source>列印</source>
         <translation>Imprimer</translation>
+    </message>
+</context>
+<context>
+    <name>qtplot::demo::InspectionWindow</name>
+    <message>
+        <source>良品 A</source>
+        <translation>Bon A</translation>
+    </message>
+    <message>
+        <source>良品 B</source>
+        <translation>Bon B</translation>
+    </message>
+    <message>
+        <source>刮痕</source>
+        <translation>Rayure</translation>
+    </message>
+    <message>
+        <source>黑點</source>
+        <translation>Tache sombre</translation>
+    </message>
+    <message>
+        <source>凹坑</source>
+        <translation>Piqûre</translation>
+    </message>
+    <message>
+        <source>瑕疵檢測門檻示範</source>
+        <translation>Démo du seuil d'inspection</translation>
+    </message>
+    <message>
+        <source>影像：</source>
+        <translation>Image :</translation>
+    </message>
+    <message>
+        <source>門檻：</source>
+        <translation>Seuil :</translation>
+    </message>
+    <message>
+        <source>分數分布（拖動虛線改門檻）</source>
+        <translation>Distributions des scores (faites glisser la ligne pointillée)</translation>
+    </message>
+    <message>
+        <source>誤判率（OK 被判 NG）</source>
+        <translation>Taux de fausses alarmes (OK jugé NG)</translation>
+    </message>
+    <message>
+        <source>檢出率（NG 被抓到）</source>
+        <translation>Taux de détection (NG détecté)</translation>
+    </message>
+    <message>
+        <source>ROC（AUC = %1）</source>
+        <translation>ROC (AUC = %1)</translation>
+    </message>
+    <message>
+        <source>%1：最高異常分數 %2 → 判定 %3</source>
+        <translation>%1 : score d'anomalie max. %2 → jugé %3</translation>
+    </message>
+    <message>
+        <source>混淆矩陣（%1 片 OK、%2 片 NG）</source>
+        <translation>Matrice de confusion (%1 OK, %2 NG)</translation>
+    </message>
+    <message>
+        <source>門檻 &lt;b&gt;%1&lt;/b&gt;&#x3000;&#x3000;漏檢率 &lt;b style=&apos;color:#d62728&apos;&gt;%2%&lt;/b&gt;（%3 片 NG 被放過）&#x3000;&#x3000;誤判率 &lt;b&gt;%4%&lt;/b&gt;（%5 片 OK 被打掉）&#x3000;&#x3000;精確率 %6%&#x3000;&#x3000;正確率 %7%</source>
+        <translation>Seuil &lt;b&gt;%1&lt;/b&gt;　　Non-détection &lt;b style='color:#d62728'&gt;%2 %&lt;/b&gt; (%3 NG acceptées)　　Fausses alarmes &lt;b&gt;%4 %&lt;/b&gt; (%5 OK rejetées)　　Précision %6 %　　Exactitude %7 %</translation>
     </message>
 </context>
 <context>
@@ -176,7 +247,7 @@
     </message>
     <message>
         <source>共 %1 支範例。滑鼠：左鍵拖曳平移、右鍵拖曳縮放、中鍵框選、滾輪縮放、左鍵雙擊自動範圍。</source>
-        <translation>%1 exemples. Souris : glisser-gauche pour déplacer, glisser-droit pour zoomer, bouton du milieu pour zoomer sur une zone, molette pour zoomer, double-clic pour l'échelle automatique.</translation>
+        <translation>%1 exemples. Souris : glisser-gauche pour déplacer, glisser-droit pour zoomer, bouton du milieu pour zoomer sur une zone, molette pour zoomer, double-clic pour l&apos;échelle automatique.</translation>
     </message>
     <message>
         <source>跟隨系統</source>
@@ -188,11 +259,11 @@
     </message>
     <message>
         <source>複製圖片(&amp;C)</source>
-        <translation>&amp;Copier l'image</translation>
+        <translation>&amp;Copier l&apos;image</translation>
     </message>
     <message>
         <source>另存圖片(&amp;S)…</source>
-        <translation>&amp;Enregistrer l'image…</translation>
+        <translation>&amp;Enregistrer l&apos;image…</translation>
     </message>
     <message>
         <source>匯出全部範例為 PNG(&amp;E)…</source>
@@ -229,6 +300,10 @@
     <message>
         <source>說明(&amp;H)</source>
         <translation>Aid&amp;e</translation>
+    </message>
+    <message>
+        <source>瑕疵檢測門檻示範(&amp;I)…</source>
+        <translation>Démo du seuil d'&amp;inspection…</translation>
     </message>
     <message>
         <source>關於(&amp;A)…</source>
@@ -275,15 +350,15 @@ Le moteur de rendu ne dépend pas de Qt Charts : conversion des coordonnées, gr
     </message>
     <message>
         <source>共用 X 軸</source>
-        <translation>Partager l'axe X</translation>
+        <translation>Partager l&apos;axe X</translation>
     </message>
     <message>
         <source>共用 Y 軸</source>
-        <translation>Partager l'axe Y</translation>
+        <translation>Partager l&apos;axe Y</translation>
     </message>
     <message>
         <source>在任一張圖上平移或縮放，另一張會同步。常見用途是上圖看價格、下圖看成交量，兩者的時間軸必須對齊。</source>
-        <translation>Déplacez ou zoomez sur un graphique et l'autre suit. Usage typique : le prix en haut et le volume en bas, dont les axes temporels doivent rester alignés.</translation>
+        <translation>Déplacez ou zoomez sur un graphique et l&apos;autre suit. Usage typique : le prix en haut et le volume en bas, dont les axes temporels doivent rester alignés.</translation>
     </message>
     <message>
         <source>上圖</source>

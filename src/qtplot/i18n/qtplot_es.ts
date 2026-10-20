@@ -66,6 +66,14 @@
         <translation>8 puntos seguidos fuera de 1σ</translation>
     </message>
     <message>
+        <source>預測</source>
+        <translation>Predicho</translation>
+    </message>
+    <message>
+        <source>實際</source>
+        <translation>Real</translation>
+    </message>
+    <message>
         <source>累積百分比</source>
         <translation>Porcentaje acumulado</translation>
     </message>

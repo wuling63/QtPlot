@@ -516,6 +516,34 @@
         <translation>Segnare acquisti e vendite</translation>
     </message>
     <message>
+        <source>視覺檢測</source>
+        <translation>Ispezione visiva</translation>
+    </message>
+    <message>
+        <source>混淆矩陣</source>
+        <translation>Matrice di confusione</translation>
+    </message>
+    <message>
+        <source>依列正規化（看召回率）</source>
+        <translation>Normalizzata per riga (richiamo)</translation>
+    </message>
+    <message>
+        <source>OK／NG 的混淆矩陣</source>
+        <translation>Matrice di confusione OK / NG</translation>
+    </message>
+    <message>
+        <source>異常熱圖</source>
+        <translation>Mappa delle anomalie</translation>
+    </message>
+    <message>
+        <source>異常熱圖疊在影像上</source>
+        <translation>Mappa delle anomalie sull'immagine</translation>
+    </message>
+    <message>
+        <source>OK／NG 分數分布與門檻</source>
+        <translation>Distribuzioni dei punteggi OK / NG e soglia</translation>
+    </message>
+    <message>
         <source>命中與提示</source>
         <translation>Hit test e tooltip</translation>
     </message>
@@ -2916,6 +2944,74 @@ Intercetta di Egger %2 (più lontana da 0, più asimmetria)</translation>
         <translation>Rendimento %1%</translation>
     </message>
     <message>
+        <source>良品</source>
+        <translation>Buono</translation>
+    </message>
+    <message>
+        <source>刮痕</source>
+        <translation>Graffio</translation>
+    </message>
+    <message>
+        <source>黑點</source>
+        <translation>Macchia scura</translation>
+    </message>
+    <message>
+        <source>凹坑</source>
+        <translation>Buca</translation>
+    </message>
+    <message>
+        <source>污漬</source>
+        <translation>Macchie</translation>
+    </message>
+    <message>
+        <source>門檻 %1
+漏檢率 %2%（%3／%4 片 NG 被放過）
+誤判率 %5%（%6／%7 片 OK 被打掉）</source>
+        <translation>Soglia %1
+Mancati %2% (%3 / %4 pezzi NG accettati)
+Falsi allarmi %5% (%6 / %7 pezzi OK scartati)</translation>
+    </message>
+    <message>
+        <source>瑕疵分類的混淆矩陣（筆數）</source>
+        <translation>Matrice di confusione dei difetti (conteggi)</translation>
+    </message>
+    <message>
+        <source>%1：召回率 %2%、精確率 %3%、F1 %4</source>
+        <translation>%1: richiamo %2%, precisione %3%, F1 %4</translation>
+    </message>
+    <message>
+        <source>依列正規化：對角線是召回率（正確率 %1%）</source>
+        <translation>Normalizzata per riga: la diagonale è il richiamo (accuratezza %1%)</translation>
+    </message>
+    <message>
+        <source>門檻 0.48：漏檢 %1 片、過殺 %2 片</source>
+        <translation>Soglia 0,48: %1 mancati, %2 scarti errati</translation>
+    </message>
+    <message>
+        <source>刮痕：異常分數 ≥ %1 的區域</source>
+        <translation>Graffio: aree con punteggio di anomalia ≥ %1</translation>
+    </message>
+    <message>
+        <source>良品（OK）</source>
+        <translation>Buono (OK)</translation>
+    </message>
+    <message>
+        <source>不良品（NG）</source>
+        <translation>Difettoso (NG)</translation>
+    </message>
+    <message>
+        <source>異常分數</source>
+        <translation>Punteggio di anomalia</translation>
+    </message>
+    <message>
+        <source>片數</source>
+        <translation>Pezzi</translation>
+    </message>
+    <message>
+        <source>拖動門檻線：漏檢與過殺的取捨</source>
+        <translation>Trascina la soglia: mancati o scarti errati</translation>
+    </message>
+    <message>
         <source>量測點</source>
         <translation>Punti misurati</translation>
     </message>
@@ -3106,10 +3202,6 @@ Intercetta di Egger %2 (più lontana da 0, più asimmetria)</translation>
     <message>
         <source>變形</source>
         <translation>Deformazione</translation>
-    </message>
-    <message>
-        <source>污漬</source>
-        <translation>Macchie</translation>
     </message>
     <message>
         <source>缺料</source>

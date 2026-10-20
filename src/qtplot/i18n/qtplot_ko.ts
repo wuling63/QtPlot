@@ -66,6 +66,14 @@
         <translation>8개 점 연속 1σ 밖</translation>
     </message>
     <message>
+        <source>預測</source>
+        <translation>예측</translation>
+    </message>
+    <message>
+        <source>實際</source>
+        <translation>실제</translation>
+    </message>
+    <message>
         <source>累積百分比</source>
         <translation>누적 백분율</translation>
     </message>

@@ -73,6 +73,14 @@
         <translation>8 points in a row outside 1σ</translation>
     </message>
     <message>
+        <source>預測</source>
+        <translation>Predicted</translation>
+    </message>
+    <message>
+        <source>實際</source>
+        <translation>Actual</translation>
+    </message>
+    <message>
         <source>累積百分比</source>
         <translation>Cumulative %</translation>
     </message>
@@ -161,6 +169,69 @@
     </message>
 </context>
 <context>
+    <name>qtplot::demo::InspectionWindow</name>
+    <message>
+        <source>良品 A</source>
+        <translation>Good A</translation>
+    </message>
+    <message>
+        <source>良品 B</source>
+        <translation>Good B</translation>
+    </message>
+    <message>
+        <source>刮痕</source>
+        <translation>Scratch</translation>
+    </message>
+    <message>
+        <source>黑點</source>
+        <translation>Dark spot</translation>
+    </message>
+    <message>
+        <source>凹坑</source>
+        <translation>Pit</translation>
+    </message>
+    <message>
+        <source>瑕疵檢測門檻示範</source>
+        <translation>Defect Inspection Threshold Demo</translation>
+    </message>
+    <message>
+        <source>影像：</source>
+        <translation>Image:</translation>
+    </message>
+    <message>
+        <source>門檻：</source>
+        <translation>Threshold:</translation>
+    </message>
+    <message>
+        <source>分數分布（拖動虛線改門檻）</source>
+        <translation>Score distributions (drag the dashed line)</translation>
+    </message>
+    <message>
+        <source>誤判率（OK 被判 NG）</source>
+        <translation>False alarm rate (OK judged NG)</translation>
+    </message>
+    <message>
+        <source>檢出率（NG 被抓到）</source>
+        <translation>Detection rate (NG caught)</translation>
+    </message>
+    <message>
+        <source>ROC（AUC = %1）</source>
+        <translation>ROC (AUC = %1)</translation>
+    </message>
+    <message>
+        <source>%1：最高異常分數 %2 → 判定 %3</source>
+        <translation>%1: highest anomaly score %2 → judged %3</translation>
+    </message>
+    <message>
+        <source>混淆矩陣（%1 片 OK、%2 片 NG）</source>
+        <translation>Confusion matrix (%1 OK, %2 NG)</translation>
+    </message>
+    <message>
+        <source>門檻 &lt;b&gt;%1&lt;/b&gt;&#x3000;&#x3000;漏檢率 &lt;b style=&apos;color:#d62728&apos;&gt;%2%&lt;/b&gt;（%3 片 NG 被放過）&#x3000;&#x3000;誤判率 &lt;b&gt;%4%&lt;/b&gt;（%5 片 OK 被打掉）&#x3000;&#x3000;精確率 %6%&#x3000;&#x3000;正確率 %7%</source>
+        <translation>Threshold &lt;b&gt;%1&lt;/b&gt;　　Miss rate &lt;b style='color:#d62728'&gt;%2%&lt;/b&gt; (%3 NG passed)　　False alarms &lt;b&gt;%4%&lt;/b&gt; (%5 OK rejected)　　Precision %6%　　Accuracy %7%</translation>
+    </message>
+</context>
+<context>
     <name>qtplot::demo::MainWindow</name>
     <message>
         <source>QtPlot Cookbook — Qt/QPainter 互動式繪圖</source>
@@ -229,6 +300,10 @@
     <message>
         <source>說明(&amp;H)</source>
         <translation>&amp;Help</translation>
+    </message>
+    <message>
+        <source>瑕疵檢測門檻示範(&amp;I)…</source>
+        <translation>Defect &amp;Inspection Threshold Demo…</translation>
     </message>
     <message>
         <source>關於(&amp;A)…</source>

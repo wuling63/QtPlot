@@ -66,6 +66,14 @@
         <translation>8 punti consecutivi oltre 1σ</translation>
     </message>
     <message>
+        <source>預測</source>
+        <translation>Predetto</translation>
+    </message>
+    <message>
+        <source>實際</source>
+        <translation>Reale</translation>
+    </message>
+    <message>
         <source>累積百分比</source>
         <translation>Percentuale cumulativa</translation>
     </message>

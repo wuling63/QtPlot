@@ -23,6 +23,7 @@
 #include "Specialty.h"
 #include "Finance.h"
 #include "Statistics.h"
+#include "Inspection.h"
 #include "Analysis.h"
 #include "Spectral.h"
 
@@ -441,6 +442,9 @@ public:
     /// 管制圖（SPC）。rules 留空只跑規則 1（單點超出 3σ）。
     ControlChart* addControlChart(QVector<double> values,
                                   QVector<ControlRule> rules = {});
+    /// 混淆矩陣（counts[實際][預測]）。會把類別名放到兩軸的刻度上、軸名設成「預測」「實際」，
+    /// 關掉格線並設成等比例。
+    ConfusionMatrix* addConfusionMatrix(const QStringList& labels, QVector<QVector<double>> counts);
     /// 森林圖。順便把左軸的刻度換成每一列的名稱。
     ForestPlot* addForestPlot(QVector<ForestRow> rows);
     /// 常態 Q-Q 圖：樣本點加一條穿過四分位數的參考線。

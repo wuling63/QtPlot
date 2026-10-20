@@ -66,6 +66,14 @@
         <translation>8 points in a row outside 1σ</translation>
     </message>
     <message>
+        <source>預測</source>
+        <translation>Predicted</translation>
+    </message>
+    <message>
+        <source>實際</source>
+        <translation>Actual</translation>
+    </message>
+    <message>
         <source>累積百分比</source>
         <translation>Cumulative %</translation>
     </message>

@@ -859,7 +859,7 @@ void Heatmap::render(RenderPack& rp) {
         for (int c = 0; c < cols; ++c) {
             const int srcCol = flipHorizontally ? (cols - 1 - c) : c;
             const double v = values.at(static_cast<qsizetype>(srcRow) * cols + srcCol);
-            if (std::isnan(v) && transparentNaN) {
+            if ((std::isnan(v) && transparentNaN) || (std::isfinite(hideBelow) && v < hideBelow)) {
                 scan[c] = qRgba(0, 0, 0, 0);
             } else {
                 const QColor col = colormap.lookup(v, cr.min, cr.max);

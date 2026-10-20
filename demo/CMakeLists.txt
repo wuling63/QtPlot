@@ -3,6 +3,9 @@ add_executable(QtPlotDemo WIN32
     MainWindow.h   MainWindow.cpp
     Recipe.h       Recipe.cpp
     SharedAxesWindow.h  SharedAxesWindow.cpp
+    InspectionData.h    InspectionData.cpp
+    InspectionWindow.h  InspectionWindow.cpp
+    recipes/Inspection.cpp
     recipes/Quickstart.cpp
     recipes/PlotTypes.cpp
     recipes/AxesLayout.cpp
@@ -43,7 +46,7 @@ qt_add_translations(QtPlotDemo
              "${CMAKE_CURRENT_SOURCE_DIR}/i18n/demo_de.ts"
              "${CMAKE_CURRENT_SOURCE_DIR}/i18n/demo_it.ts"
              "${CMAKE_CURRENT_SOURCE_DIR}/i18n/demo_es.ts"
-    SOURCES MainWindow.cpp SharedAxesWindow.cpp
+    SOURCES MainWindow.cpp SharedAxesWindow.cpp InspectionWindow.cpp
     LUPDATE_OPTIONS -no-obsolete -locations none
     QM_FILES_OUTPUT_VARIABLE demo_qm_files)
 # 範例內容（清單上的名稱、圖上的字）的翻譯。這幾個 .ts 不是 lupdate 產生的：

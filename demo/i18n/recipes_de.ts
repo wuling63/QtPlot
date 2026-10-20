@@ -516,6 +516,34 @@
         <translation>Kauf- und Verkaufssignale markieren</translation>
     </message>
     <message>
+        <source>視覺檢測</source>
+        <translation>Optische Prüfung</translation>
+    </message>
+    <message>
+        <source>混淆矩陣</source>
+        <translation>Konfusionsmatrix</translation>
+    </message>
+    <message>
+        <source>依列正規化（看召回率）</source>
+        <translation>Zeilennormiert (Recall)</translation>
+    </message>
+    <message>
+        <source>OK／NG 的混淆矩陣</source>
+        <translation>OK/NG-Konfusionsmatrix</translation>
+    </message>
+    <message>
+        <source>異常熱圖</source>
+        <translation>Anomalie-Heatmap</translation>
+    </message>
+    <message>
+        <source>異常熱圖疊在影像上</source>
+        <translation>Anomalie-Heatmap über dem Bild</translation>
+    </message>
+    <message>
+        <source>OK／NG 分數分布與門檻</source>
+        <translation>OK/NG-Scoreverteilung und Schwelle</translation>
+    </message>
+    <message>
         <source>命中與提示</source>
         <translation>Treffertest und Tooltip</translation>
     </message>
@@ -2916,6 +2944,74 @@ Geschätzt η = %3 (wahr %4)
         <translation>Rendite %1%</translation>
     </message>
     <message>
+        <source>良品</source>
+        <translation>Gut</translation>
+    </message>
+    <message>
+        <source>刮痕</source>
+        <translation>Kratzer</translation>
+    </message>
+    <message>
+        <source>黑點</source>
+        <translation>Dunkler Fleck</translation>
+    </message>
+    <message>
+        <source>凹坑</source>
+        <translation>Grübchen</translation>
+    </message>
+    <message>
+        <source>污漬</source>
+        <translation>Flecken</translation>
+    </message>
+    <message>
+        <source>門檻 %1
+漏檢率 %2%（%3／%4 片 NG 被放過）
+誤判率 %5%（%6／%7 片 OK 被打掉）</source>
+        <translation>Schwelle %1
+Schlupf %2% (%3 / %4 NG-Teile durchgelassen)
+Pseudoausschuss %5% (%6 / %7 OK-Teile verworfen)</translation>
+    </message>
+    <message>
+        <source>瑕疵分類的混淆矩陣（筆數）</source>
+        <translation>Konfusionsmatrix der Fehlerklassen (Anzahl)</translation>
+    </message>
+    <message>
+        <source>%1：召回率 %2%、精確率 %3%、F1 %4</source>
+        <translation>%1: Recall %2%, Präzision %3%, F1 %4</translation>
+    </message>
+    <message>
+        <source>依列正規化：對角線是召回率（正確率 %1%）</source>
+        <translation>Zeilennormiert: die Diagonale ist der Recall (Genauigkeit %1%)</translation>
+    </message>
+    <message>
+        <source>門檻 0.48：漏檢 %1 片、過殺 %2 片</source>
+        <translation>Schwelle 0,48: %1 Schlupf, %2 Pseudoausschuss</translation>
+    </message>
+    <message>
+        <source>刮痕：異常分數 ≥ %1 的區域</source>
+        <translation>Kratzer: Bereiche mit Anomaliescore ≥ %1</translation>
+    </message>
+    <message>
+        <source>良品（OK）</source>
+        <translation>Gut (OK)</translation>
+    </message>
+    <message>
+        <source>不良品（NG）</source>
+        <translation>Fehlerhaft (NG)</translation>
+    </message>
+    <message>
+        <source>異常分數</source>
+        <translation>Anomaliescore</translation>
+    </message>
+    <message>
+        <source>片數</source>
+        <translation>Teile</translation>
+    </message>
+    <message>
+        <source>拖動門檻線：漏檢與過殺的取捨</source>
+        <translation>Schwelle ziehen: Schlupf gegen Pseudoausschuss</translation>
+    </message>
+    <message>
         <source>量測點</source>
         <translation>Messpunkte</translation>
     </message>
@@ -3106,10 +3202,6 @@ Geschätzt η = %3 (wahr %4)
     <message>
         <source>變形</source>
         <translation>Verformung</translation>
-    </message>
-    <message>
-        <source>污漬</source>
-        <translation>Flecken</translation>
     </message>
     <message>
         <source>缺料</source>

@@ -11,7 +11,7 @@
 
 ## 範例圖
 
-以下都是 `QtPlotDemo --export` 直接畫出來的，458 支範例裡的 12 支：
+以下都是 `QtPlotDemo --export` 直接畫出來的，463 支範例裡的 12 支：
 
 <table>
 <tr>
@@ -43,7 +43,7 @@
 | 核心引擎（座標、刻度、版面、圖例、渲染） | 可用 |
 | 滑鼠互動（平移／縮放／框選／自動範圍） | 可用 |
 | 圖元種類 | 84 種（見下表） |
-| Cookbook 範例 | 458 支，15 個章節（10 支會動、10 支需要滑鼠互動、5 支是子圖） |
+| Cookbook 範例 | 463 支，15 個章節（10 支會動、10 支需要滑鼠互動、5 支是子圖） |
 | 數值自我檢查 | `qtplot_selftest`，851 項；另有 `--soak` 換圖測試與 `tools/check_fonts.py` |
 | 互動 | 平移／縮放／框選縮放、命中測試（二維／只比 X）、游標提示、吸附到資料點的十字線、框選資料點、拖曳圖元、兩張圖共用座標軸、**點圖例切換顯示**、**視野復原／重做（Ctrl+Z / Ctrl+Y）**、**觸控與觸控板手勢**、**視野切換動畫** |
 | 輸出 | PNG（可指定倍率）、SVG、**PDF**、剪貼簿、**列印（含預覽）** |
@@ -67,6 +67,7 @@
 | 極座標 | `PolarAxis`、`Pie`（甜甜圈／分離扇形／立體擠出／引線標籤）、`Sunburst`（旭日，標籤可切線／彎曲／徑向／水平）、`Coxcomb`（玫瑰／堆疊／甜甜圈，名稱可沿半徑排並貼著尖端）、`Radar`、`RadialGauge`、`RadialBarChart`（環狀長條，可選距離正確）、`CircularHeatmap`（環狀熱圖，可只畫半圈並在格子裡寫字） |
 | 統計 | `BoxPlot`、`Beeswarm`（蜂群）、`Dendrogram`（樹狀聚類）、`Lollipop`、`Population`（可組成小提琴圖）、`Ridgeline`（山脊／joyplot） |
 | 診斷與推論 | `ControlChart`（SPC，含 Nelson 八規則）、`ForestPlot`（後設分析）；另有 Q-Q、ROC/PR、Kaplan–Meier、FFT／頻譜圖、Bland–Altman、後設分析漏斗圖＋Egger、勞倫茲曲線／吉尼、常態與 Weibull 機率紙等計算函式 |
+| 視覺檢測 | `ConfusionMatrix`（混淆矩陣，可依列／欄／全體正規化，字色依底色自動切換）；`classMetrics()`（每類精確率／召回率／F1）、`thresholdStats()`（OK／NG 門檻的漏檢率與誤判率）；`Heatmap::hideBelow`（異常熱圖疊在影像上只露出超過門檻的區域）。範例程式的「檢視 ▸ 瑕疵檢測門檻示範」是影像疊圖、分數分布、混淆矩陣、ROC 四圖聯動的視窗 |
 | 財金 | `Candlestick`（蠟燭／OHLC 棒線）、`Volume` |
 | 場 | `ContourLines`（marching squares）、`VectorField` |
 | 版面 | `Multiplot`（m×n 子圖、跨格、權重、共用軸、繪圖區對齊）、`MultiplotWidget`、`InsetPlot`（嵌入小圖） |
@@ -125,14 +126,14 @@ Qt 的執行期檔案（DLL、平台外掛、影像格式、樣式）在建置�
 ```powershell
 QtPlotDemo                        # 開啟 Cookbook 瀏覽器
 QtPlotDemo --recipe "散點圖"       # 開啟並跳到指定範例
-QtPlotDemo --export out\          # 不開視窗，把 458 支範例全部存成 PNG
+QtPlotDemo --export out\          # 不開視窗，把 463 支範例全部存成 PNG
 QtPlotDemo --soak                 # 不開視窗，照 GUI 的方式連續換過每一支範例
 QtPlotDemo --lang en              # 指定介面語言（en zh_CN ja ko fr de it es zh_TW）
 ```
 
 `--export` 是無頭模式，可以拿來做視覺回歸：改完引擎重跑一次，比對前後的 PNG 就知道哪張圖變了。
 
-`--soak` 驗的是另一件事：**換圖**。它只開一個 `PlotWidget`，把 458 支範例一支接一支
+`--soak` 驗的是另一件事：**換圖**。它只開一個 `PlotWidget`，把 463 支範例一支接一支
 畫進去，每次換圖前檢查有沒有東西殘留。回傳 0 表示沒有。
 
 部署後的 `build\bin\` 約 36 MB、24 個檔案。windeployqt 還會帶上 Direct3D 的著色器編譯器
@@ -352,7 +353,7 @@ Cookbook 裡由 QTimer 真的跑起來，匯出 PNG 時則先跑 240 個 frame �
 |---|---|---|
 | Signal 1M／10M／50M 點，看全圖 | 54／78／114 ms | 11／17／10 ms |
 | SignalXY 10M 點 | 79 ms | 16 ms |
-| Scatter 1 萬／10 萬個實心圓標記 | 338／4583 ms | 8／35 ms |
+| Scatter 1 萬／10 萬個實心圓標記 | 338／4633 ms | 8／35 ms |
 | DataStreamer 10 萬點 | 864 ms | 12 ms |
 | 滑鼠移過去（只有提示框變） | 46 ms | 0.3 ms |
 

@@ -66,6 +66,14 @@
         <translation>连续 8 点在 1σ 之外</translation>
     </message>
     <message>
+        <source>預測</source>
+        <translation>预测</translation>
+    </message>
+    <message>
+        <source>實際</source>
+        <translation>实际</translation>
+    </message>
+    <message>
         <source>累積百分比</source>
         <translation>累积百分比</translation>
     </message>

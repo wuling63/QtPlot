@@ -516,6 +516,34 @@
         <translation>Mark buy and sell points</translation>
     </message>
     <message>
+        <source>視覺檢測</source>
+        <translation>Visual inspection</translation>
+    </message>
+    <message>
+        <source>混淆矩陣</source>
+        <translation>Confusion matrix</translation>
+    </message>
+    <message>
+        <source>依列正規化（看召回率）</source>
+        <translation>Row-normalized (recall)</translation>
+    </message>
+    <message>
+        <source>OK／NG 的混淆矩陣</source>
+        <translation>OK / NG confusion matrix</translation>
+    </message>
+    <message>
+        <source>異常熱圖</source>
+        <translation>Anomaly heatmap</translation>
+    </message>
+    <message>
+        <source>異常熱圖疊在影像上</source>
+        <translation>Anomaly heatmap over the image</translation>
+    </message>
+    <message>
+        <source>OK／NG 分數分布與門檻</source>
+        <translation>OK / NG score distributions and threshold</translation>
+    </message>
+    <message>
         <source>命中與提示</source>
         <translation>Hit Testing and Tooltips</translation>
     </message>
@@ -2916,6 +2944,74 @@ Estimated η = %3 (true %4)
         <translation>Return %1%</translation>
     </message>
     <message>
+        <source>良品</source>
+        <translation>Good</translation>
+    </message>
+    <message>
+        <source>刮痕</source>
+        <translation>Scratch</translation>
+    </message>
+    <message>
+        <source>黑點</source>
+        <translation>Dark spot</translation>
+    </message>
+    <message>
+        <source>凹坑</source>
+        <translation>Pit</translation>
+    </message>
+    <message>
+        <source>污漬</source>
+        <translation>Stains</translation>
+    </message>
+    <message>
+        <source>門檻 %1
+漏檢率 %2%（%3／%4 片 NG 被放過）
+誤判率 %5%（%6／%7 片 OK 被打掉）</source>
+        <translation>Threshold %1
+Miss rate %2% (%3 / %4 NG parts passed)
+False alarms %5% (%6 / %7 OK parts rejected)</translation>
+    </message>
+    <message>
+        <source>瑕疵分類的混淆矩陣（筆數）</source>
+        <translation>Defect classification confusion matrix (counts)</translation>
+    </message>
+    <message>
+        <source>%1：召回率 %2%、精確率 %3%、F1 %4</source>
+        <translation>%1: recall %2%, precision %3%, F1 %4</translation>
+    </message>
+    <message>
+        <source>依列正規化：對角線是召回率（正確率 %1%）</source>
+        <translation>Row-normalized: the diagonal is recall (accuracy %1%)</translation>
+    </message>
+    <message>
+        <source>門檻 0.48：漏檢 %1 片、過殺 %2 片</source>
+        <translation>Threshold 0.48: %1 missed, %2 false rejects</translation>
+    </message>
+    <message>
+        <source>刮痕：異常分數 ≥ %1 的區域</source>
+        <translation>Scratch: regions with anomaly score ≥ %1</translation>
+    </message>
+    <message>
+        <source>良品（OK）</source>
+        <translation>Good (OK)</translation>
+    </message>
+    <message>
+        <source>不良品（NG）</source>
+        <translation>Defective (NG)</translation>
+    </message>
+    <message>
+        <source>異常分數</source>
+        <translation>Anomaly score</translation>
+    </message>
+    <message>
+        <source>片數</source>
+        <translation>Parts</translation>
+    </message>
+    <message>
+        <source>拖動門檻線：漏檢與過殺的取捨</source>
+        <translation>Drag the threshold: misses vs. false rejects</translation>
+    </message>
+    <message>
         <source>量測點</source>
         <translation>Measured points</translation>
     </message>
@@ -3106,10 +3202,6 @@ Estimated η = %3 (true %4)
     <message>
         <source>變形</source>
         <translation>Deformation</translation>
-    </message>
-    <message>
-        <source>污漬</source>
-        <translation>Stains</translation>
     </message>
     <message>
         <source>缺料</source>

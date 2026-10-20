@@ -3,6 +3,7 @@
 <RCC version="1.0">
   <qresource prefix="/recipes">
     <file alias="Quickstart.cpp">recipes/Quickstart.cpp</file>
+    <file alias="Inspection.cpp">recipes/Inspection.cpp</file>
     <file alias="PlotTypes.cpp">recipes/PlotTypes.cpp</file>
     <file alias="AxesLayout.cpp">recipes/AxesLayout.cpp</file>
     <file alias="Styling.cpp">recipes/Styling.cpp</file>

@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 
+#include "InspectionWindow.h"
 #include "SharedAxesWindow.h"
 #include "qtplot/Translation.h"
 
@@ -277,6 +278,12 @@ void MainWindow::buildMenus() {
     buildLanguageMenu(menuBar()->addMenu(tr("語言(&L)")));
 
     QMenu* helpMenu = menuBar()->addMenu(tr("說明(&H)"));
+    viewMenu->addAction(tr("瑕疵檢測門檻示範(&I)…"), this, [this] {
+        // 四張圖跟著同一個門檻聯動，一支範例只有一個 PlotWidget 做不到，所以是獨立視窗
+        auto* w = new InspectionWindow(m_darkTheme);
+        w->setAttribute(Qt::WA_DeleteOnClose);
+        w->show();
+    });
     helpMenu->addAction(tr("關於(&A)…"), this, [this] {
         QMessageBox::information(
             this, tr("關於 QtPlot"),

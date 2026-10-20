@@ -14,6 +14,7 @@ add_library(qtplot STATIC
     Overlays.h        Overlays.cpp
     RadialCharts.h    RadialCharts.cpp
     Statistics.h      Statistics.cpp
+    Inspection.h      Inspection.cpp
     Analysis.h        Analysis.cpp
     Spectral.h        Spectral.cpp
     Finance.h         Finance.cpp

@@ -11,7 +11,7 @@ million-point `Signal` decimation, custom tick generators, multiple bound axes, 
 
 ## Gallery
 
-Every image below was drawn by `QtPlotDemo --export --lang en` — 12 of the 458 recipes:
+Every image below was drawn by `QtPlotDemo --export --lang en` — 12 of the 463 recipes:
 
 <table>
 <tr>
@@ -43,7 +43,7 @@ Every image below was drawn by `QtPlotDemo --export --lang en` — 12 of the 458
 | Core engine (coordinates, ticks, layout, legend, rendering) | Working |
 | Mouse interaction (pan / zoom / box zoom / auto scale) | Working |
 | Plot types | 84 (see table below) |
-| Cookbook | 458 recipes in 15 chapters (10 animated, 10 that need mouse interaction, 5 multi-plot layouts) |
+| Cookbook | 463 recipes in 15 chapters (10 animated, 10 that need mouse interaction, 5 multi-plot layouts) |
 | Self-checks | `qtplot_selftest` (numeric checks), `--soak` plot-switching test, widget / C API / C# tests, all run by `ctest` |
 | Interaction | Pan / zoom / box zoom, hit testing (2-D or X-only), hover tooltips, crosshair snapping to data, box-selecting points, dragging plottables, shared axes between plots, **click legend to toggle series**, **view undo / redo (Ctrl+Z / Ctrl+Y)**, **touch and touchpad gestures**, **animated view transitions** |
 | Output | PNG (any scale), SVG, **PDF**, clipboard, **printing with preview** |
@@ -67,6 +67,7 @@ Every image below was drawn by `QtPlotDemo --export --lang en` — 12 of the 458
 | Polar | `PolarAxis`, `Pie` (donut / exploded slices / extruded 3-D / leader-line labels), `Sunburst` (tangential / curved / radial / horizontal labels), `Coxcomb` (rose / stacked / donut, labels can run along the radius), `Radar`, `RadialGauge`, `RadialBarChart` (optionally distance-correct), `CircularHeatmap` (can be a half circle with text in cells) |
 | Statistics | `BoxPlot`, `Beeswarm`, `Dendrogram`, `Lollipop`, `Population` (can form violin plots), `Ridgeline` (joyplot) |
 | Diagnostics and inference | `ControlChart` (SPC with all eight Nelson rules), `ForestPlot` (meta-analysis); plus functions for Q-Q, ROC/PR, Kaplan–Meier, FFT / spectrogram, Bland–Altman, meta-analysis funnel plot with Egger's test, Lorenz curve / Gini, normal and Weibull probability paper |
+| Visual inspection | `ConfusionMatrix` (row / column / overall normalization, ink colour follows the cell); `classMetrics()` (per-class precision / recall / F1), `thresholdStats()` (miss and false-alarm rates for an OK / NG threshold); `Heatmap::hideBelow` (overlay an anomaly map on the image showing only regions above the threshold). The demo's "View ▸ Defect Inspection Threshold Demo" links an image overlay, score distributions, a confusion matrix and a ROC curve to one threshold |
 | Finance | `Candlestick` (candles / OHLC bars), `Volume` |
 | Fields | `ContourLines` (marching squares), `VectorField` |
 | Layout | `Multiplot` (m×n subplots, spanning, weights, shared axes, aligned data areas), `MultiplotWidget`, `InsetPlot` |
@@ -132,14 +133,14 @@ so **no PATH changes are needed and the whole `build\bin\` folder can be copied 
 ```powershell
 QtPlotDemo                        # open the Cookbook browser
 QtPlotDemo --recipe "散點圖"       # open and jump to a recipe (original or translated name)
-QtPlotDemo --export out\          # no window: save all 458 recipes as PNG
+QtPlotDemo --export out\          # no window: save all 463 recipes as PNG
 QtPlotDemo --soak                 # no window: switch through every recipe the way the GUI does
 QtPlotDemo --lang en              # UI language (en zh_CN ja ko fr de it es zh_TW)
 ```
 
 `--export` is headless and can be used for visual regression testing: re-run it after changing the engine and compare the PNGs.
 
-`--soak` checks something else: **switching plots**. It uses a single `PlotWidget`, draws all 458 recipes one after another,
+`--soak` checks something else: **switching plots**. It uses a single `PlotWidget`, draws all 463 recipes one after another,
 and checks before each switch that nothing from the previous plot remains. Exit code 0 means clean.
 
 ### Mouse and keyboard
@@ -359,7 +360,7 @@ so **the code on screen is the code that actually runs**. When adding a new `.cp
 |---|---|---|
 | Signal 1M / 10M / 50M points, full view | 54 / 78 / 114 ms | 11 / 17 / 10 ms |
 | SignalXY 10M points | 79 ms | 16 ms |
-| Scatter with 10k / 100k filled circle markers | 338 / 4583 ms | 8 / 35 ms |
+| Scatter with 10k / 100k filled circle markers | 338 / 4633 ms | 8 / 35 ms |
 | DataStreamer 100k points | 864 ms | 12 ms |
 | Mouse hover (only the tooltip changes) | 46 ms | 0.3 ms |
 

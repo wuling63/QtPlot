@@ -516,6 +516,34 @@
         <translation>매수·매도 지점 표시</translation>
     </message>
     <message>
+        <source>視覺檢測</source>
+        <translation>비전 검사</translation>
+    </message>
+    <message>
+        <source>混淆矩陣</source>
+        <translation>혼동 행렬</translation>
+    </message>
+    <message>
+        <source>依列正規化（看召回率）</source>
+        <translation>행 정규화 (재현율)</translation>
+    </message>
+    <message>
+        <source>OK／NG 的混淆矩陣</source>
+        <translation>OK/NG 혼동 행렬</translation>
+    </message>
+    <message>
+        <source>異常熱圖</source>
+        <translation>이상 히트맵</translation>
+    </message>
+    <message>
+        <source>異常熱圖疊在影像上</source>
+        <translation>이미지 위의 이상 히트맵</translation>
+    </message>
+    <message>
+        <source>OK／NG 分數分布與門檻</source>
+        <translation>OK/NG 점수 분포와 임계값</translation>
+    </message>
+    <message>
         <source>命中與提示</source>
         <translation>히트 테스트와 툴팁</translation>
     </message>
@@ -2916,6 +2944,74 @@ Egger 절편 %2(0에서 멀수록 비대칭)</translation>
         <translation>수익률 %1%</translation>
     </message>
     <message>
+        <source>良品</source>
+        <translation>양품</translation>
+    </message>
+    <message>
+        <source>刮痕</source>
+        <translation>스크래치</translation>
+    </message>
+    <message>
+        <source>黑點</source>
+        <translation>흑점</translation>
+    </message>
+    <message>
+        <source>凹坑</source>
+        <translation>함몰</translation>
+    </message>
+    <message>
+        <source>污漬</source>
+        <translation>얼룩</translation>
+    </message>
+    <message>
+        <source>門檻 %1
+漏檢率 %2%（%3／%4 片 NG 被放過）
+誤判率 %5%（%6／%7 片 OK 被打掉）</source>
+        <translation>임계값 %1
+미검출률 %2% (NG %3 / %4개 통과)
+오검출률 %5% (OK %6 / %7개 불량 처리)</translation>
+    </message>
+    <message>
+        <source>瑕疵分類的混淆矩陣（筆數）</source>
+        <translation>결함 분류 혼동 행렬 (개수)</translation>
+    </message>
+    <message>
+        <source>%1：召回率 %2%、精確率 %3%、F1 %4</source>
+        <translation>%1: 재현율 %2%, 정밀도 %3%, F1 %4</translation>
+    </message>
+    <message>
+        <source>依列正規化：對角線是召回率（正確率 %1%）</source>
+        <translation>행 정규화: 대각선이 재현율 (정확도 %1%)</translation>
+    </message>
+    <message>
+        <source>門檻 0.48：漏檢 %1 片、過殺 %2 片</source>
+        <translation>임계값 0.48: 미검출 %1개, 과검출 %2개</translation>
+    </message>
+    <message>
+        <source>刮痕：異常分數 ≥ %1 的區域</source>
+        <translation>스크래치: 이상 점수 ≥ %1 영역</translation>
+    </message>
+    <message>
+        <source>良品（OK）</source>
+        <translation>양품 (OK)</translation>
+    </message>
+    <message>
+        <source>不良品（NG）</source>
+        <translation>불량품 (NG)</translation>
+    </message>
+    <message>
+        <source>異常分數</source>
+        <translation>이상 점수</translation>
+    </message>
+    <message>
+        <source>片數</source>
+        <translation>개수</translation>
+    </message>
+    <message>
+        <source>拖動門檻線：漏檢與過殺的取捨</source>
+        <translation>임계값 선을 드래그: 미검출과 과검출의 균형</translation>
+    </message>
+    <message>
         <source>量測點</source>
         <translation>측정점</translation>
     </message>
@@ -3106,10 +3202,6 @@ Egger 절편 %2(0에서 멀수록 비대칭)</translation>
     <message>
         <source>變形</source>
         <translation>변형</translation>
-    </message>
-    <message>
-        <source>污漬</source>
-        <translation>얼룩</translation>
     </message>
     <message>
         <source>缺料</source>

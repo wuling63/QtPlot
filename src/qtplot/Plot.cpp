@@ -745,6 +745,32 @@ Fishbone* Plot::addFishbone(const QString& effect, QVector<FishboneCategory> cat
     return f;
 }
 
+ConfusionMatrix* Plot::addConfusionMatrix(const QStringList& labels, QVector<QVector<double>> counts) {
+    auto* cm = emplace<ConfusionMatrix>();
+    cm->labels = labels;
+    cm->counts = std::move(counts);
+    const int n = cm->size();
+
+    // 類別名放在刻度上：底軸是預測、左軸是實際（第 0 列在最上面，所以左軸倒著排）
+    auto bottom = std::make_shared<ManualTickGenerator>();
+    auto left = std::make_shared<ManualTickGenerator>();
+    for (int i = 0; i < n; ++i) {
+        const QString name = i < labels.size() ? labels[i] : QString::number(i);
+        bottom->ticks.append({static_cast<double>(i), name});
+        left->ticks.append({static_cast<double>(n - 1 - i), name});
+    }
+    Axis* bx = bottomAxis();
+    Axis* ly = leftAxis();
+    bx->tickGenerator = bottom;
+    ly->tickGenerator = left;
+    setAutoText(bx, [bx] { return &bx->label.text; }, QT_TRANSLATE_NOOP("qtplot", "預測"));
+    setAutoText(ly, [ly] { return &ly->label.text; }, QT_TRANSLATE_NOOP("qtplot", "實際"));
+    grid.isVisible = false;
+    equalAxisScale = true;
+    if (n > 0) setAxisLimits(-0.5, n - 0.5, -0.5, n - 0.5);
+    return cm;
+}
+
 Pareto* Plot::addPareto(QVector<ParetoItem> items) {
     auto* pr = emplace<Pareto>();
     pr->items = std::move(items);

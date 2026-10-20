@@ -66,6 +66,14 @@
         <translation>8 点連続で 1σ の外側</translation>
     </message>
     <message>
+        <source>預測</source>
+        <translation>予測</translation>
+    </message>
+    <message>
+        <source>實際</source>
+        <translation>実際</translation>
+    </message>
+    <message>
         <source>累積百分比</source>
         <translation>累積比率 (%)</translation>
     </message>

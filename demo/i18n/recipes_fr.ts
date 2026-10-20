@@ -516,6 +516,34 @@
         <translation>Marquer les points d'achat/vente</translation>
     </message>
     <message>
+        <source>視覺檢測</source>
+        <translation>Inspection visuelle</translation>
+    </message>
+    <message>
+        <source>混淆矩陣</source>
+        <translation>Matrice de confusion</translation>
+    </message>
+    <message>
+        <source>依列正規化（看召回率）</source>
+        <translation>Normalisée par ligne (rappel)</translation>
+    </message>
+    <message>
+        <source>OK／NG 的混淆矩陣</source>
+        <translation>Matrice de confusion OK / NG</translation>
+    </message>
+    <message>
+        <source>異常熱圖</source>
+        <translation>Carte d'anomalie</translation>
+    </message>
+    <message>
+        <source>異常熱圖疊在影像上</source>
+        <translation>Carte d'anomalie sur l'image</translation>
+    </message>
+    <message>
+        <source>OK／NG 分數分布與門檻</source>
+        <translation>Distributions des scores OK / NG et seuil</translation>
+    </message>
+    <message>
         <source>命中與提示</source>
         <translation>Détection et infobulles</translation>
     </message>
@@ -2916,6 +2944,74 @@ Ordonnée d'Egger %2 (plus loin de 0 = plus asymétrique)</translation>
         <translation>Rendement %1%</translation>
     </message>
     <message>
+        <source>良品</source>
+        <translation>Bon</translation>
+    </message>
+    <message>
+        <source>刮痕</source>
+        <translation>Rayure</translation>
+    </message>
+    <message>
+        <source>黑點</source>
+        <translation>Tache sombre</translation>
+    </message>
+    <message>
+        <source>凹坑</source>
+        <translation>Piqûre</translation>
+    </message>
+    <message>
+        <source>污漬</source>
+        <translation>Taches</translation>
+    </message>
+    <message>
+        <source>門檻 %1
+漏檢率 %2%（%3／%4 片 NG 被放過）
+誤判率 %5%（%6／%7 片 OK 被打掉）</source>
+        <translation>Seuil %1
+Non-détection %2 % (%3 / %4 pièces NG acceptées)
+Fausses alarmes %5 % (%6 / %7 pièces OK rejetées)</translation>
+    </message>
+    <message>
+        <source>瑕疵分類的混淆矩陣（筆數）</source>
+        <translation>Matrice de confusion des défauts (effectifs)</translation>
+    </message>
+    <message>
+        <source>%1：召回率 %2%、精確率 %3%、F1 %4</source>
+        <translation>%1 : rappel %2 %, précision %3 %, F1 %4</translation>
+    </message>
+    <message>
+        <source>依列正規化：對角線是召回率（正確率 %1%）</source>
+        <translation>Normalisée par ligne : la diagonale est le rappel (exactitude %1 %)</translation>
+    </message>
+    <message>
+        <source>門檻 0.48：漏檢 %1 片、過殺 %2 片</source>
+        <translation>Seuil 0,48 : %1 manquées, %2 rejets à tort</translation>
+    </message>
+    <message>
+        <source>刮痕：異常分數 ≥ %1 的區域</source>
+        <translation>Rayure : zones où le score d'anomalie ≥ %1</translation>
+    </message>
+    <message>
+        <source>良品（OK）</source>
+        <translation>Bon (OK)</translation>
+    </message>
+    <message>
+        <source>不良品（NG）</source>
+        <translation>Défectueux (NG)</translation>
+    </message>
+    <message>
+        <source>異常分數</source>
+        <translation>Score d'anomalie</translation>
+    </message>
+    <message>
+        <source>片數</source>
+        <translation>Pièces</translation>
+    </message>
+    <message>
+        <source>拖動門檻線：漏檢與過殺的取捨</source>
+        <translation>Faites glisser le seuil : manqués ou rejets à tort</translation>
+    </message>
+    <message>
         <source>量測點</source>
         <translation>Points de mesure</translation>
     </message>
@@ -3106,10 +3202,6 @@ Ordonnée d'Egger %2 (plus loin de 0 = plus asymétrique)</translation>
     <message>
         <source>變形</source>
         <translation>Déformation</translation>
-    </message>
-    <message>
-        <source>污漬</source>
-        <translation>Taches</translation>
     </message>
     <message>
         <source>缺料</source>

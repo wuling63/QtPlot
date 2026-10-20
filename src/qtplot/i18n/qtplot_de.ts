@@ -66,6 +66,14 @@
         <translation>8 Punkte in Folge außerhalb 1σ</translation>
     </message>
     <message>
+        <source>預測</source>
+        <translation>Vorhergesagt</translation>
+    </message>
+    <message>
+        <source>實際</source>
+        <translation>Tatsächlich</translation>
+    </message>
+    <message>
         <source>累積百分比</source>
         <translation>Kumulierter Anteil (%)</translation>
     </message>

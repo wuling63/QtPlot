@@ -427,6 +427,69 @@ void testPerformancePaths() {
     }
 }
 
+void testInspection() {
+    out() << "視覺檢測（混淆矩陣、門檻統計、熱圖遮罩）\n";
+    // 2 類：實際 A 有 8 筆（6 對 2 錯）、實際 B 有 4 筆（1 錯 3 對）
+    const QVector<QVector<double>> m = {{6, 2}, {1, 3}};
+    const QVector<ClassMetrics> cm = classMetrics(m);
+    checkClose(cm[0].recall, 6.0 / 8, 1e-12, "A 的召回率 = 6/8");
+    checkClose(cm[0].precision, 6.0 / 7, 1e-12, "A 的精確率 = 6/7（預測 A 的那一欄）");
+    checkClose(cm[1].f1, 2 * (3.0 / 5) * (3.0 / 4) / (3.0 / 5 + 3.0 / 4), 1e-12, "B 的 F1");
+    check(cm[0].support == 8 && cm[1].support == 4, "support 是每列的總和");
+    checkClose(accuracy(m), 9.0 / 12, 1e-12, "正確率 = 對角線 / 全部");
+    check(classMetrics({{0, 0}, {0, 5}})[0].precision == 0, "沒有樣本時分母為 0 不會除錯，給 0");
+
+    const auto counts = confusionCounts({0, 0, 1, 1, 2, 5}, {0, 1, 1, 1, 0, 0}, 3);
+    check(counts[0][0] == 1 && counts[0][1] == 1 && counts[1][1] == 2 && counts[2][0] == 1,
+          "confusionCounts 數得對，超出類別數的那筆被略過");
+
+    const ThresholdStats s = thresholdStats({0.1, 0.2, 0.6, 0.3}, {0.7, 0.4, 0.9}, 0.5);
+    check(s.tp == 2 && s.fn == 1 && s.tn == 3 && s.fp == 1, "門檻 0.5：抓到 2、漏 1、過殺 1");
+    checkClose(s.missRate, 1.0 / 3, 1e-12, "漏檢率 = 漏的 / NG 總數");
+    checkClose(s.falseAlarmRate, 1.0 / 4, 1e-12, "誤判率 = 過殺 / OK 總數");
+    check(s.counts() == QVector<QVector<double>>{{3, 1}, {1, 2}}, "counts() 的排法：列實際 {OK, NG}、欄預測 {OK, NG}");
+    check(thresholdStats({0.5}, {}, 0.5).fp == 1, "剛好等於門檻算 NG");
+
+    ConfusionMatrix c;
+    c.counts = m;
+    c.normalize = ConfusionMatrix::Normalize::Row;
+    checkClose(c.normalized(0, 1), 2.0 / 8, 1e-12, "依列正規化");
+    c.normalize = ConfusionMatrix::Normalize::Column;
+    checkClose(c.normalized(1, 0), 1.0 / 7, 1e-12, "依欄正規化");
+    c.normalize = ConfusionMatrix::Normalize::All;
+    checkClose(c.normalized(1, 1), 3.0 / 12, 1e-12, "全體正規化");
+
+    {
+        Plot plot;
+        plot.addConfusionMatrix({QStringLiteral("A"), QStringLiteral("B")}, m);
+        plot.renderToImage(400, 400);
+        const QVector<Tick>& ticks = plot.leftAxis()->ticks();
+        bool aOnTop = false;
+        for (const Tick& t : ticks)
+            if (t.label == QStringLiteral("A") && t.position == 1) aOnTop = true;
+        check(aOnTop, "第 0 列（A）在左軸最上面");
+        check(!plot.grid.isVisible && plot.equalAxisScale, "關掉格線、設成等比例");
+    }
+
+    // hideBelow：低於門檻的格子是透明的
+    {
+        Plot plot;
+        plot.style.figureBackground = QColor(255, 255, 255);
+        plot.style.dataBackground = QColor(255, 255, 255);
+        auto* h = plot.addHeatmap({0.1, 0.9}, 1, 2);
+        h->colormap = Colormap(Colormap::Viridis);  // Hot 的最高值是純白，會和底色分不出來
+        h->hideBelow = 0.5;
+        plot.setAxisLimits(0, 2, 0, 1);
+        plot.grid.isVisible = false;
+        const QImage img = plot.renderToImage(400, 200);
+        const PixelRect d = plot.lastDataRect();
+        const QColor left = img.pixelColor(int(d.left + d.width() * 0.25), int((d.top + d.bottom) / 2));
+        const QColor right = img.pixelColor(int(d.left + d.width() * 0.75), int((d.top + d.bottom) / 2));
+        check(left == QColor(255, 255, 255), "低於 hideBelow 的格子透出底色");
+        check(right != QColor(255, 255, 255), "高於門檻的格子照常上色");
+    }
+}
+
 void testContour3DAndDepthShade() {
     out() << "3D 等值線與依深度調淡\n";
     auto c = std::make_unique<Contour3D>();
@@ -4626,6 +4689,7 @@ int main(int argc, char* argv[]) {
     testAxisBreaks();
     testTriSurface();
     testContour3DAndDepthShade();
+    testInspection();
     testPerformancePaths();
     testBubbleGanttVenn();
     testFlowCharts();
