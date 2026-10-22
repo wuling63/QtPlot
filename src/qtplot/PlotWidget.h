@@ -152,6 +152,9 @@ public:
     void saveImageDialog();
     /// 把目前的圖複製到剪貼簿。
     void copyToClipboard();
+    /// 跳出圖例樣式對話框（外框、底色、符號塗滿與否、字型），改了馬上看得到。
+    /// 圖例原本關著的話會先打開。
+    void legendStyleDialog();
 
     // ── 列印 ──
     /// 印到指定的印表機（或 PDF 印表機）。

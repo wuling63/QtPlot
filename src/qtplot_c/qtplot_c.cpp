@@ -275,6 +275,136 @@ int qp_set_font(QpPlot* plot, const char* family, double scale) {
     });
 }
 
+// ───────────────────────────── 圖例樣式 ─────────────────────────────
+
+int qp_set_legend_layout(QpPlot* plot, int placement, int horizontal, int columns) {
+    return guard([&]() -> int {
+        QP_REQUIRE_PLOT();
+        Legend& lg = plot->plot.legend;
+        switch (placement) {
+        case QP_LEGEND_INSIDE: lg.placement = Legend::Placement::Inside; break;
+        case QP_LEGEND_OUTSIDE_RIGHT: lg.placement = Legend::Placement::OutsideRight; break;
+        case QP_LEGEND_OUTSIDE_BOTTOM:
+            lg.placement = Legend::Placement::OutsideBottom;
+            lg.alignment = Qt::AlignHCenter | Qt::AlignTop;  // 底下的圖例預設置中
+            break;
+        default: return fail(QP_ERR_ARG, "unknown legend placement");
+        }
+        lg.horizontal = horizontal != 0;
+        if (columns > 0) lg.columns = columns;
+        return QP_OK;
+    });
+}
+
+int qp_set_legend_border(QpPlot* plot, uint32_t argb, double width, int pattern) {
+    return guard([&]() -> int {
+        QP_REQUIRE_PLOT();
+        if (pattern < QP_LINE_SOLID || pattern > QP_LINE_DASH_DOT_DOT) return fail(QP_ERR_ARG, "unknown line pattern");
+        LineStyle& b = plot->plot.legend.border;
+        if (!(width > 0)) {
+            b.pattern = LinePattern::None;
+            return QP_OK;
+        }
+        if (argb != QP_AUTO_COLOR) b.color = QColor::fromRgba(argb);
+        b.width = width;
+        b.pattern = static_cast<LinePattern>(pattern);
+        return QP_OK;
+    });
+}
+
+int qp_set_legend_background(QpPlot* plot, uint32_t argb) {
+    return guard([&]() -> int {
+        QP_REQUIRE_PLOT();
+        plot->plot.legend.background = FillStyle(QColor::fromRgba(argb));  // 0 = 透明 = 不塗
+        return QP_OK;
+    });
+}
+
+int qp_set_legend_symbols(QpPlot* plot, int filled, uint32_t outlineArgb, double outlineWidth) {
+    return guard([&]() -> int {
+        QP_REQUIRE_PLOT();
+        Legend& lg = plot->plot.legend;
+        lg.fillSymbols = filled != 0;
+        lg.symbolOutline = (outlineWidth > 0)
+                               ? LineStyle(outlineArgb ? QColor::fromRgba(outlineArgb) : QColor(0, 0, 0), outlineWidth)
+                               : LineStyle::none();
+        return QP_OK;
+    });
+}
+
+int qp_set_legend_font(QpPlot* plot, const char* family, double size, int bold, int italic, uint32_t argb) {
+    return guard([&]() -> int {
+        QP_REQUIRE_PLOT();
+        FontStyle& f = plot->plot.legend.font;
+        if (family && *family) {
+            f.family = toString(family);
+            plot->plot.legend.title.font.family = f.family;
+        }
+        if (size > 0) f.size = size;
+        if (bold >= 0) {
+            f.weight = FontStyle::Auto;
+            f.bold = bold != 0;
+        }
+        if (italic >= 0) f.italic = italic != 0;
+        if (argb != QP_AUTO_COLOR) f.color = QColor::fromRgba(argb);
+        return QP_OK;
+    });
+}
+
+// ───────────────────────────── 座標軸與刻度 ─────────────────────────────
+
+#define QP_AXIS(var)                                                   \
+    QP_REQUIRE_PLOT();                                                 \
+    Axis* var = axisOf(plot->plot, axis);                              \
+    if (!var) return fail(QP_ERR_ARG, "unknown axis")
+
+int qp_set_axis_color(QpPlot* plot, int axis, uint32_t argb) {
+    return guard([&]() -> int {
+        QP_AXIS(a);
+        a->setColor(QColor::fromRgba(argb));
+        return QP_OK;
+    });
+}
+
+int qp_set_axis_ticks(QpPlot* plot, int axis, int direction, double majorLength, double minorLength, int mirror) {
+    return guard([&]() -> int {
+        QP_AXIS(a);
+        if (direction < QP_TICKS_OUTSIDE || direction > QP_TICKS_CROSS) return fail(QP_ERR_ARG, "unknown tick direction");
+        a->tickDirection = static_cast<TickDirection>(direction);
+        if (majorLength >= 0) a->majorTickLength = majorLength;
+        if (minorLength >= 0) a->minorTickLength = minorLength;
+        a->mirrorTicks = mirror != 0;
+        return QP_OK;
+    });
+}
+
+int qp_set_axis_tick_marker(QpPlot* plot, int axis, int shape, double size, uint32_t argb) {
+    return guard([&]() -> int {
+        QP_AXIS(a);
+        if (shape < QP_MARKER_NONE || shape > QP_MARKER_HORIZONTAL_BAR) return fail(QP_ERR_ARG, "unknown marker shape");
+        const QColor c = argb ? QColor::fromRgba(argb) : a->majorTickLine.color;
+        a->majorTickMarker = MarkerStyle(static_cast<MarkerShape>(shape), std::max(0.0, size), c);
+        return QP_OK;
+    });
+}
+
+int qp_set_axis_log(QpPlot* plot, int axis, int enabled, int labelFormat, int labelMinor) {
+    return guard([&]() -> int {
+        QP_AXIS(a);
+        if (labelFormat < QP_LOG_LABEL_AUTO || labelFormat > QP_LOG_LABEL_E) return fail(QP_ERR_ARG, "unknown log label format");
+        a->logScale = enabled != 0;
+        if (a->logScale) {
+            auto lg = std::make_shared<LogTickGenerator>();
+            lg->labelFormat = static_cast<LogTickGenerator::LabelFormat>(labelFormat);
+            lg->labelMinorTicks = labelMinor != 0;
+            a->tickGenerator = lg;
+        } else if (dynamic_cast<LogTickGenerator*>(a->tickGenerator.get())) {
+            a->tickGenerator = std::make_shared<AutomaticTickGenerator>();  // 關掉時換回線性刻度
+        }
+        return QP_OK;
+    });
+}
+
 // ───────────────────────────── 視野 ─────────────────────────────
 
 int qp_set_limits(QpPlot* plot, double xMin, double xMax, double yMin, double yMax) {
@@ -336,11 +466,10 @@ int qp_pan(QpPlot* plot, double dxPx, double dyPx) {
         Plot& p = plot->plot;
         const PixelRect d = p.lastDataRect();
         if (d.isEmpty()) return fail(QP_ERR_ARG, "plot has not been rendered yet");
-        // 用 getCoordinate 算位移，反向軸的方向自然就對了
+        // 走 Axis::pan：反向軸的方向自然就對了，對數軸也會在對數空間平移
         auto shift = [&](Axis* a, Axis* mirror, double from, double to) {
             if (a->locked) return;
-            const double delta = a->getCoordinate(from, d) - a->getCoordinate(to, d);
-            a->range = {a->range.min + delta, a->range.max + delta};
+            a->pan(from, to, d);
             mirror->range = a->range;
         };
         shift(p.bottomAxis(), p.topAxis(), d.left, d.left + dxPx);
@@ -360,11 +489,11 @@ int qp_zoom(QpPlot* plot, double factor, double px, double py) {
         Axis* bx = p.bottomAxis();
         Axis* by = p.leftAxis();
         if (!bx->locked) {
-            bx->range.zoom(factor, bx->getCoordinate(px, d));
+            bx->zoom(factor, bx->getCoordinate(px, d));
             p.topAxis()->range = bx->range;
         }
         if (!by->locked) {
-            by->range.zoom(factor, by->getCoordinate(py, d));
+            by->zoom(factor, by->getCoordinate(py, d));
             p.rightAxis()->range = by->range;
         }
         return QP_OK;
@@ -452,6 +581,14 @@ QpItem* qp_add_streamer(QpPlot* plot, int capacity, uint32_t argb) {
 
 QpItem* qp_add_logger(QpPlot* plot, uint32_t argb) {
     return guardItem(plot, [&](Plot& p) -> IPlottable* { return p.addDataLogger(toColor(argb)); });
+}
+
+QpItem* qp_add_live_spectrum(QpPlot* plot, int fftSize, double sampleRate, uint32_t argb) {
+    return guardItem(plot, [&](Plot& p) -> IPlottable* {
+        if (fftSize < 8) return fail(QP_ERR_ARG, "fftSize must be >= 8"), nullptr;
+        if (!(sampleRate > 0)) return fail(QP_ERR_ARG, "sampleRate must be > 0"), nullptr;
+        return p.addLiveSpectrum(fftSize, sampleRate, toColor(argb));
+    });
 }
 
 // ───────────────────────────── 圖元屬性 ─────────────────────────────
@@ -555,7 +692,81 @@ int qp_item_append(QpPlot* plot, QpItem* item, const double* xs, const double* y
             else s->addRange(toVector(ys, count));
             return QP_OK;
         }
-        return fail(QP_ERR_WRONG_TYPE, "append only applies to streamer and logger");
+        if (auto* s = dynamic_cast<LiveSpectrum*>(p)) {
+            s->addRange(toVector(ys, count));  // 頻譜只看樣本，xs 忽略
+            return QP_OK;
+        }
+        return fail(QP_ERR_WRONG_TYPE, "append only applies to streamer, logger and live spectrum");
+    });
+}
+
+int qp_spectrum_set_analysis(QpPlot* plot, QpItem* item, int window, double averaging, int peakHold,
+                             double peakHoldDecayDb) {
+    return guard([&]() -> int {
+        QP_RESOLVE(p);
+        auto* s = dynamic_cast<LiveSpectrum*>(p);
+        if (!s) return fail(QP_ERR_WRONG_TYPE, "this item is not a live spectrum");
+        if (window < QP_WINDOW_RECTANGULAR || window > QP_WINDOW_FLAT_TOP) return fail(QP_ERR_ARG, "unknown window");
+        s->window = static_cast<WindowFunction>(window);
+        s->averaging = std::clamp(averaging, 0.0, 0.99);
+        s->showPeakHold = peakHold != 0;
+        s->peakHoldDecayDb = std::max(0.0, peakHoldDecayDb);
+        return QP_OK;
+    });
+}
+
+int qp_spectrum_set_display(QpPlot* plot, QpItem* item, double minDb, double maxDb, int peakLabels, uint32_t fillArgb) {
+    return guard([&]() -> int {
+        QP_RESOLVE(p);
+        auto* s = dynamic_cast<LiveSpectrum*>(p);
+        if (!s) return fail(QP_ERR_WRONG_TYPE, "this item is not a live spectrum");
+        if (!(maxDb > minDb)) return fail(QP_ERR_ARG, "maxDb must be greater than minDb");
+        s->minDb = minDb;
+        s->maxDb = maxDb;
+        s->peakLabels = std::max(0, peakLabels);
+        s->fill = FillStyle(QColor::fromRgba(fillArgb));
+        return QP_OK;
+    });
+}
+
+// ───────────────────────────── 頻譜計算 ─────────────────────────────
+
+int qp_welch(const double* samples, int count, double sampleRate, int segmentSize, double overlap, int window,
+             double* outFreq, double* outDb, int capacity) {
+    return guard([&]() -> int {
+        if (!checkArray(samples, count)) return count <= 0 ? QP_ERR_ARG : QP_ERR_NULL;
+        if (count < 2) return fail(QP_ERR_ARG, "need at least 2 samples");
+        if (!(sampleRate > 0)) return fail(QP_ERR_ARG, "sampleRate must be > 0");
+        if (window < QP_WINDOW_RECTANGULAR || window > QP_WINDOW_FLAT_TOP) return fail(QP_ERR_ARG, "unknown window");
+        const QVector<double> v = toVector(samples, count);
+        const WindowFunction w = static_cast<WindowFunction>(window);
+        const Periodogram pg = (segmentSize > 0 && segmentSize < count) ? welch(v, sampleRate, segmentSize, overlap, w)
+                                                                        : periodogram(v, sampleRate, w);
+        const int bins = static_cast<int>(pg.frequencies.size());
+        if (outFreq && outDb && capacity >= bins) {
+            std::copy(pg.frequencies.begin(), pg.frequencies.end(), outFreq);
+            std::copy(pg.decibels.begin(), pg.decibels.end(), outDb);
+        }
+        return bins;
+    });
+}
+
+int qp_find_peaks(const double* freqs, const double* db, int count, int maxPeaks, double minProminenceDb,
+                  double minSpacingHz, double minFrequency, double* outFreq, double* outDb) {
+    return guard([&]() -> int {
+        if (!checkArray(freqs, count) || !checkArray(db, count)) return QP_ERR_ARG;
+        if (maxPeaks <= 0) return 0;
+        if (!outFreq || !outDb) return fail(QP_ERR_NULL, "output pointer is NULL");
+        Periodogram pg;
+        pg.frequencies = toVector(freqs, count);
+        pg.decibels = toVector(db, count);
+        for (double d : pg.decibels) pg.amplitude.append(std::pow(10.0, d / 20));  // 只是為了讓 amplitude 欄位一致
+        const QVector<SpectralPeak> peaks = findSpectralPeaks(pg, maxPeaks, minProminenceDb, minSpacingHz, minFrequency);
+        for (int i = 0; i < peaks.size(); ++i) {
+            outFreq[i] = peaks[i].frequency;
+            outDb[i] = peaks[i].decibels;
+        }
+        return static_cast<int>(peaks.size());
     });
 }
 

@@ -553,3 +553,125 @@ QTPLOT_RECIPE("場", "頻譜", "頻譜圖（掃頻與諧波）",
     plot.grid.isVisible = false;
     plot.setAxisLimits(0, sp.duration(), 0, sp.maxFrequency());
 }
+
+QTPLOT_RECIPE("場", "頻譜", "Welch 平均功率譜",
+              "只做一次 FFT 的功率譜，每一格都是一個隨機變數：雜訊底像一片草叢，"
+              "比雜訊底只高幾 dB 的成分（180 Hz 與 410 Hz）藏在草裡分不出來。\n"
+              "welch() 把訊號切成彼此重疊一半的短段，每段各做一次功率譜再把功率平均起來，"
+              "草叢的起伏大約縮成 1/√段數，兩個小峰就浮出來了。\n"
+              "灰線是同樣 1024 點的單一段：比較要用同樣的段長 —— 雜訊的能量平均分到每一格，"
+              "FFT 越長、每格分到的越少，雜訊底的高度本來就會隨長度改變。") {
+    const double fs = 2000;
+    const int n = 32768;
+    gen::setSeed(12);
+    QVector<double> sig = gen::randomNormal(n, 0, 0.5);
+    for (int i = 0; i < n; ++i) {
+        const double t = i / fs;
+        sig[i] += 1.0 * std::sin(2 * kPi * 50 * t) + 0.1 * std::sin(2 * kPi * 180 * t) +
+                  0.07 * std::sin(2 * kPi * 410 * t);
+    }
+
+    const Periodogram one = periodogram(sig.mid(0, 1024), fs);
+    auto* raw = plot.addScatter(one.frequencies, one.decibels, QColor(160, 160, 160));
+    raw->marker = MarkerStyle::none();
+    raw->line.width = 1.0;
+    raw->legendText = RT("單一段（1024 點）");
+
+    const Periodogram avg = welch(sig, fs, 1024, 0.5);
+    auto* w = plot.addScatter(avg.frequencies, avg.decibels, QColor(31, 119, 180));
+    w->marker = MarkerStyle::none();
+    w->line.width = 1.8;
+    w->legendText = RT("Welch（%1 段平均）").arg(avg.segments);
+
+    plot.bottomAxis()->label.text = RT("頻率（Hz）");
+    plot.leftAxis()->label.text = RT("振幅（dB）");
+    for (double f : {180.0, 410.0}) {
+        auto* v = plot.addVerticalLine(f);
+        v->line = LineStyle(QColor(130, 130, 130, 120), 1.0, LinePattern::Dotted);
+    }
+
+    plot.title.text = RT("平均之後，藏在雜訊裡的小峰才看得見");
+    plot.legend.isVisible = true;
+    plot.setAxisLimits(0, 500, -55, 5);
+}
+
+QTPLOT_RECIPE("場", "頻譜", "自動標出頻譜峰值",
+              "馬達振動：轉速 29.5 Hz 與它的倍頻，加上一個不在倍頻上的軸承頻率。\n"
+              "findSpectralPeaks() 找出比附近雜訊底高出門檻的峰，依高度排序，"
+              "頻率用相鄰三格做拋物線內插 —— 格距 0.98 Hz，標出來的頻率卻準到小數點後一位。\n"
+              "minSpacingHz 讓太近的峰只留一個，minFrequency 跳過直流與漂移。") {
+    const double fs = 1000;
+    const int n = 16384;
+    gen::setSeed(4);
+    QVector<double> sig = gen::randomNormal(n, 0, 0.05);
+    const double rot = 29.5;
+    for (int i = 0; i < n; ++i) {
+        const double t = i / fs;
+        sig[i] += 0.8 + 1.0 * std::sin(2 * kPi * rot * t) + 0.35 * std::sin(2 * kPi * 2 * rot * t) +
+                  0.12 * std::sin(2 * kPi * 3 * rot * t) + 0.06 * std::sin(2 * kPi * 162.3 * t);
+    }
+
+    const Periodogram pg = welch(sig, fs, 1024, 0.5);
+    auto* s = plot.addScatter(pg.frequencies, pg.decibels, QColor(45, 110, 185));
+    s->marker = MarkerStyle::none();
+    s->line.width = 1.3;
+
+    const QVector<SpectralPeak> peaks = findSpectralPeaks(pg, 6, 15, 5, 5);
+    QVector<double> px, py;
+    for (const SpectralPeak& p : peaks) {
+        px.append(p.frequency);
+        py.append(p.decibels);
+        auto* t = plot.addText(QStringLiteral("%1 Hz").arg(p.frequency, 0, 'f', 1), p.frequency, p.decibels);
+        t->alignment = Qt::AlignHCenter | Qt::AlignBottom;
+        t->offsetY = -10;
+        t->label.font.size = 9;
+        t->background = FillStyle(QColor(255, 255, 255, 210));
+    }
+    auto* m = plot.addMarkers(px, py, QColor(214, 39, 40));
+    m->marker = MarkerStyle(MarkerShape::FilledTriangleDown, 9, QColor(214, 39, 40));
+
+    plot.bottomAxis()->label.text = RT("頻率（Hz）");
+    plot.leftAxis()->label.text = RT("振幅（dB）");
+    plot.title.text = RT("轉速倍頻與軸承頻率");
+    plot.setAxisLimits(0, 220, -75, 10);
+}
+
+QTPLOT_RECIPE("場", "頻譜", "3D 瀑布頻譜",
+              "機台升速：轉速從 10 Hz 升到 60 Hz，三條斜線是 1、2、3 倍轉速，"
+              "140 Hz 那條不動的是結構共振 —— 轉速倍頻掃過它時會被激起來。\n"
+              "Waterfall3D::setSpectrogram() 把頻譜圖的每個時間格排成一條曲線，"
+              "顏色由舊到新；floorZ 設成頻譜圖的最小值，曲線才會往下填到地板。"
+              "可以用滑鼠拖曳旋轉。") {
+    const double fs = 1000;
+    const int n = 6000;  // 6 秒
+    gen::setSeed(9);
+    QVector<double> sig = gen::randomNormal(n, 0, 0.01);
+    double phase = 0;
+    for (int i = 0; i < n; ++i) {
+        const double t = i / fs;
+        const double rot = 10 + 50 * t / 6;
+        phase += 2 * kPi * rot / fs;
+        // 倍頻靠近 140 Hz 時共振被激起（簡單的共振曲線）
+        double res = 0;
+        for (int h = 1; h <= 3; ++h) res += 1 / (1 + std::pow((h * rot - 140) / 6, 2));
+        sig[i] += std::sin(phase) + 0.45 * std::sin(2 * phase) + 0.2 * std::sin(3 * phase) +
+                  0.6 * res * std::sin(2 * kPi * 140 * t);
+    }
+
+    const Spectrogram sp = spectrogram(sig, fs, 512, 128, WindowFunction::Hann, true, 45);
+    auto w = std::make_unique<Waterfall3D>();
+    w->setSpectrogram(sp, 30, Colormap(Colormap::Viridis), 250);
+    w->edgeWidth = 0.7;
+    w->fillAlpha = 230;
+
+    auto* chart = plot.addChart3D();
+    chart->add(std::move(w));
+    chart->xLabel = RT("頻率（Hz）");
+    chart->yLabel = RT("時間（秒）");
+    chart->zLabel = RT("強度（dB）");
+    chart->aspectX = 1.5;
+    chart->aspectZ = 0.5;
+    chart->azimuth = -25;
+    chart->elevation = 30;
+    plot.title.text = RT("升速過程的瀑布頻譜");
+}

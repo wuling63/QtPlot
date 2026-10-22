@@ -208,6 +208,18 @@
         <translation>Spectrogram (chirp and harmonics)</translation>
     </message>
     <message>
+        <source>Welch 平均功率譜</source>
+        <translation>Welch Averaged Power Spectrum</translation>
+    </message>
+    <message>
+        <source>自動標出頻譜峰值</source>
+        <translation>Automatic Spectrum Peak Labels</translation>
+    </message>
+    <message>
+        <source>3D 瀑布頻譜</source>
+        <translation>3D Waterfall Spectrum</translation>
+    </message>
+    <message>
         <source>座標軸</source>
         <translation>Axes</translation>
     </message>
@@ -338,6 +350,26 @@
     <message>
         <source>截斷 X 軸（跳過空檔）</source>
         <translation>Broken X axis (skip gaps)</translation>
+    </message>
+    <message>
+        <source>刻度線的方向與鏡像</source>
+        <translation>Tick Direction and Mirrored Ticks</translation>
+    </message>
+    <message>
+        <source>刻度標記與個別刻度上色</source>
+        <translation>Tick Markers and Per-Tick Colors</translation>
+    </message>
+    <message>
+        <source>一次換掉整根軸的顏色</source>
+        <translation>Color a Whole Axis at Once</translation>
+    </message>
+    <message>
+        <source>真正的對數軸（波德圖）</source>
+        <translation>True Logarithmic Axis (Bode Plot)</translation>
+    </message>
+    <message>
+        <source>對數刻度的文字格式</source>
+        <translation>Log Tick Label Formats</translation>
     </message>
     <message>
         <source>裝飾</source>
@@ -634,6 +666,10 @@
     <message>
         <source>多軌波形</source>
         <translation>Multi-track waveforms</translation>
+    </message>
+    <message>
+        <source>即時 FFT 頻譜（峰值保持）</source>
+        <translation>Live FFT Spectrum (Peak Hold)</translation>
     </message>
     <message>
         <source>商務圖表</source>
@@ -1562,6 +1598,10 @@
     <message>
         <source>圖例放在下方並換行</source>
         <translation>Legend at bottom with wrapping</translation>
+    </message>
+    <message>
+        <source>圖例外框、符號與字型</source>
+        <translation>Legend Border, Symbols and Font</translation>
     </message>
     <message>
         <source>核密度的核函數</source>
@@ -2556,12 +2596,32 @@ TPR %2 / FPR %3</translation>
         <translation>Spectrogram: chirp, 2nd harmonic and a mid-section whistle</translation>
     </message>
     <message>
-        <source>訊號量測結果</source>
-        <translation>Signal measurements</translation>
+        <source>單一段（1024 點）</source>
+        <translation>Single segment (1024 points)</translation>
+    </message>
+    <message>
+        <source>Welch（%1 段平均）</source>
+        <translation>Welch (%1 segments averaged)</translation>
+    </message>
+    <message>
+        <source>平均之後，藏在雜訊裡的小峰才看得見</source>
+        <translation>Averaging reveals small peaks hidden in the noise</translation>
+    </message>
+    <message>
+        <source>轉速倍頻與軸承頻率</source>
+        <translation>Shaft Harmonics and Bearing Frequency</translation>
     </message>
     <message>
         <source>時間（秒）</source>
         <translation>Time (s)</translation>
+    </message>
+    <message>
+        <source>升速過程的瀑布頻譜</source>
+        <translation>Waterfall Spectrum of a Run-Up</translation>
+    </message>
+    <message>
+        <source>訊號量測結果</source>
+        <translation>Signal measurements</translation>
     </message>
     <message>
         <source>電壓（伏特）</source>
@@ -2716,6 +2776,62 @@ Axes set with setRange are not overridden by autoScale, but can still be dragged
     <message>
         <source>截斷 X 軸</source>
         <translation>Broken X axis</translation>
+    </message>
+    <message>
+        <source>刻度線的三種方向</source>
+        <translation>Three tick directions</translation>
+    </message>
+    <message>
+        <source>朝外（預設）</source>
+        <translation>Outside (default)</translation>
+    </message>
+    <message>
+        <source>朝內＋鏡像</source>
+        <translation>Inside + mirrored</translation>
+    </message>
+    <message>
+        <source>穿過框線</source>
+        <translation>Crossing the frame</translation>
+    </message>
+    <message>
+        <source>樣本</source>
+        <translation>Sample</translation>
+    </message>
+    <message>
+        <source>超出規格的刻度標成紅色</source>
+        <translation>Out-of-spec ticks in red</translation>
+    </message>
+    <message>
+        <source>溫度 (°C)</source>
+        <translation>Temperature (°C)</translation>
+    </message>
+    <message>
+        <source>濕度 (%)</source>
+        <translation>Humidity (%)</translation>
+    </message>
+    <message>
+        <source>時間 (h)</source>
+        <translation>Time (h)</translation>
+    </message>
+    <message>
+        <source>軸的顏色對應曲線的顏色</source>
+        <translation>Axis colors match the curves</translation>
+    </message>
+    <message>
+        <source>增益（dB）</source>
+        <translation>Gain (dB)</translation>
+    </message>
+    <message>
+        <source>一階低通濾波器的波德圖</source>
+        <translation>Bode plot of a first-order low-pass filter</translation>
+    </message>
+    <message>
+        <source>同一份資料，四種刻度寫法</source>
+        <translation>Same data, four ways to write the ticks</translation>
+    </message>
+    <message>
+        <source>Plain＋次刻度文字</source>
+        <translation>Plain + minor tick labels</translation>
     </message>
     <message>
         <source>強度</source>
@@ -3152,10 +3268,6 @@ False alarms %5% (%6 / %7 OK parts rejected)</translation>
         <translation>Sensor readings</translation>
     </message>
     <message>
-        <source>溫度 (°C)</source>
-        <translation>Temperature (°C)</translation>
-    </message>
-    <message>
         <source>取樣點</source>
         <translation>Sample</translation>
     </message>
@@ -3182,6 +3294,14 @@ False alarms %5% (%6 / %7 OK parts rejected)</translation>
     <message>
         <source>通道 3</source>
         <translation>Channel 3</translation>
+    </message>
+    <message>
+        <source>平均頻譜</source>
+        <translation>Averaged spectrum</translation>
+    </message>
+    <message>
+        <source>峰值保持</source>
+        <translation>Peak hold</translation>
     </message>
     <message>
         <source>刮傷</source>
@@ -5172,10 +5292,6 @@ Numeric integral (to |x| = 4) = %3</translation>
         <translation>Pressure (hPa)</translation>
     </message>
     <message>
-        <source>濕度 (%)</source>
-        <translation>Humidity (%)</translation>
-    </message>
-    <message>
         <source>時間 (分鐘)</source>
         <translation>Time (min)</translation>
     </message>
@@ -5282,6 +5398,10 @@ Numeric integral (to |x| = 4) = %3</translation>
     <message>
         <source>東部</source>
         <translation>East</translation>
+    </message>
+    <message>
+        <source>各國營收佔比</source>
+        <translation>Revenue Share by Country</translation>
     </message>
     <message>
         <source>三角</source>

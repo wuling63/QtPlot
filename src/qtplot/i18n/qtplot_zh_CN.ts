@@ -99,6 +99,105 @@
     </message>
 </context>
 <context>
+    <name>qtplot::LegendStyleDialog</name>
+    <message>
+        <source>圖例樣式</source>
+        <translation>图例样式</translation>
+    </message>
+    <message>
+        <source>顯示外框</source>
+        <translation>显示外框</translation>
+    </message>
+    <message>
+        <source>實線</source>
+        <translation>实线</translation>
+    </message>
+    <message>
+        <source>虛線</source>
+        <translation>虚线</translation>
+    </message>
+    <message>
+        <source>點線</source>
+        <translation>点线</translation>
+    </message>
+    <message>
+        <source>點虛線</source>
+        <translation>点划线</translation>
+    </message>
+    <message>
+        <source>外框</source>
+        <translation>外框</translation>
+    </message>
+    <message>
+        <source>顏色</source>
+        <translation>颜色</translation>
+    </message>
+    <message>
+        <source>粗細</source>
+        <translation>粗细</translation>
+    </message>
+    <message>
+        <source>線型</source>
+        <translation>线型</translation>
+    </message>
+    <message>
+        <source>塗滿底色</source>
+        <translation>填充背景</translation>
+    </message>
+    <message>
+        <source>底色</source>
+        <translation>背景</translation>
+    </message>
+    <message>
+        <source>色塊塗滿</source>
+        <translation>色块填充</translation>
+    </message>
+    <message>
+        <source>色塊加外框</source>
+        <translation>色块加外框</translation>
+    </message>
+    <message>
+        <source>符號</source>
+        <translation>符号</translation>
+    </message>
+    <message>
+        <source>文字</source>
+        <translation>文字</translation>
+    </message>
+    <message>
+        <source>字型</source>
+        <translation>字体</translation>
+    </message>
+    <message>
+        <source>還原預設</source>
+        <translation>恢复默认</translation>
+    </message>
+    <message>
+        <source>外框顏色</source>
+        <translation>外框颜色</translation>
+    </message>
+    <message>
+        <source>色塊外框顏色</source>
+        <translation>色块外框颜色</translation>
+    </message>
+    <message>
+        <source>文字顏色</source>
+        <translation>文字颜色</translation>
+    </message>
+    <message>
+        <source>粗體</source>
+        <translation>粗体</translation>
+    </message>
+    <message>
+        <source>斜體</source>
+        <translation>斜体</translation>
+    </message>
+    <message>
+        <source>圖例字型</source>
+        <translation>图例字体</translation>
+    </message>
+</context>
+<context>
     <name>qtplot::PlotWidget</name>
     <message>
         <source>%1 個圖元, %2 ms (%3 FPS)</source>
@@ -127,6 +226,10 @@
     <message>
         <source>顯示圖例(&amp;L)</source>
         <translation>显示图例(&amp;L)</translation>
+    </message>
+    <message>
+        <source>圖例樣式(&amp;Y)…</source>
+        <translation>图例样式(&amp;Y)…</translation>
     </message>
     <message>
         <source>語言(&amp;N)</source>

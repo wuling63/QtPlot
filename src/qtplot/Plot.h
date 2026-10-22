@@ -78,6 +78,11 @@ struct Legend {
     bool overrideMarkerShape = false;
     MarkerShape markerShapeOverride = MarkerShape::FilledSquare;
 
+    /// 色塊符號要不要塗滿。關掉就只畫外框 —— 黑白列印或系列顏色很淡時比較好認。
+    bool fillSymbols = true;
+    /// 色塊符號的外框。預設不畫；fillSymbols 關掉又沒設外框時，用該項目的顏色畫 1.5 像素的框。
+    LineStyle symbolOutline = LineStyle::none();
+
     /// 圖例身上的字型設定。
     void visitFonts(const FontVisitor& visit) {
         visit(font);
@@ -401,6 +406,8 @@ public:
     // 即時資料
     DataLogger* addDataLogger(QColor color = QColor());
     DataStreamer* addDataStreamer(int capacity = 1000, QColor color = QColor());
+    /// 即時 FFT 頻譜。樣本用 LiveSpectrum::add() 餵進去，頻譜自己算。
+    LiveSpectrum* addLiveSpectrum(int fftSize = 1024, double sampleRate = 1000, QColor color = QColor());
     DataStreamerXY* addDataStreamerXY(int capacity = 1000, QColor color = QColor());
 
     // 場

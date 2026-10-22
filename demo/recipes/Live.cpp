@@ -148,3 +148,47 @@ QTPLOT_RECIPE_LIVE("即時", "波形", "多軌波形",
         }
     }
 }
+
+QTPLOT_RECIPE_LIVE("即時", "頻譜", "即時 FFT 頻譜（峰值保持）",
+                   "LiveSpectrum 是頻譜分析儀的畫面：樣本用 addRange() 餵進去（擷取卡的執行緒也可以），"
+                   "每收到半個 FFT 長度就重算一次。\n"
+                   "藍線是平均後的頻譜（averaging = 0.5，平均的是功率）：移動中的音在平均之下會拖出一條尾巴。"
+                   "紅色虛線是峰值保持：掃過的頻率會留下痕跡，每次更新往下掉 0.4 dB；"
+                   "三角形標出最高的峰（peakLabels = 3，最多三個）。\n"
+                   "1 kHz 的固定音只有 −40 dB，一樣會被標出來。", 30) {
+    const double fs = 8000;
+    const int block = 512;
+    if (frame == 0) {
+        auto* s = plot.addLiveSpectrum(1024, fs);
+        s->averaging = 0.5;
+        s->showPeakHold = true;
+        s->peakHoldDecayDb = 0.4;
+        s->peakLabels = 3;
+        s->peakMinFrequency = 50;
+        s->minDb = -110;
+        s->maxDb = 10;
+        s->fill = FillStyle(QColor(31, 119, 180, 45));
+        s->legendText = RT("平均頻譜");
+        s->peakHoldLegendText = RT("峰值保持");
+        plot.legend.isVisible = true;
+        plot.bottomAxis()->label.text = RT("頻率（Hz）");
+        plot.leftAxis()->label.text = RT("振幅（dB）");
+        return;
+    }
+    auto* s = firstOf<LiveSpectrum>(plot);
+    if (!s) return;
+    // 一個在 700～2300 Hz 之間慢慢來回掃的音（帶二次諧波）、1 kHz 的弱音與白雜訊。
+    // 掃太快的話，一個 FFT 長度裡頻率就走了好幾格，峰會被抹成一片平台。
+    // 相位用樣本序號直接算，不必在 frame 之間記狀態
+    QVector<double> v(block);
+    for (int i = 0; i < block; ++i) {
+        const qint64 idx = static_cast<qint64>(frame - 1) * block + i;
+        const double t = idx / fs;
+        const double sweepPhase = 2 * kPi * (1500 * t - 800 / (2 * kPi * 0.03) * std::cos(2 * kPi * 0.03 * t));
+        const double h = std::sin(idx * 12.9898) * 43758.5453;  // 確定性的雜訊（每次跑都一樣）
+        const double noise = (h - std::floor(h) - 0.5) * 0.02;
+        v[i] = 0.5 * std::sin(sweepPhase) + 0.08 * std::sin(2 * sweepPhase) +
+               0.01 * std::sin(2 * kPi * 1000 * t) + noise;
+    }
+    s->addRange(v);
+}

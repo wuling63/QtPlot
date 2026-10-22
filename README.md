@@ -11,7 +11,7 @@
 
 ## 範例圖
 
-以下都是 `QtPlotDemo --export` 直接畫出來的，463 支範例裡的 12 支：
+以下都是 `QtPlotDemo --export` 直接畫出來的，473 支範例裡的 12 支：
 
 <table>
 <tr>
@@ -43,7 +43,7 @@
 | 核心引擎（座標、刻度、版面、圖例、渲染） | 可用 |
 | 滑鼠互動（平移／縮放／框選／自動範圍） | 可用 |
 | 圖元種類 | 84 種（見下表） |
-| Cookbook 範例 | 463 支，15 個章節（10 支會動、10 支需要滑鼠互動、5 支是子圖） |
+| Cookbook 範例 | 473 支，15 個章節（11 支會動、10 支需要滑鼠互動、5 支是子圖） |
 | 數值自我檢查 | `qtplot_selftest`，851 項；另有 `--soak` 換圖測試與 `tools/check_fonts.py` |
 | 互動 | 平移／縮放／框選縮放、命中測試（二維／只比 X）、游標提示、吸附到資料點的十字線、框選資料點、拖曳圖元、兩張圖共用座標軸、**點圖例切換顯示**、**視野復原／重做（Ctrl+Z / Ctrl+Y）**、**觸控與觸控板手勢**、**視野切換動畫** |
 | 輸出 | PNG（可指定倍率）、SVG、**PDF**、剪貼簿、**列印（含預覽）** |
@@ -66,12 +66,12 @@
 | 形狀與標註 | `LabeledLine`（沿線寫字的直線，角度依螢幕斜率自動算）、`ColorGrid`（每格自訂顏色的格子，用於分類區域）、`Shape`（矩形／橢圓／多邊形）、`Sector`（扇形／環狀／橢圓／沿弧文字）、`Arc`（圓弧／橢圓弧）、`Text`、`Annotation`、`Arrow` |
 | 極座標 | `PolarAxis`、`Pie`（甜甜圈／分離扇形／立體擠出／引線標籤）、`Sunburst`（旭日，標籤可切線／彎曲／徑向／水平）、`Coxcomb`（玫瑰／堆疊／甜甜圈，名稱可沿半徑排並貼著尖端）、`Radar`、`RadialGauge`、`RadialBarChart`（環狀長條，可選距離正確）、`CircularHeatmap`（環狀熱圖，可只畫半圈並在格子裡寫字） |
 | 統計 | `BoxPlot`、`Beeswarm`（蜂群）、`Dendrogram`（樹狀聚類）、`Lollipop`、`Population`（可組成小提琴圖）、`Ridgeline`（山脊／joyplot） |
-| 診斷與推論 | `ControlChart`（SPC，含 Nelson 八規則）、`ForestPlot`（後設分析）；另有 Q-Q、ROC/PR、Kaplan–Meier、FFT／頻譜圖、Bland–Altman、後設分析漏斗圖＋Egger、勞倫茲曲線／吉尼、常態與 Weibull 機率紙等計算函式 |
+| 診斷與推論 | `ControlChart`（SPC，含 Nelson 八規則）、`ForestPlot`（後設分析）；另有 Q-Q、ROC/PR、Kaplan–Meier、FFT／頻譜圖／Welch 平均功率譜／頻譜峰值（拋物線內插）、Bland–Altman、後設分析漏斗圖＋Egger、勞倫茲曲線／吉尼、常態與 Weibull 機率紙等計算函式 |
 | 視覺檢測 | `ConfusionMatrix`（混淆矩陣，可依列／欄／全體正規化，字色依底色自動切換）；`classMetrics()`（每類精確率／召回率／F1）、`thresholdStats()`（OK／NG 門檻的漏檢率與誤判率）；`Heatmap::hideBelow`（異常熱圖疊在影像上只露出超過門檻的區域）。範例程式的「檢視 ▸ 瑕疵檢測門檻示範」是影像疊圖、分數分布、混淆矩陣、ROC 四圖聯動的視窗 |
 | 財金 | `Candlestick`（蠟燭／OHLC 棒線）、`Volume` |
 | 場 | `ContourLines`（marching squares）、`VectorField` |
 | 版面 | `Multiplot`（m×n 子圖、跨格、權重、共用軸、繪圖區對齊）、`MultiplotWidget`、`InsetPlot`（嵌入小圖） |
-| 即時 | `DataLogger`（Full／Jump／Slide 視野）、`DataStreamer`（Wipe／Scroll 循環緩衝）、`DataStreamerXY`（不等間距取樣） |
+| 即時 | `DataLogger`（Full／Jump／Slide 視野）、`DataStreamer`（Wipe／Scroll 循環緩衝）、`DataStreamerXY`（不等間距取樣）、`LiveSpectrum`（即時 FFT 頻譜：指數平均、峰值保持、自動標峰） |
 | 標註 | `Tooltip`（氣泡）、`Callout`（引線）、`Bracket`（區間括號）、`ScaleBar`、`ImageRect` |
 | 特殊座標 | `TriangularAxis`（三角圖）、`SmithChartAxis`、`PhasorPlot`、`TIN`（Delaunay 三角網） |
 | 裝飾 | `Colorbar`（色階圖例）、`ImageMarker`、`FloatingAxis`（繪圖區內部的浮動軸）、`LegendPanel`（第二個以後的圖例） |
@@ -81,13 +81,13 @@
 
 ScottPlot 5 的圖種與互動能力都已對齊，另外多了它沒有的 `Colorbar`（色階圖例）。
 
-其他細項：圖例可加標題、分欄、放在繪圖區外面（右側或下方）；核密度可選 5 種核函數（`KernelType`）；箭頭有 6 種頭（`ArrowHead`）並可雙向；熱圖可設整體透明度、逐格透明度（`alphaMap`）與格子中心對齊（`cellCentered`）；日期軸可用固定間隔（例如每週一）；長條的標籤可放在外側、正中央或條內起點（`Bar::labelPlacement`），並可各自指定顏色。
+其他細項：圖例可加標題、分欄、放在繪圖區外面（右側或下方），外框顏色與線型、底色、符號塗滿與否、字型都能在右鍵選單的「圖例樣式…」對話框裡即時調整（`LegendStyleDialog`）；座標軸可以是真正的對數軸（`logScale`，資料用原始數值，平移縮放在對數空間做），刻度可朝外／朝內／穿過框線、鏡像到對面、畫成標記、逐根上色（`tickStyler`），`setColor()` 一次換掉整根軸的顏色，對數刻度文字可選一般數字／上標／e 記號；核密度可選 5 種核函數（`KernelType`）；箭頭有 6 種頭（`ArrowHead`）並可雙向；熱圖可設整體透明度、逐格透明度（`alphaMap`）與格子中心對齊（`cellCentered`）；日期軸可用固定間隔（例如每週一）；長條的標籤可放在外側、正中央或條內起點（`Bar::labelPlacement`），並可各自指定顏色。
 
 第三批補充（對照 ScottPlot Cookbook 全部 541 支範例後補齊）：
 
 - **刻度**：`AutomaticTickGenerator::tickDensity`／`targetTickCount`；`LogTickGenerator::minorMultipliers`；`DateTimeTickGenerator::labelFormatter`（可依縮放層級換格式）。
 - **座標軸**：`Axis::subLabel`（副標題）、`Axis::labelImage`（影像當標題）。
-- **版面與樣式**：`Plot::fixedDataRect`、`titleCenteredOnFigure`、`figureBorder`、`hairline`（髮絲線）、`moveToFront()`／`moveToBack()`；`LineStyle::handDrawn`（手繪線）；`FontStyle::lineHeight`（行距）；圖例 `overrideMarkerShape`。
+- **版面與樣式**：`Plot::fixedDataRect`、`titleCenteredOnFigure`、`figureBorder`、`hairline`（髮絲線）、`moveToFront()`／`moveToBack()`；`LineStyle::handDrawn`（手繪線）；`FontStyle::lineHeight`（行距）；圖例 `overrideMarkerShape`、`fillSymbols`（色塊塗滿或只畫框）、`symbolOutline`（色塊外框）。
 - **色彩**：`Palette::fromColors()`／`reversed()`／`inverted()`；`Colormap::reversed()`／`stepped(n)`，查表會保留透明度。
 - **資料**：`Scatter` 的 `xScale`／`yScale`／`xOffset`／`yOffset`、`fillAboveColor`／`fillBelowColor`、`markersBelowLine`；`Signal::yScale`；`SignalXY` 的位移與倍率；`Histogram::fromRange()`／`fromBinWidth()`／`probabilities()`；`gridScattered()` 與 `addContourScattered()`（散點等值線）；`resampleOhlc()` 與 `Candlestick::barDuration`；`DataLogger::setY()`。
 - **拖曳**：`IPlottable::beginDrag()` 讓圖元只拖「一部分」：線段端點（`Arrow::draggableEndpoints`）、區間的邊（`AxisSpan::resizable`）、矩形的邊與角（`Shape::resizable`）、個別資料點（`Scatter`／`Markers::draggablePoints`）。
@@ -126,14 +126,14 @@ Qt 的執行期檔案（DLL、平台外掛、影像格式、樣式）在建置�
 ```powershell
 QtPlotDemo                        # 開啟 Cookbook 瀏覽器
 QtPlotDemo --recipe "散點圖"       # 開啟並跳到指定範例
-QtPlotDemo --export out\          # 不開視窗，把 463 支範例全部存成 PNG
+QtPlotDemo --export out\          # 不開視窗，把 473 支範例全部存成 PNG
 QtPlotDemo --soak                 # 不開視窗，照 GUI 的方式連續換過每一支範例
 QtPlotDemo --lang en              # 指定介面語言（en zh_CN ja ko fr de it es zh_TW）
 ```
 
 `--export` 是無頭模式，可以拿來做視覺回歸：改完引擎重跑一次，比對前後的 PNG 就知道哪張圖變了。
 
-`--soak` 驗的是另一件事：**換圖**。它只開一個 `PlotWidget`，把 463 支範例一支接一支
+`--soak` 驗的是另一件事：**換圖**。它只開一個 `PlotWidget`，把 473 支範例一支接一支
 畫進去，每次換圖前檢查有沒有東西殘留。回傳 0 表示沒有。
 
 部署後的 `build\bin\` 約 36 MB、24 個檔案。windeployqt 還會帶上 Direct3D 的著色器編譯器
@@ -149,7 +149,7 @@ QtPlotDemo --lang en              # 指定介面語言（en zh_CN ja ko fr de it
 | 中鍵拖曳 / Alt+左鍵拖曳 | 框選縮放 |
 | 滾輪 | 以游標為中心縮放 |
 | 左鍵雙擊 | 自動範圍 |
-| 右鍵單擊 | 內容選單（自動範圍、複製、另存、列印、格線、圖例、效能） |
+| 右鍵單擊 | 內容選單（自動範圍、複製、另存、列印、格線、圖例、圖例樣式、效能） |
 | Ctrl+P | 預覽列印 |
 | 拖曳時按住 Shift / Ctrl | 只動 X 軸 / 只動 Y 軸 |
 | 游標靠近資料點 | 顯示該點數值（`showTooltipOnHover`） |
@@ -242,7 +242,7 @@ src/qtplot/
   Statistics.*       3 種統計圖元 + 四分位數／迴歸／核密度估計
   Finance.*          K 線與成交量、跳過非交易日的日期軸、SMA／EMA／布林通道
   Field.*            等值線（marching squares）與向量場
-  Live.*             即時資料：累積型 DataLogger 與循環緩衝 DataStreamer
+  Live.*             即時資料：累積型 DataLogger、循環緩衝 DataStreamer 與即時頻譜 LiveSpectrum
   Annotations.*      引線標註、區間括號、比例尺、影像
   Specialty.*        三角圖、史密斯圖、相量圖、Delaunay 三角化與 TIN
   Decorations.*      色階圖例、影像標記、浮動軸
@@ -369,7 +369,7 @@ Cookbook 裡由 QTimer 真的跑起來，匯出 PNG 時則先跑 240 個 frame �
 - **分層快取**：`PlotWidget` 把圖存成一張點陣圖，滑鼠移動只換提示框、拖框選框時直接貼快取。
   改完資料請呼叫 `refresh()`（直接呼叫 `QWidget::update()` 也會整張重畫，只是剛好和滑鼠移動擠在同一幀時可能晚一幀）。
   `layerCacheEnabled = false` 可關掉。
-- **背景執行緒餵資料**：DataStreamer／DataStreamerXY／DataLogger 的 `add*`、`clear` 有鎖，可以從擷取卡或相機的執行緒呼叫。
+- **背景執行緒餵資料**：DataStreamer／DataStreamerXY／DataLogger／LiveSpectrum 的 `add*`、`clear` 有鎖，可以從擷取卡或相機的執行緒呼叫。
   背景執行緒不能碰 widget，改用 `PlotWidget::setAutoRefresh(毫秒)`（C#：`PlotControl.AutoRefreshInterval`），
   GUI 執行緒定時看 `dataVersion()`，有新資料才重畫。
 
@@ -408,7 +408,9 @@ WPF 用 `Plot.Render(byte[], w, h, stride)` 畫進 `WriteableBitmap`（格式 `P
   原生 DLL 不在 `build\bin` 就用 `-p:QtPlotNativeDir=路徑` 指定。
 - 目標機器要裝 [VC++ 2015–2022 可轉散發套件](https://learn.microsoft.com/cpp/windows/latest-supported-vc-redist)。
 - 錯誤一律丟 `QtPlotException`；`Clear()`／`Reset()` 之後舊的 `PlotItem` 會失效（丟例外，不會當掉）。
-- 目前包了常用的 12 種圖元（散點、Signal、長條、直方圖、熱圖、參考線、文字、即時串流……）。
+- 目前包了常用的 13 種圖元（散點、Signal、長條、直方圖、熱圖、參考線、文字、即時串流、即時頻譜……），
+  另外有圖例樣式（`SetLegendBorder`／`SetLegendSymbols`／`SetLegendFont`）、座標軸（`SetAxisColor`／`SetAxisTicks`／`SetAxisLog`）
+  與頻譜計算（`Spectral.Welch`、`Spectral.FindPeaks`）。
   要加新的：在 `qtplot_c.h/.cpp` 加一個 `qp_add_*`，`Native.cs` 加一行宣告，`Plot.cs` 加一個方法。
 
 ```powershell

@@ -11,7 +11,7 @@ million-point `Signal` decimation, custom tick generators, multiple bound axes, 
 
 ## Gallery
 
-Every image below was drawn by `QtPlotDemo --export --lang en` — 12 of the 463 recipes:
+Every image below was drawn by `QtPlotDemo --export --lang en` — 12 of the 473 recipes:
 
 <table>
 <tr>
@@ -43,7 +43,7 @@ Every image below was drawn by `QtPlotDemo --export --lang en` — 12 of the 463
 | Core engine (coordinates, ticks, layout, legend, rendering) | Working |
 | Mouse interaction (pan / zoom / box zoom / auto scale) | Working |
 | Plot types | 84 (see table below) |
-| Cookbook | 463 recipes in 15 chapters (10 animated, 10 that need mouse interaction, 5 multi-plot layouts) |
+| Cookbook | 473 recipes in 15 chapters (11 animated, 10 that need mouse interaction, 5 multi-plot layouts) |
 | Self-checks | `qtplot_selftest` (numeric checks), `--soak` plot-switching test, widget / C API / C# tests, all run by `ctest` |
 | Interaction | Pan / zoom / box zoom, hit testing (2-D or X-only), hover tooltips, crosshair snapping to data, box-selecting points, dragging plottables, shared axes between plots, **click legend to toggle series**, **view undo / redo (Ctrl+Z / Ctrl+Y)**, **touch and touchpad gestures**, **animated view transitions** |
 | Output | PNG (any scale), SVG, **PDF**, clipboard, **printing with preview** |
@@ -66,12 +66,12 @@ Every image below was drawn by `QtPlotDemo --export --lang en` — 12 of the 463
 | Shapes and annotations | `LabeledLine` (text along a line, angle follows the on-screen slope), `ColorGrid` (per-cell colours for categorical regions), `Shape` (rectangle / ellipse / polygon), `Sector` (sector / ring / ellipse / text along the arc), `Arc`, `Text`, `Annotation`, `Arrow` |
 | Polar | `PolarAxis`, `Pie` (donut / exploded slices / extruded 3-D / leader-line labels), `Sunburst` (tangential / curved / radial / horizontal labels), `Coxcomb` (rose / stacked / donut, labels can run along the radius), `Radar`, `RadialGauge`, `RadialBarChart` (optionally distance-correct), `CircularHeatmap` (can be a half circle with text in cells) |
 | Statistics | `BoxPlot`, `Beeswarm`, `Dendrogram`, `Lollipop`, `Population` (can form violin plots), `Ridgeline` (joyplot) |
-| Diagnostics and inference | `ControlChart` (SPC with all eight Nelson rules), `ForestPlot` (meta-analysis); plus functions for Q-Q, ROC/PR, Kaplan–Meier, FFT / spectrogram, Bland–Altman, meta-analysis funnel plot with Egger's test, Lorenz curve / Gini, normal and Weibull probability paper |
+| Diagnostics and inference | `ControlChart` (SPC with all eight Nelson rules), `ForestPlot` (meta-analysis); plus functions for Q-Q, ROC/PR, Kaplan–Meier, FFT / spectrogram / Welch averaged power spectrum / spectral peaks (parabolic interpolation), Bland–Altman, meta-analysis funnel plot with Egger's test, Lorenz curve / Gini, normal and Weibull probability paper |
 | Visual inspection | `ConfusionMatrix` (row / column / overall normalization, ink colour follows the cell); `classMetrics()` (per-class precision / recall / F1), `thresholdStats()` (miss and false-alarm rates for an OK / NG threshold); `Heatmap::hideBelow` (overlay an anomaly map on the image showing only regions above the threshold). The demo's "View ▸ Defect Inspection Threshold Demo" links an image overlay, score distributions, a confusion matrix and a ROC curve to one threshold |
 | Finance | `Candlestick` (candles / OHLC bars), `Volume` |
 | Fields | `ContourLines` (marching squares), `VectorField` |
 | Layout | `Multiplot` (m×n subplots, spanning, weights, shared axes, aligned data areas), `MultiplotWidget`, `InsetPlot` |
-| Live data | `DataLogger` (Full / Jump / Slide view), `DataStreamer` (Wipe / Scroll ring buffer), `DataStreamerXY` (irregular sampling) |
+| Live data | `DataLogger` (Full / Jump / Slide view), `DataStreamer` (Wipe / Scroll ring buffer), `DataStreamerXY` (irregular sampling), `LiveSpectrum` (live FFT spectrum with exponential averaging, peak hold and peak labels) |
 | Annotations | `Tooltip` (speech bubble), `Callout` (leader line), `Bracket`, `ScaleBar`, `ImageRect` |
 | Special coordinates | `TriangularAxis` (ternary), `SmithChartAxis`, `PhasorPlot`, `TIN` (Delaunay triangulation) |
 | Decorations | `Colorbar`, `ImageMarker`, `FloatingAxis` (axis inside the data area), `LegendPanel` (additional legends) |
@@ -81,13 +81,13 @@ Statistics helpers can also be used on their own: `BoxStats::fromValues()` (five
 
 Plot types and interaction match ScottPlot 5, and QtPlot additionally has a `Colorbar`, which ScottPlot does not.
 
-Other details: legends can have titles, multiple columns, and can sit outside the data area (right or bottom); kernel density offers 5 kernels (`KernelType`); arrows have 6 head styles (`ArrowHead`) and can be double-ended; heatmaps support overall opacity, per-cell opacity (`alphaMap`) and centred cells (`cellCentered`); date axes can use fixed intervals (e.g. every Monday); bar labels can go outside, centred or at the bar base (`Bar::labelPlacement`), each with its own colour.
+Other details: legends can have titles, multiple columns, and can sit outside the data area (right or bottom); their border colour and line style, background, filled or outline-only swatches and font can be adjusted live in the right-click "Legend Style…" dialog (`LegendStyleDialog`); axes can be truly logarithmic (`logScale`: raw data values, panning and zooming in log space), ticks can point outside / inside / across the frame, be mirrored to the opposite side, drawn as markers or coloured one by one (`tickStyler`), `setColor()` recolours a whole axis, and log tick labels can be plain numbers, superscripts or e-notation; kernel density offers 5 kernels (`KernelType`); arrows have 6 head styles (`ArrowHead`) and can be double-ended; heatmaps support overall opacity, per-cell opacity (`alphaMap`) and centred cells (`cellCentered`); date axes can use fixed intervals (e.g. every Monday); bar labels can go outside, centred or at the bar base (`Bar::labelPlacement`), each with its own colour.
 
 Third batch of additions (after comparing against all 541 ScottPlot Cookbook recipes):
 
 - **Ticks**: `AutomaticTickGenerator::tickDensity` / `targetTickCount`; `LogTickGenerator::minorMultipliers`; `DateTimeTickGenerator::labelFormatter` (format can change with zoom level).
 - **Axes**: `Axis::subLabel` (secondary title), `Axis::labelImage` (image as title).
-- **Layout and style**: `Plot::fixedDataRect`, `titleCenteredOnFigure`, `figureBorder`, `hairline`, `moveToFront()` / `moveToBack()`; `LineStyle::handDrawn`; `FontStyle::lineHeight`; legend `overrideMarkerShape`.
+- **Layout and style**: `Plot::fixedDataRect`, `titleCenteredOnFigure`, `figureBorder`, `hairline`, `moveToFront()` / `moveToBack()`; `LineStyle::handDrawn`; `FontStyle::lineHeight`; legend `overrideMarkerShape`, `fillSymbols` (filled or outline-only swatches), `symbolOutline` (swatch outline).
 - **Colour**: `Palette::fromColors()` / `reversed()` / `inverted()`; `Colormap::reversed()` / `stepped(n)`, lookups keep alpha.
 - **Data**: `Scatter` `xScale` / `yScale` / `xOffset` / `yOffset`, `fillAboveColor` / `fillBelowColor`, `markersBelowLine`; `Signal::yScale`; offset and scale for `SignalXY`; `Histogram::fromRange()` / `fromBinWidth()` / `probabilities()`; `gridScattered()` and `addContourScattered()` (contours from scattered points); `resampleOhlc()` and `Candlestick::barDuration`; `DataLogger::setY()`.
 - **Dragging**: `IPlottable::beginDrag()` lets a plottable drag only *part* of itself: line endpoints (`Arrow::draggableEndpoints`), span edges (`AxisSpan::resizable`), rectangle edges and corners (`Shape::resizable`), individual data points (`Scatter` / `Markers::draggablePoints`).
@@ -133,14 +133,14 @@ so **no PATH changes are needed and the whole `build\bin\` folder can be copied 
 ```powershell
 QtPlotDemo                        # open the Cookbook browser
 QtPlotDemo --recipe "散點圖"       # open and jump to a recipe (original or translated name)
-QtPlotDemo --export out\          # no window: save all 463 recipes as PNG
+QtPlotDemo --export out\          # no window: save all 473 recipes as PNG
 QtPlotDemo --soak                 # no window: switch through every recipe the way the GUI does
 QtPlotDemo --lang en              # UI language (en zh_CN ja ko fr de it es zh_TW)
 ```
 
 `--export` is headless and can be used for visual regression testing: re-run it after changing the engine and compare the PNGs.
 
-`--soak` checks something else: **switching plots**. It uses a single `PlotWidget`, draws all 463 recipes one after another,
+`--soak` checks something else: **switching plots**. It uses a single `PlotWidget`, draws all 473 recipes one after another,
 and checks before each switch that nothing from the previous plot remains. Exit code 0 means clean.
 
 ### Mouse and keyboard
@@ -152,7 +152,7 @@ and checks before each switch that nothing from the previous plot remains. Exit 
 | Middle-drag / Alt + left-drag | Box zoom |
 | Wheel | Zoom around the cursor |
 | Double-click | Auto scale |
-| Right-click | Context menu (auto scale, copy, save, print, grid, legend, language, benchmark) |
+| Right-click | Context menu (auto scale, copy, save, print, grid, legend, legend style, language, benchmark) |
 | Ctrl+P | Print preview |
 | Ctrl+Z / Ctrl+Y | Undo / redo the view |
 | Hold Shift / Ctrl while dragging | X only / Y only |
@@ -249,7 +249,7 @@ src/qtplot/
   Statistics.*       3 statistics plottables + quartiles / regression / kernel density
   Finance.*          candlesticks and volume, date axis that skips non-trading days, SMA / EMA / Bollinger bands
   Field.*            contour lines (marching squares) and vector fields
-  Live.*             live data: DataLogger (accumulating) and DataStreamer (ring buffer), thread-safe
+  Live.*             live data: DataLogger (accumulating), DataStreamer (ring buffer) and LiveSpectrum (live FFT), thread-safe
   Decimation.*       min/max index and envelope rendering for large data
   Annotations.*      callouts, brackets, scale bars, images
   Specialty.*        ternary, Smith chart, phasors, Delaunay triangulation and TIN
@@ -376,7 +376,7 @@ How:
 - **Layer cache**: `PlotWidget` keeps the plot as a bitmap; when only the tooltip or the selection rectangle changes it blits the cache.
   Call `refresh()` after changing data (a plain `QWidget::update()` also triggers a full repaint, but if it lands in the same frame as a mouse move
   it may show up one frame late). Set `layerCacheEnabled = false` to disable.
-- **Feeding data from background threads**: `add*` and `clear` on `DataStreamer` / `DataStreamerXY` / `DataLogger` are locked and can be
+- **Feeding data from background threads**: `add*` and `clear` on `DataStreamer` / `DataStreamerXY` / `DataLogger` / `LiveSpectrum` are locked and can be
   called from a frame grabber's or camera's thread. Background threads must not touch widgets, so use `PlotWidget::setAutoRefresh(ms)`
   (C#: `PlotControl.AutoRefreshInterval`): the GUI thread checks `dataVersion()` periodically and repaints only when there is new data.
 
@@ -416,7 +416,9 @@ In WPF, use `Plot.Render(byte[], w, h, stride)` into a `WriteableBitmap` (format
   if the native DLLs are not in `build\bin`, pass `-p:QtPlotNativeDir=path`.
 - The target machine needs the [VC++ 2015–2022 redistributable](https://learn.microsoft.com/cpp/windows/latest-supported-vc-redist).
 - Errors are thrown as `QtPlotException`; after `Clear()` / `Reset()` old `PlotItem`s become invalid (they throw instead of crashing).
-- 12 common plot types are wrapped so far (scatter, Signal, bars, histogram, heatmap, reference lines, text, live streaming, …).
+- 13 common plot types are wrapped so far (scatter, Signal, bars, histogram, heatmap, reference lines, text, live streaming, live spectrum, …),
+  plus legend styling (`SetLegendBorder` / `SetLegendSymbols` / `SetLegendFont`), axes (`SetAxisColor` / `SetAxisTicks` / `SetAxisLog`)
+  and spectral calculations (`Spectral.Welch`, `Spectral.FindPeaks`).
   To add one: add a `qp_add_*` in `qtplot_c.h/.cpp`, one declaration in `Native.cs` and one method in `Plot.cs`.
 
 ```powershell

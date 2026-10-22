@@ -99,6 +99,105 @@
     </message>
 </context>
 <context>
+    <name>qtplot::LegendStyleDialog</name>
+    <message>
+        <source>圖例樣式</source>
+        <translation>범례 스타일</translation>
+    </message>
+    <message>
+        <source>顯示外框</source>
+        <translation>테두리 표시</translation>
+    </message>
+    <message>
+        <source>實線</source>
+        <translation>실선</translation>
+    </message>
+    <message>
+        <source>虛線</source>
+        <translation>파선</translation>
+    </message>
+    <message>
+        <source>點線</source>
+        <translation>점선</translation>
+    </message>
+    <message>
+        <source>點虛線</source>
+        <translation>일점쇄선</translation>
+    </message>
+    <message>
+        <source>外框</source>
+        <translation>테두리</translation>
+    </message>
+    <message>
+        <source>顏色</source>
+        <translation>색</translation>
+    </message>
+    <message>
+        <source>粗細</source>
+        <translation>두께</translation>
+    </message>
+    <message>
+        <source>線型</source>
+        <translation>선 종류</translation>
+    </message>
+    <message>
+        <source>塗滿底色</source>
+        <translation>배경 채우기</translation>
+    </message>
+    <message>
+        <source>底色</source>
+        <translation>배경</translation>
+    </message>
+    <message>
+        <source>色塊塗滿</source>
+        <translation>색 견본 채우기</translation>
+    </message>
+    <message>
+        <source>色塊加外框</source>
+        <translation>색 견본 테두리</translation>
+    </message>
+    <message>
+        <source>符號</source>
+        <translation>기호</translation>
+    </message>
+    <message>
+        <source>文字</source>
+        <translation>텍스트</translation>
+    </message>
+    <message>
+        <source>字型</source>
+        <translation>글꼴</translation>
+    </message>
+    <message>
+        <source>還原預設</source>
+        <translation>기본값 복원</translation>
+    </message>
+    <message>
+        <source>外框顏色</source>
+        <translation>테두리 색</translation>
+    </message>
+    <message>
+        <source>色塊外框顏色</source>
+        <translation>색 견본 테두리 색</translation>
+    </message>
+    <message>
+        <source>文字顏色</source>
+        <translation>텍스트 색</translation>
+    </message>
+    <message>
+        <source>粗體</source>
+        <translation>굵게</translation>
+    </message>
+    <message>
+        <source>斜體</source>
+        <translation>기울임꼴</translation>
+    </message>
+    <message>
+        <source>圖例字型</source>
+        <translation>범례 글꼴</translation>
+    </message>
+</context>
+<context>
     <name>qtplot::PlotWidget</name>
     <message>
         <source>%1 個圖元, %2 ms (%3 FPS)</source>
@@ -127,6 +226,10 @@
     <message>
         <source>顯示圖例(&amp;L)</source>
         <translation>범례 표시(&amp;L)</translation>
+    </message>
+    <message>
+        <source>圖例樣式(&amp;Y)…</source>
+        <translation>범례 스타일(&amp;Y)…</translation>
     </message>
     <message>
         <source>語言(&amp;N)</source>

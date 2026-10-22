@@ -28,6 +28,7 @@ add_library(qtplot STATIC
     Plot.h            Plot.cpp
     Multiplot.h       Multiplot.cpp
     PlotWidget.h      PlotWidget.cpp
+    LegendStyleDialog.h LegendStyleDialog.cpp
     DataGen.h         DataGen.cpp
     Decimation.h      Decimation.cpp
     Translation.h     Translation.cpp

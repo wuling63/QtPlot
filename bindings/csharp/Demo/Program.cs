@@ -124,6 +124,47 @@ internal static class Program
         producer.Join();
         Check(frames > 3 && fed > 0 && plot.DataVersion != v0, $"背景執行緒 Append、同時 Render：{frames} 張、{fed} 點，沒有當掉");
 
+        // 圖例樣式、座標軸與刻度、對數軸
+        plot.Clear();
+        var lx = Enumerable.Range(0, 40).Select(i => i * 0.2).ToArray();
+        var item = plot.AddScatter(lx, lx.Select(x => Math.Pow(10, x / 2)).ToArray());
+        item.Legend = "10^(x/2)";
+        plot.ShowLegend();
+        plot.SetLegendLayout(LegendPlacement.OutsideBottom, horizontal: true);
+        plot.SetLegendBorder(Color.DarkRed, 1.5, LineDash.Dashed);
+        plot.SetLegendBackground(null);
+        plot.SetLegendSymbols(filled: false);
+        plot.SetLegendFont("Georgia", 12, italic: true);
+        plot.SetAxisColor(AxisEdge.Left, Color.SteelBlue);
+        plot.SetAxisTicks(AxisEdge.Bottom, TickDirection.Inside, 8, mirror: true);
+        plot.SetAxisTickMarker(AxisEdge.Bottom, MarkerShape.FilledCircle, 6);
+        plot.SetAxisLog(AxisEdge.Left, true, LogLabelFormat.Superscript);
+        plot.AutoScale();
+        Check(plot.Limits.YMin > 0 && plot.Limits.YMax > 10000, "對數軸的自動範圍是正的");
+        using (var bmp = plot.RenderToBitmap(400, 300)) { }
+        var p1 = plot.CoordinateToPixel(1, 1).Y;
+        var p10 = plot.CoordinateToPixel(1, 10).Y;
+        var p100 = plot.CoordinateToPixel(1, 100).Y;
+        Check(Math.Abs((p1 - p10) - (p10 - p100)) < 1e-6, "對數軸上每個十的次方一樣長");
+        try { plot.SetAxisTicks((AxisEdge)9, TickDirection.Inside); Check(false, "不認得的軸應該丟例外"); }
+        catch (QtPlotException e) { Check(e.Code == -2, "不認得的軸丟 ERR_ARG"); }
+
+        // 頻譜：Welch、找峰值、即時頻譜
+        var sig = Enumerable.Range(0, 4096).Select(k => Math.Sin(2 * Math.PI * 125 * k / 1000.0) + 0.1 * Math.Sin(2 * Math.PI * 312.5 * k / 1000.0)).ToArray();
+        var (freq, db) = Spectral.Welch(sig, 1000, 512);
+        Check(freq.Length == 257 && Math.Abs(freq[64] - 125) < 1e-9 && Math.Abs(db[64]) < 0.1, "Spectral.Welch：125 Hz 振幅 1（0 dB）");
+        var peaks = Spectral.FindPeaks(freq, db, 4, 15);
+        Check(peaks.Length == 2 && Math.Abs(peaks[1].Frequency - 312.5) < 0.5 && Math.Abs(peaks[1].Decibels + 20) < 0.6,
+              $"Spectral.FindPeaks：{string.Join("、", peaks.Select(pk => $"{pk.Frequency:F1} Hz {pk.Decibels:F1} dB"))}");
+        plot.Clear();
+        var live = plot.AddLiveSpectrum(1024, 1000, Color.SteelBlue)
+                       .SetSpectrumAnalysis(WindowFunction.Hann, 0.5, peakHold: true, peakHoldDecayDb: 0.3)
+                       .SetSpectrumDisplay(-100, 10, peakLabels: 2, fill: Color.FromArgb(60, Color.SteelBlue));
+        var vLive = plot.DataVersion;
+        live.Append(sig);
+        Check(plot.DataVersion != vLive, "即時頻譜 Append 之後資料版本變了");
+        using (var bmp = plot.RenderToBitmap(400, 300)) { }
+
         var png = Path.Combine(dir, "csharp_smoke.png");
         plot.SavePng(png, 800, 400);
         Check(File.Exists(png) && new FileInfo(png).Length > 1000, "SavePng");

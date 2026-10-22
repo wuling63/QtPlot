@@ -269,7 +269,34 @@ void Waterfall3D::limits(CoordinateRange& x, CoordinateRange& y, CoordinateRange
     for (const auto& curve : zs)
         for (double v : curve)
             if (std::isfinite(v)) { z.expand(v); any = true; }
-    if (any) z.expand(0.0);  // 曲線填到 0，0 一定要在盒子裡
+    if (any) z.expand(std::isnan(floorZ) ? 0.0 : floorZ);  // 曲線填到地板，地板一定要在盒子裡
+}
+
+void Waterfall3D::setSpectrogram(const Spectrogram& sp, int maxCurves, const Colormap& colormap, double maxFrequency) {
+    xs.clear();
+    ys.clear();
+    zs.clear();
+    curveNames.clear();
+    if (sp.rows < 2 || sp.cols < 1 || maxCurves < 1) return;
+
+    for (int k = 0; k < sp.rows; ++k) {
+        const double f = sp.sampleRate * k / sp.windowSize;
+        if (maxFrequency > 0 && f > maxFrequency && xs.size() >= 2) break;
+        xs.append(f);
+    }
+    const int rows = static_cast<int>(xs.size());
+    // 等間隔挑時間格，最後一格一定要在（最新的頻譜通常是想看的）
+    const int count = std::min(maxCurves, sp.cols);
+    for (int i = 0; i < count; ++i) {
+        const int col = (count == 1) ? sp.cols - 1 : static_cast<int>(std::lround(double(i) * (sp.cols - 1) / (count - 1)));
+        ys.append(double(col) * sp.hopSize / sp.sampleRate);
+        QVector<double> curve(rows);
+        for (int k = 0; k < rows; ++k) curve[k] = sp.at(k, col);
+        zs.append(curve);
+    }
+    palette = Palette::fromColors(colormap.sampleColors(count));
+    const CoordinateRange r = sp.valueRange();
+    floorZ = r.isValid() ? r.min : std::numeric_limits<double>::quiet_NaN();
 }
 
 double Columns3D::columnWidth() const {
@@ -513,7 +540,7 @@ void Chart3D::render(RenderPack& rp) {
             }
         } else if (auto* tw = dynamic_cast<Waterfall3D*>(sp.get()); tw && tw->thickness > 0) {
             // 有厚度：緞帶（只有頂面）或實心板（後面、頂面、前面）
-            const double baseZ = std::clamp(0.0, zr.min, zr.max);
+            const double baseZ = std::clamp(std::isnan(tw->floorZ) ? 0.0 : tw->floorZ, zr.min, zr.max);
             const bool plusYFar = proj.farSide(1) > 0;
             for (int k = 0; k < std::min(tw->ys.size(), tw->zs.size()); ++k) {
                 const int n = static_cast<int>(std::min(tw->xs.size(), tw->zs[k].size()));
@@ -571,7 +598,7 @@ void Chart3D::render(RenderPack& rp) {
                 }});
             }
         } else if (auto* w = dynamic_cast<Waterfall3D*>(sp.get())) {
-            const double baseZ = std::clamp(0.0, zr.min, zr.max);
+            const double baseZ = std::clamp(std::isnan(w->floorZ) ? 0.0 : w->floorZ, zr.min, zr.max);
             for (int k = 0; k < std::min(w->ys.size(), w->zs.size()); ++k) {
                 const int n = static_cast<int>(std::min(w->xs.size(), w->zs[k].size()));
                 if (n < 2) continue;

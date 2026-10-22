@@ -208,6 +208,18 @@
         <translation>Spektrogramm (Sweep und Oberwellen)</translation>
     </message>
     <message>
+        <source>Welch 平均功率譜</source>
+        <translation>Gemitteltes Leistungsspektrum (Welch)</translation>
+    </message>
+    <message>
+        <source>自動標出頻譜峰值</source>
+        <translation>Spektrumspitzen automatisch beschriften</translation>
+    </message>
+    <message>
+        <source>3D 瀑布頻譜</source>
+        <translation>3D-Wasserfallspektrum</translation>
+    </message>
+    <message>
         <source>座標軸</source>
         <translation>Achsen</translation>
     </message>
@@ -338,6 +350,26 @@
     <message>
         <source>截斷 X 軸（跳過空檔）</source>
         <translation>Unterbrochene X-Achse (Lücken überspringen)</translation>
+    </message>
+    <message>
+        <source>刻度線的方向與鏡像</source>
+        <translation>Teilstrichrichtung und gespiegelte Teilstriche</translation>
+    </message>
+    <message>
+        <source>刻度標記與個別刻度上色</source>
+        <translation>Teilstrichmarker und Farbe je Teilstrich</translation>
+    </message>
+    <message>
+        <source>一次換掉整根軸的顏色</source>
+        <translation>Eine ganze Achse auf einmal einfärben</translation>
+    </message>
+    <message>
+        <source>真正的對數軸（波德圖）</source>
+        <translation>Echte logarithmische Achse (Bode-Diagramm)</translation>
+    </message>
+    <message>
+        <source>對數刻度的文字格式</source>
+        <translation>Beschriftungsformate für Log-Achsen</translation>
     </message>
     <message>
         <source>裝飾</source>
@@ -634,6 +666,10 @@
     <message>
         <source>多軌波形</source>
         <translation>Mehrspurige Wellenformen</translation>
+    </message>
+    <message>
+        <source>即時 FFT 頻譜（峰值保持）</source>
+        <translation>Live-FFT-Spektrum (Spitzenwerthaltung)</translation>
     </message>
     <message>
         <source>商務圖表</source>
@@ -1562,6 +1598,10 @@
     <message>
         <source>圖例放在下方並換行</source>
         <translation>Legende unten mit Umbruch</translation>
+    </message>
+    <message>
+        <source>圖例外框、符號與字型</source>
+        <translation>Legendenrahmen, Symbole und Schrift</translation>
     </message>
     <message>
         <source>核密度的核函數</source>
@@ -2556,12 +2596,32 @@ TPR %2 / FPR %3</translation>
         <translation>Spektrogramm: Sweep, 2. Oberwelle und Pfeifton in der Mitte</translation>
     </message>
     <message>
-        <source>訊號量測結果</source>
-        <translation>Signalmessung</translation>
+        <source>單一段（1024 點）</source>
+        <translation>Einzelnes Segment (1024 Punkte)</translation>
+    </message>
+    <message>
+        <source>Welch（%1 段平均）</source>
+        <translation>Welch (%1 Segmente gemittelt)</translation>
+    </message>
+    <message>
+        <source>平均之後，藏在雜訊裡的小峰才看得見</source>
+        <translation>Erst die Mittelung zeigt kleine Spitzen im Rauschen</translation>
+    </message>
+    <message>
+        <source>轉速倍頻與軸承頻率</source>
+        <translation>Drehzahlharmonische und Lagerfrequenz</translation>
     </message>
     <message>
         <source>時間（秒）</source>
         <translation>Zeit (s)</translation>
+    </message>
+    <message>
+        <source>升速過程的瀑布頻譜</source>
+        <translation>Wasserfallspektrum eines Hochlaufs</translation>
+    </message>
+    <message>
+        <source>訊號量測結果</source>
+        <translation>Signalmessung</translation>
     </message>
     <message>
         <source>電壓（伏特）</source>
@@ -2716,6 +2776,62 @@ Mit setRange gesetzte Achsen überschreibt autoScale nicht, Ziehen/Zoomen geht w
     <message>
         <source>截斷 X 軸</source>
         <translation>Unterbrochene X-Achse</translation>
+    </message>
+    <message>
+        <source>刻度線的三種方向</source>
+        <translation>Drei Teilstrichrichtungen</translation>
+    </message>
+    <message>
+        <source>朝外（預設）</source>
+        <translation>Nach außen (Standard)</translation>
+    </message>
+    <message>
+        <source>朝內＋鏡像</source>
+        <translation>Nach innen + gespiegelt</translation>
+    </message>
+    <message>
+        <source>穿過框線</source>
+        <translation>Über den Rahmen</translation>
+    </message>
+    <message>
+        <source>樣本</source>
+        <translation>Probe</translation>
+    </message>
+    <message>
+        <source>超出規格的刻度標成紅色</source>
+        <translation>Teilstriche außerhalb der Spezifikation in Rot</translation>
+    </message>
+    <message>
+        <source>溫度 (°C)</source>
+        <translation>Temperatur (°C)</translation>
+    </message>
+    <message>
+        <source>濕度 (%)</source>
+        <translation>Luftfeuchte (%)</translation>
+    </message>
+    <message>
+        <source>時間 (h)</source>
+        <translation>Zeit (h)</translation>
+    </message>
+    <message>
+        <source>軸的顏色對應曲線的顏色</source>
+        <translation>Achsenfarben passend zu den Kurven</translation>
+    </message>
+    <message>
+        <source>增益（dB）</source>
+        <translation>Verstärkung (dB)</translation>
+    </message>
+    <message>
+        <source>一階低通濾波器的波德圖</source>
+        <translation>Bode-Diagramm eines Tiefpasses erster Ordnung</translation>
+    </message>
+    <message>
+        <source>同一份資料，四種刻度寫法</source>
+        <translation>Gleiche Daten, vier Schreibweisen der Teilstriche</translation>
+    </message>
+    <message>
+        <source>Plain＋次刻度文字</source>
+        <translation>Plain + Nebenteilstrich-Beschriftung</translation>
     </message>
     <message>
         <source>強度</source>
@@ -3152,10 +3268,6 @@ Pseudoausschuss %5% (%6 / %7 OK-Teile verworfen)</translation>
         <translation>Sensorwerte</translation>
     </message>
     <message>
-        <source>溫度 (°C)</source>
-        <translation>Temperatur (°C)</translation>
-    </message>
-    <message>
         <source>取樣點</source>
         <translation>Abtastpunkt</translation>
     </message>
@@ -3182,6 +3294,14 @@ Pseudoausschuss %5% (%6 / %7 OK-Teile verworfen)</translation>
     <message>
         <source>通道 3</source>
         <translation>Kanal 3</translation>
+    </message>
+    <message>
+        <source>平均頻譜</source>
+        <translation>Gemitteltes Spektrum</translation>
+    </message>
+    <message>
+        <source>峰值保持</source>
+        <translation>Spitzenwerthaltung</translation>
     </message>
     <message>
         <source>刮傷</source>
@@ -5172,10 +5292,6 @@ Numerisch (bis |x| = 4) = %3</translation>
         <translation>Luftdruck (hPa)</translation>
     </message>
     <message>
-        <source>濕度 (%)</source>
-        <translation>Luftfeuchte (%)</translation>
-    </message>
-    <message>
         <source>時間 (分鐘)</source>
         <translation>Zeit (min)</translation>
     </message>
@@ -5282,6 +5398,10 @@ Numerisch (bis |x| = 4) = %3</translation>
     <message>
         <source>東部</source>
         <translation>Ost</translation>
+    </message>
+    <message>
+        <source>各國營收佔比</source>
+        <translation>Umsatzanteil nach Land</translation>
     </message>
     <message>
         <source>三角</source>

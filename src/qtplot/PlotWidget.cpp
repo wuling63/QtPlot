@@ -1,4 +1,5 @@
 #include "PlotWidget.h"
+#include "LegendStyleDialog.h"
 #include "Translation.h"
 
 #include <QApplication>
@@ -587,14 +588,13 @@ void PlotWidget::applyPan(QPointF from, QPointF to, Qt::KeyboardModifiers mods) 
     Axis* bx = m_plot->bottomAxis();
     Axis* by = m_plot->leftAxis();
 
+    // 走 Axis::pan：對數軸要在對數空間平移，直接加減範圍會越拖越歪
     if (!onlyY && !bx->locked) {
-        const double dx = bx->getCoordinate(from.x(), d) - bx->getCoordinate(to.x(), d);
-        bx->range.translate(dx);
+        bx->pan(from.x(), to.x(), d);
         m_plot->topAxis()->range = bx->range;
     }
     if (!onlyX && !by->locked) {
-        const double dy = by->getCoordinate(from.y(), d) - by->getCoordinate(to.y(), d);
-        by->range.translate(dy);
+        by->pan(from.y(), to.y(), d);
         m_plot->rightAxis()->range = by->range;
     }
 }
@@ -614,11 +614,11 @@ void PlotWidget::applyZoomDrag(QPointF from, QPointF to, Qt::KeyboardModifiers m
     Axis* by = m_plot->leftAxis();
 
     if (!onlyY && !bx->locked) {
-        bx->range.zoom(fx, bx->range.center());
+        bx->zoom(fx);
         m_plot->topAxis()->range = bx->range;
     }
     if (!onlyX && !by->locked) {
-        by->range.zoom(fy, by->range.center());
+        by->zoom(fy);
         m_plot->rightAxis()->range = by->range;
     }
 }
@@ -659,11 +659,11 @@ void PlotWidget::zoomAt(QPointF pixel, double factor, Qt::KeyboardModifiers mods
 
     // 以游標下的資料點為定點，縮放後該點仍在同一個像素上
     if (!onlyY && !bx->locked) {
-        bx->range.zoom(factor, bx->getCoordinate(pixel.x(), d));
+        bx->zoom(factor, bx->getCoordinate(pixel.x(), d));
         m_plot->topAxis()->range = bx->range;
     }
     if (!onlyX && !by->locked) {
-        by->range.zoom(factor, by->getCoordinate(pixel.y(), d));
+        by->zoom(factor, by->getCoordinate(pixel.y(), d));
         m_plot->rightAxis()->range = by->range;
     }
 }
@@ -770,6 +770,7 @@ void PlotWidget::showContextMenu(QPoint pos) {
         m_plot->legend.isVisible = on;
         requestFull();
     });
+    menu.addAction(tr("圖例樣式(&Y)…"), this, [this] { legendStyleDialog(); });
 
     if (languageMenuEnabled) {
         QMenu* langMenu = menu.addMenu(tr("語言(&N)"));
@@ -801,6 +802,16 @@ void PlotWidget::showContextMenu(QPoint pos) {
     });
 
     menu.exec(mapToGlobal(pos));
+}
+
+void PlotWidget::legendStyleDialog() {
+    if (!m_plot->legend.isVisible) {
+        m_plot->legend.isVisible = true;
+        requestFull();
+    }
+    LegendStyleDialog dlg(m_plot->legend, this);
+    connect(&dlg, &LegendStyleDialog::changed, this, [this] { requestFull(); });
+    dlg.exec();
 }
 
 void PlotWidget::copyToClipboard() {

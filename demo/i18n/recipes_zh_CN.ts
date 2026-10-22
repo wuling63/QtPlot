@@ -208,6 +208,18 @@
         <translation>频谱图（扫频与谐波）</translation>
     </message>
     <message>
+        <source>Welch 平均功率譜</source>
+        <translation>Welch 平均功率谱</translation>
+    </message>
+    <message>
+        <source>自動標出頻譜峰值</source>
+        <translation>自动标出频谱峰值</translation>
+    </message>
+    <message>
+        <source>3D 瀑布頻譜</source>
+        <translation>3D 瀑布频谱</translation>
+    </message>
+    <message>
         <source>座標軸</source>
         <translation>坐标轴</translation>
     </message>
@@ -338,6 +350,26 @@
     <message>
         <source>截斷 X 軸（跳過空檔）</source>
         <translation>截断 X 轴（跳过空档）</translation>
+    </message>
+    <message>
+        <source>刻度線的方向與鏡像</source>
+        <translation>刻度线的方向与镜像</translation>
+    </message>
+    <message>
+        <source>刻度標記與個別刻度上色</source>
+        <translation>刻度标记与单个刻度着色</translation>
+    </message>
+    <message>
+        <source>一次換掉整根軸的顏色</source>
+        <translation>一次换掉整根轴的颜色</translation>
+    </message>
+    <message>
+        <source>真正的對數軸（波德圖）</source>
+        <translation>真正的对数轴（伯德图）</translation>
+    </message>
+    <message>
+        <source>對數刻度的文字格式</source>
+        <translation>对数刻度的文字格式</translation>
     </message>
     <message>
         <source>裝飾</source>
@@ -634,6 +666,10 @@
     <message>
         <source>多軌波形</source>
         <translation>多轨波形</translation>
+    </message>
+    <message>
+        <source>即時 FFT 頻譜（峰值保持）</source>
+        <translation>实时 FFT 频谱（峰值保持）</translation>
     </message>
     <message>
         <source>商務圖表</source>
@@ -1562,6 +1598,10 @@
     <message>
         <source>圖例放在下方並換行</source>
         <translation>图例放在下方并换行</translation>
+    </message>
+    <message>
+        <source>圖例外框、符號與字型</source>
+        <translation>图例外框、符号与字体</translation>
     </message>
     <message>
         <source>核密度的核函數</source>
@@ -2556,12 +2596,32 @@ TPR %2 / FPR %3</translation>
         <translation>频谱图：扫频、二次谐波与中段的哨声</translation>
     </message>
     <message>
-        <source>訊號量測結果</source>
-        <translation>信号测量结果</translation>
+        <source>單一段（1024 點）</source>
+        <translation>单一段（1024 点）</translation>
+    </message>
+    <message>
+        <source>Welch（%1 段平均）</source>
+        <translation>Welch（%1 段平均）</translation>
+    </message>
+    <message>
+        <source>平均之後，藏在雜訊裡的小峰才看得見</source>
+        <translation>平均之后，藏在噪声里的小峰才看得见</translation>
+    </message>
+    <message>
+        <source>轉速倍頻與軸承頻率</source>
+        <translation>转速倍频与轴承频率</translation>
     </message>
     <message>
         <source>時間（秒）</source>
         <translation>时间（秒）</translation>
+    </message>
+    <message>
+        <source>升速過程的瀑布頻譜</source>
+        <translation>升速过程的瀑布频谱</translation>
+    </message>
+    <message>
+        <source>訊號量測結果</source>
+        <translation>信号测量结果</translation>
     </message>
     <message>
         <source>電壓（伏特）</source>
@@ -2716,6 +2776,62 @@ setRange 设置过的轴不会被 autoScale 覆盖，但仍然可以拖拽缩放
     <message>
         <source>截斷 X 軸</source>
         <translation>截断 X 轴</translation>
+    </message>
+    <message>
+        <source>刻度線的三種方向</source>
+        <translation>刻度线的三种方向</translation>
+    </message>
+    <message>
+        <source>朝外（預設）</source>
+        <translation>朝外（默认）</translation>
+    </message>
+    <message>
+        <source>朝內＋鏡像</source>
+        <translation>朝内＋镜像</translation>
+    </message>
+    <message>
+        <source>穿過框線</source>
+        <translation>穿过框线</translation>
+    </message>
+    <message>
+        <source>樣本</source>
+        <translation>样本</translation>
+    </message>
+    <message>
+        <source>超出規格的刻度標成紅色</source>
+        <translation>超出规格的刻度标成红色</translation>
+    </message>
+    <message>
+        <source>溫度 (°C)</source>
+        <translation>温度 (°C)</translation>
+    </message>
+    <message>
+        <source>濕度 (%)</source>
+        <translation>湿度 (%)</translation>
+    </message>
+    <message>
+        <source>時間 (h)</source>
+        <translation>时间 (h)</translation>
+    </message>
+    <message>
+        <source>軸的顏色對應曲線的顏色</source>
+        <translation>轴的颜色对应曲线的颜色</translation>
+    </message>
+    <message>
+        <source>增益（dB）</source>
+        <translation>增益（dB）</translation>
+    </message>
+    <message>
+        <source>一階低通濾波器的波德圖</source>
+        <translation>一阶低通滤波器的伯德图</translation>
+    </message>
+    <message>
+        <source>同一份資料，四種刻度寫法</source>
+        <translation>同一份数据，四种刻度写法</translation>
+    </message>
+    <message>
+        <source>Plain＋次刻度文字</source>
+        <translation>Plain＋次刻度文字</translation>
     </message>
     <message>
         <source>強度</source>
@@ -3152,10 +3268,6 @@ Egger 截距 %2（离 0 越远越不对称）</translation>
         <translation>传感器读数</translation>
     </message>
     <message>
-        <source>溫度 (°C)</source>
-        <translation>温度 (°C)</translation>
-    </message>
-    <message>
         <source>取樣點</source>
         <translation>采样点</translation>
     </message>
@@ -3182,6 +3294,14 @@ Egger 截距 %2（离 0 越远越不对称）</translation>
     <message>
         <source>通道 3</source>
         <translation>通道 3</translation>
+    </message>
+    <message>
+        <source>平均頻譜</source>
+        <translation>平均频谱</translation>
+    </message>
+    <message>
+        <source>峰值保持</source>
+        <translation>峰值保持</translation>
     </message>
     <message>
         <source>刮傷</source>
@@ -5172,10 +5292,6 @@ Egger 截距 %2（离 0 越远越不对称）</translation>
         <translation>气压 (hPa)</translation>
     </message>
     <message>
-        <source>濕度 (%)</source>
-        <translation>湿度 (%)</translation>
-    </message>
-    <message>
         <source>時間 (分鐘)</source>
         <translation>时间 (分钟)</translation>
     </message>
@@ -5282,6 +5398,10 @@ Egger 截距 %2（离 0 越远越不对称）</translation>
     <message>
         <source>東部</source>
         <translation>东部</translation>
+    </message>
+    <message>
+        <source>各國營收佔比</source>
+        <translation>各国营收占比</translation>
     </message>
     <message>
         <source>三角</source>

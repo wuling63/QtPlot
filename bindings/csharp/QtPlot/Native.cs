@@ -30,6 +30,17 @@ namespace QtPlot
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_set_antialias(IntPtr plot, int enabled);
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_set_font(IntPtr plot, byte[]? family, double scale);
 
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_set_legend_layout(IntPtr plot, int placement, int horizontal, int columns);
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_set_legend_border(IntPtr plot, uint argb, double width, int pattern);
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_set_legend_background(IntPtr plot, uint argb);
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_set_legend_symbols(IntPtr plot, int filled, uint outlineArgb, double outlineWidth);
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_set_legend_font(IntPtr plot, byte[]? family, double size, int bold, int italic, uint argb);
+
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_set_axis_color(IntPtr plot, int axis, uint argb);
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_set_axis_ticks(IntPtr plot, int axis, int direction, double majorLength, double minorLength, int mirror);
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_set_axis_tick_marker(IntPtr plot, int axis, int shape, double size, uint argb);
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_set_axis_log(IntPtr plot, int axis, int enabled, int labelFormat, int labelMinor);
+
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_set_limits(IntPtr plot, double xMin, double xMax, double yMin, double yMax);
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_get_limits(IntPtr plot, out double xMin, out double xMax, out double yMin, out double yMax);
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_autoscale(IntPtr plot, double margin);
@@ -50,6 +61,7 @@ namespace QtPlot
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern IntPtr qp_add_text(IntPtr plot, byte[]? text, double x, double y);
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern IntPtr qp_add_streamer(IntPtr plot, int capacity, uint argb);
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern IntPtr qp_add_logger(IntPtr plot, uint argb);
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern IntPtr qp_add_live_spectrum(IntPtr plot, int fftSize, double sampleRate, uint argb);
 
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_item_remove(IntPtr plot, IntPtr item);
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_item_set_visible(IntPtr plot, IntPtr item, int visible);
@@ -59,6 +71,11 @@ namespace QtPlot
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_item_set_data(IntPtr plot, IntPtr item, double[]? xs, double[] ys, int count);
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_item_set_color_range(IntPtr plot, IntPtr item, double min, double max);
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_item_append(IntPtr plot, IntPtr item, double[]? xs, double[] ys, int count);
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_spectrum_set_analysis(IntPtr plot, IntPtr item, int window, double averaging, int peakHold, double peakHoldDecayDb);
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_spectrum_set_display(IntPtr plot, IntPtr item, double minDb, double maxDb, int peakLabels, uint fillArgb);
+
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_welch(double[] samples, int count, double sampleRate, int segmentSize, double overlap, int window, double[]? outFreq, double[]? outDb, int capacity);
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_find_peaks(double[] freqs, double[] db, int count, int maxPeaks, double minProminenceDb, double minSpacingHz, double minFrequency, double[] outFreq, double[] outDb);
 
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_render_bgra(IntPtr plot, int width, int height, IntPtr buffer, int stride);
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int qp_save_png(IntPtr plot, byte[]? path, int width, int height, double scale);

@@ -20,6 +20,13 @@ namespace QtPlot
     public enum PlotTheme { Light = 0, Dark = 1, Hardcopy = 2 }
     public enum Corner { TopLeft = 0, TopRight = 1, BottomLeft = 2, BottomRight = 3 }
     public enum Colormap { Viridis = 0, Turbo, Jet, Grayscale, Blues, Hot, Coolwarm }
+    public enum LineDash { Solid = 0, Dashed, DenselyDashed, Dotted, DashDot, DashDotDot }
+    public enum LegendPlacement { Inside = 0, OutsideRight = 1, OutsideBottom = 2 }
+    /// <summary>刻度線的方向：往繪圖區外、往裡面、穿過框線。</summary>
+    public enum TickDirection { Outside = 0, Inside = 1, Cross = 2 }
+    /// <summary>對數刻度的寫法：自動、一般數字（1000）、上標（10³）、e 記號（1e3）。</summary>
+    public enum LogLabelFormat { Auto = 0, Plain, Superscript, ENotation }
+    public enum WindowFunction { Rectangular = 0, Hann, Hamming, Blackman, BlackmanHarris, FlatTop }
 
     public enum MarkerShape
     {
@@ -118,6 +125,39 @@ namespace QtPlot
         /// <summary>換字型家族，並把所有字級乘上 scale（維持標題比刻度大的層次）。</summary>
         public void SetFont(string? family, double scale = 0) => Check(Native.qp_set_font(Handle, Utf8(family), scale));
 
+        // ───────────── 圖例樣式 ─────────────
+
+        /// <summary>圖例放在繪圖區裡面、右側外面或下方外面；horizontal 橫向排；columns &gt; 0 時分欄。</summary>
+        public void SetLegendLayout(LegendPlacement placement, bool horizontal = false, int columns = 0) =>
+            Check(Native.qp_set_legend_layout(Handle, (int)placement, horizontal ? 1 : 0, columns));
+        /// <summary>圖例外框。width &lt;= 0 不畫；color 傳 null 只改粗細與線型。</summary>
+        public void SetLegendBorder(Color? color, double width = 1, LineDash dash = LineDash.Solid) =>
+            Check(Native.qp_set_legend_border(Handle, Argb(color), width, (int)dash));
+        /// <summary>圖例底色。null 代表不塗滿。</summary>
+        public void SetLegendBackground(Color? color) => Check(Native.qp_set_legend_background(Handle, Argb(color)));
+        /// <summary>色塊符號：filled = false 只畫框；outlineWidth &gt; 0 時另外加外框（outline 為 null 用黑色）。</summary>
+        public void SetLegendSymbols(bool filled, Color? outline = null, double outlineWidth = 0) =>
+            Check(Native.qp_set_legend_symbols(Handle, filled ? 1 : 0, Argb(outline), outlineWidth));
+        /// <summary>圖例的字。沒給的項目不改。</summary>
+        public void SetLegendFont(string? family = null, double size = 0, bool? bold = null, bool? italic = null, Color? color = null) =>
+            Check(Native.qp_set_legend_font(Handle, Utf8(family), size, Tri(bold), Tri(italic), Argb(color)));
+
+        // ───────────── 座標軸與刻度 ─────────────
+
+        /// <summary>一次把整根軸（框線、刻度、數字、軸標題）換成同一個顏色。</summary>
+        public void SetAxisColor(AxisEdge axis, Color color) => Check(Native.qp_set_axis_color(Handle, (int)axis, Argb(color)));
+        /// <summary>刻度線的方向與長度（負值代表不改）；mirror 在繪圖區對面也畫一份。</summary>
+        public void SetAxisTicks(AxisEdge axis, TickDirection direction, double majorLength = -1, double minorLength = -1, bool mirror = false) =>
+            Check(Native.qp_set_axis_ticks(Handle, (int)axis, (int)direction, majorLength, minorLength, mirror ? 1 : 0));
+        /// <summary>主刻度畫成標記（MarkerShape.None 取消）。color 為 null 用刻度線的顏色。</summary>
+        public void SetAxisTickMarker(AxisEdge axis, MarkerShape shape, double size = 6, Color? color = null) =>
+            Check(Native.qp_set_axis_tick_marker(Handle, (int)axis, (int)shape, size, Argb(color)));
+        /// <summary>
+        /// 對數軸：資料直接用原始數值，軸以 log10 換算，平移縮放也在對數空間做。開了之後呼叫 AutoScale 重算範圍。
+        /// </summary>
+        public void SetAxisLog(AxisEdge axis, bool enabled = true, LogLabelFormat format = LogLabelFormat.Auto, bool labelMinorTicks = false) =>
+            Check(Native.qp_set_axis_log(Handle, (int)axis, enabled ? 1 : 0, (int)format, labelMinorTicks ? 1 : 0));
+
         // ───────────── 視野 ─────────────
 
         public AxisLimits Limits
@@ -214,6 +254,13 @@ namespace QtPlot
         /// <summary>即時資料：只增不減，視野自動跟著資料走。</summary>
         public PlotItem AddLogger(Color? color = null) => Wrap(Native.qp_add_logger(Handle, Argb(color)));
 
+        /// <summary>
+        /// 即時 FFT 頻譜（頻譜分析儀）。用 PlotItem.Append 餵樣本（可以從背景執行緒），頻譜自己算；
+        /// 用 SetSpectrumAnalysis／SetSpectrumDisplay 調平均、峰值保持與顯示。
+        /// </summary>
+        public PlotItem AddLiveSpectrum(int fftSize = 1024, double sampleRate = 1000, Color? color = null) =>
+            Wrap(Native.qp_add_live_spectrum(Handle, fftSize, sampleRate, Argb(color)));
+
         // ───────────── 輸出 ─────────────
 
         /// <summary>
@@ -284,6 +331,8 @@ namespace QtPlot
         internal static byte[]? Utf8(string? s) => s == null ? null : Encoding.UTF8.GetBytes(s + "\0");
 
         internal static uint Argb(Color? c) => c.HasValue ? (uint)c.Value.ToArgb() : 0u;
+
+        private static int Tri(bool? b) => b.HasValue ? (b.Value ? 1 : 0) : -1;
 
         private static string Utf8Ptr(IntPtr p)
         {
@@ -369,5 +418,58 @@ namespace QtPlot
         }
 
         public void Remove() => Plot.Check(Native.qp_item_remove(_plot.Handle, Handle));
+
+        /// <summary>即時頻譜的分析設定：窗函數、指數平均（0～0.99，平均功率）、峰值保持與它每次往下掉幾 dB。</summary>
+        public PlotItem SetSpectrumAnalysis(WindowFunction window = WindowFunction.Hann, double averaging = 0,
+                                            bool peakHold = false, double peakHoldDecayDb = 0)
+        {
+            Plot.Check(Native.qp_spectrum_set_analysis(_plot.Handle, Handle, (int)window, averaging, peakHold ? 1 : 0, peakHoldDecayDb));
+            return this;
+        }
+
+        /// <summary>即時頻譜的顯示：Y 軸範圍（dB）、自動標出幾個峰、曲線下方的填色（null 不填）。</summary>
+        public PlotItem SetSpectrumDisplay(double minDb = -120, double maxDb = 0, int peakLabels = 0, Color? fill = null)
+        {
+            Plot.Check(Native.qp_spectrum_set_display(_plot.Handle, Handle, minDb, maxDb, peakLabels, Plot.Argb(fill)));
+            return this;
+        }
+    }
+
+    /// <summary>頻譜計算（不需要 Plot）。</summary>
+    public static class Spectral
+    {
+        /// <summary>
+        /// Welch 平均功率譜：切成 segmentSize 長、重疊 overlap 的段，平均功率。
+        /// segmentSize &lt;= 0 或不小於樣本數時整段做一次 FFT。回傳頻率（Hz）與 20·log10 振幅（dB）。
+        /// </summary>
+        public static (double[] Frequencies, double[] Decibels) Welch(double[] samples, double sampleRate, int segmentSize = 0,
+                                                                      double overlap = 0.5, WindowFunction window = WindowFunction.Hann)
+        {
+            if (samples == null) throw new ArgumentNullException(nameof(samples));
+            int bins = Plot.Check(Native.qp_welch(samples, samples.Length, sampleRate, segmentSize, overlap, (int)window, null, null, 0));
+            var f = new double[bins];
+            var d = new double[bins];
+            Plot.Check(Native.qp_welch(samples, samples.Length, sampleRate, segmentSize, overlap, (int)window, f, d, bins));
+            return (f, d);
+        }
+
+        /// <summary>
+        /// 找頻譜峰值，依高度由大到小。頻率經過拋物線內插，比頻率格距準。
+        /// minProminenceDb 是比附近雜訊底高出多少才算；minSpacingHz 是兩個峰至少隔多遠；minFrequency 以下不算。
+        /// </summary>
+        public static (double Frequency, double Decibels)[] FindPeaks(double[] frequencies, double[] decibels, int maxPeaks = 5,
+                                                                      double minProminenceDb = 10, double minSpacingHz = 0, double minFrequency = 0)
+        {
+            if (frequencies == null) throw new ArgumentNullException(nameof(frequencies));
+            if (decibels == null) throw new ArgumentNullException(nameof(decibels));
+            if (frequencies.Length != decibels.Length) throw new ArgumentException("frequencies 與 decibels 長度不同");
+            if (maxPeaks <= 0) return Array.Empty<(double, double)>();
+            var f = new double[maxPeaks];
+            var d = new double[maxPeaks];
+            int n = Plot.Check(Native.qp_find_peaks(frequencies, decibels, frequencies.Length, maxPeaks, minProminenceDb, minSpacingHz, minFrequency, f, d));
+            var result = new (double, double)[n];
+            for (int i = 0; i < n; i++) result[i] = (f[i], d[i]);
+            return result;
+        }
     }
 }

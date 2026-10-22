@@ -4,10 +4,14 @@
 // 視窗設成 WA_DontShowOnScreen：isVisible() 為真（動畫才會跑），但不會閃出畫面。
 //
 // 用法: qtplot_widget_test [暫存資料夾]   全部通過回傳 0，否則回傳失敗數
+#include "qtplot/LegendStyleDialog.h"
 #include "qtplot/PlotWidget.h"
 #include "qtplot/Translation.h"
 
 #include <QApplication>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QPushButton>
 #include <QDir>
 #include <QElapsedTimer>
 #include <QFile>
@@ -497,6 +501,52 @@ void testLayerCache(PlotWidget& w) {
 
 }  // namespace
 
+void testLegendStyleDialog() {
+    out() << "圖例樣式對話框\n";
+    Legend lg;
+    int changes = 0;
+    {
+        LegendStyleDialog dlg(lg);
+        QObject::connect(&dlg, &LegendStyleDialog::changed, [&] { ++changes; });
+        auto box = [&](const char* name) { return dlg.findChild<QCheckBox*>(QString::fromLatin1(name)); };
+        check(box("borderOn") && box("backgroundOn") && box("fillSymbols") && box("symbolOutlineOn"),
+              "找得到四個勾選框");
+        if (!box("borderOn") || !box("backgroundOn") || !box("fillSymbols") || !box("symbolOutlineOn")) return;
+        check(box("borderOn")->isChecked() && box("fillSymbols")->isChecked() && !box("symbolOutlineOn")->isChecked(),
+              "打開時反映目前的圖例（有外框、色塊塗滿、色塊沒外框）");
+
+        box("borderOn")->setChecked(false);
+        check(!lg.border.isVisible() && changes > 0, "取消外框馬上寫進圖例並通知重畫");
+        box("borderOn")->setChecked(true);
+        dlg.findChild<QComboBox*>(QStringLiteral("borderPattern"))->setCurrentIndex(1);
+        check(lg.border.isVisible() && lg.border.pattern == LinePattern::Dashed, "外框改成虛線");
+
+        box("backgroundOn")->setChecked(false);
+        check(!lg.background.isVisible(), "取消塗滿底色");
+        box("fillSymbols")->setChecked(false);
+        check(!lg.fillSymbols, "色塊改成只畫框");
+        box("symbolOutlineOn")->setChecked(true);
+        check(lg.symbolOutline.isVisible(), "色塊加外框");
+
+        dlg.reject();
+        check(lg.border.pattern == LinePattern::Solid && lg.background.isVisible() && lg.fillSymbols &&
+                  !lg.symbolOutline.isVisible(),
+              "按取消還原成打開時的樣子");
+    }
+    {
+        lg.fillSymbols = false;
+        lg.font.family = QStringLiteral("Courier New");
+        lg.font.italic = true;
+        lg.isVisible = true;
+        LegendStyleDialog dlg(lg);
+        dlg.findChild<QPushButton*>(QStringLiteral("restoreDefaults"))->click();
+        check(lg.fillSymbols && lg.font.family.isEmpty() && !lg.font.italic, "還原預設：符號與字型回到預設");
+        check(lg.isVisible, "還原預設不動位置與顯示與否");
+        dlg.accept();
+        check(lg.fillSymbols, "按確定保留修改");
+    }
+}
+
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
     const QString dir = argc > 1 ? QString::fromLocal8Bit(argv[1]) : QDir::tempPath();
@@ -512,6 +562,7 @@ int main(int argc, char* argv[]) {
     testAnimation(w);
     testGestures(w);
     testLayerCache(w);
+    testLegendStyleDialog();
 
     out() << "\n" << (g_failures == 0 ? QStringLiteral("全部通過") : QStringLiteral("%1 項失敗").arg(g_failures))
           << "\n";

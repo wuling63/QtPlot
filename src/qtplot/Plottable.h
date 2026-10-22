@@ -191,6 +191,9 @@ public:
         t.yInverted = yAxis && yAxis->inverted;
         t.xBreaks = (xAxis && xAxis->hasBreaks()) ? &xAxis->breaks() : nullptr;
         t.yBreaks = (yAxis && yAxis->hasBreaks()) ? &yAxis->breaks() : nullptr;
+        // 對數軸同理：和 Plot::transformFor 必須一致
+        t.xLog = xAxis && xAxis->logScale;
+        t.yLog = yAxis && yAxis->logScale;
         return t;
     }
 };

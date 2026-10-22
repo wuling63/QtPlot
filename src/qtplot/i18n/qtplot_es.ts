@@ -99,6 +99,105 @@
     </message>
 </context>
 <context>
+    <name>qtplot::LegendStyleDialog</name>
+    <message>
+        <source>圖例樣式</source>
+        <translation>Estilo de la leyenda</translation>
+    </message>
+    <message>
+        <source>顯示外框</source>
+        <translation>Mostrar borde</translation>
+    </message>
+    <message>
+        <source>實線</source>
+        <translation>Continua</translation>
+    </message>
+    <message>
+        <source>虛線</source>
+        <translation>Discontinua</translation>
+    </message>
+    <message>
+        <source>點線</source>
+        <translation>Punteada</translation>
+    </message>
+    <message>
+        <source>點虛線</source>
+        <translation>Raya-punto</translation>
+    </message>
+    <message>
+        <source>外框</source>
+        <translation>Borde</translation>
+    </message>
+    <message>
+        <source>顏色</source>
+        <translation>Color</translation>
+    </message>
+    <message>
+        <source>粗細</source>
+        <translation>Grosor</translation>
+    </message>
+    <message>
+        <source>線型</source>
+        <translation>Tipo de línea</translation>
+    </message>
+    <message>
+        <source>塗滿底色</source>
+        <translation>Rellenar fondo</translation>
+    </message>
+    <message>
+        <source>底色</source>
+        <translation>Fondo</translation>
+    </message>
+    <message>
+        <source>色塊塗滿</source>
+        <translation>Rellenar muestras</translation>
+    </message>
+    <message>
+        <source>色塊加外框</source>
+        <translation>Contorno de muestras</translation>
+    </message>
+    <message>
+        <source>符號</source>
+        <translation>Símbolos</translation>
+    </message>
+    <message>
+        <source>文字</source>
+        <translation>Texto</translation>
+    </message>
+    <message>
+        <source>字型</source>
+        <translation>Fuente</translation>
+    </message>
+    <message>
+        <source>還原預設</source>
+        <translation>Restaurar valores predeterminados</translation>
+    </message>
+    <message>
+        <source>外框顏色</source>
+        <translation>Color del borde</translation>
+    </message>
+    <message>
+        <source>色塊外框顏色</source>
+        <translation>Color del contorno de las muestras</translation>
+    </message>
+    <message>
+        <source>文字顏色</source>
+        <translation>Color del texto</translation>
+    </message>
+    <message>
+        <source>粗體</source>
+        <translation>Negrita</translation>
+    </message>
+    <message>
+        <source>斜體</source>
+        <translation>Cursiva</translation>
+    </message>
+    <message>
+        <source>圖例字型</source>
+        <translation>Fuente de la leyenda</translation>
+    </message>
+</context>
+<context>
     <name>qtplot::PlotWidget</name>
     <message>
         <source>%1 個圖元, %2 ms (%3 FPS)</source>
@@ -127,6 +226,10 @@
     <message>
         <source>顯示圖例(&amp;L)</source>
         <translation>Mostrar &amp;leyenda</translation>
+    </message>
+    <message>
+        <source>圖例樣式(&amp;Y)…</source>
+        <translation>Es&amp;tilo de la leyenda…</translation>
     </message>
     <message>
         <source>語言(&amp;N)</source>

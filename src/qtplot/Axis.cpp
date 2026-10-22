@@ -145,14 +145,18 @@ QVector<Tick> LogTickGenerator::generate(const CoordinateRange& range, double le
     int hi = static_cast<int>(std::ceil(range.max));
     if (hi - lo > 40) return out;  // 範圍太大就不畫，避免刻度爆量
 
+    // 範圍裡的主刻度少於兩根時，次刻度也要印字，否則軸上幾乎沒有數字
+    int majorsInRange = 0;
+    for (int e = lo; e <= hi; ++e)
+        if (e >= range.min && e <= range.max) ++majorsInRange;
+    const bool minorLabels = labelMinorTicks || majorsInRange < 2;
+
     for (int e = lo; e <= hi; ++e) {
         if (e >= range.min && e <= range.max) {
             Tick t;
             t.position = e;
             t.isMajor = true;
-            double v = std::pow(base, e);
-            t.label = (std::abs(e) <= 4) ? QString::number(v, 'g', 6)
-                                         : QStringLiteral("%1^%2").arg(base).arg(e);
+            t.label = formatLabel(1, e);
             out.append(t);
         }
         for (double m : minorMultipliers) {
@@ -162,11 +166,34 @@ QVector<Tick> LogTickGenerator::generate(const CoordinateRange& range, double le
                 Tick t;
                 t.position = pos;
                 t.isMajor = false;
+                if (minorLabels) t.label = formatLabel(m, e);
                 out.append(t);
             }
         }
     }
     return out;
+}
+
+QString LogTickGenerator::formatLabel(double mantissa, int exponent) const {
+    const double value = mantissa * std::pow(base, exponent);
+    const bool isTen = std::abs(base - 10.0) < 1e-12;
+    // 底數寫法：10、2、e
+    const QString baseText = std::abs(base - std::exp(1.0)) < 1e-9 ? QStringLiteral("e") : QString::number(base, 'g', 6);
+    const QString mant = (mantissa == 1) ? QString() : QString::number(mantissa, 'g', 6) + QChar(0x00D7);
+
+    LabelFormat f = labelFormat;
+    if (f == LabelFormat::Auto) f = (std::abs(exponent) <= 3) ? LabelFormat::Plain : LabelFormat::Superscript;
+    // e 記號只對 10 為底有意義；其他底數退回上標
+    if (f == LabelFormat::ENotation && !isTen) f = LabelFormat::Superscript;
+
+    switch (f) {
+    case LabelFormat::Plain:
+        return QString::number(value, 'g', 12);
+    case LabelFormat::ENotation:
+        return QString::number(mantissa, 'g', 6) + QStringLiteral("e") + QString::number(exponent);
+    default:
+        return mant + baseText + superscript(exponent);
+    }
 }
 
 // ───────────────────── DateTimeTickGenerator ─────────────────────
@@ -315,7 +342,29 @@ Axis::Axis(Edge e) : m_edge(e) {
     if (isVertical()) label.font.rotation = subLabel.font.rotation = -90;
 }
 
+LogTickGenerator& Axis::defaultLogTicks() const {
+    if (!m_logTicks) m_logTicks = std::make_shared<LogTickGenerator>();
+    return *m_logTicks;
+}
+
 void Axis::regenerateTicks(double lengthPx) {
+    regenerateTicksRaw(lengthPx);
+    if (tickStyler)
+        for (Tick& t : m_ticks) tickStyler(t);
+}
+
+void Axis::regenerateTicksRaw(double lengthPx) {
+    if (logScale) {
+        // 在 log_base 空間產生刻度，再把位置換回原始數值
+        LogTickGenerator* lg = dynamic_cast<LogTickGenerator*>(tickGenerator.get());
+        if (!lg) lg = &defaultLogTicks();
+        double lo, hi;
+        logBounds(range, lo, hi);
+        const double toBase = 1.0 / std::log10(lg->base > 1 ? lg->base : 10.0);
+        m_ticks = lg->generate({lo * toBase, hi * toBase}, lengthPx, tickFont, isVertical());
+        for (Tick& t : m_ticks) t.position = std::pow(lg->base > 1 ? lg->base : 10.0, t.position);
+        return;
+    }
     if (!tickGenerator) {
         m_ticks.clear();
         return;
@@ -401,7 +450,8 @@ QString Axis::multiplierLabel() const {
 }
 
 double Axis::getPixel(double coord, const PixelRect& dataRect) const {
-    const double frac = m_breaks.isEmpty()
+    const double frac = logScale ? logFraction(coord, range)
+                        : m_breaks.isEmpty()
                             ? (coord - range.min) / range.span()
                             : m_breaks.toFraction(coord, range, isVertical() ? dataRect.height() : dataRect.width());
     const double f = inverted ? (1.0 - frac) : frac;
@@ -414,9 +464,69 @@ double Axis::getCoordinate(double pixel, const PixelRect& dataRect) const {
     if (isVertical()) frac = (dataRect.bottom - pixel) / dataRect.height();
     else              frac = (pixel - dataRect.left) / dataRect.width();
     if (inverted) frac = 1.0 - frac;
+    if (logScale) return logFromFraction(frac, range);
     if (!m_breaks.isEmpty())
         return m_breaks.fromFraction(frac, range, isVertical() ? dataRect.height() : dataRect.width());
     return range.min + frac * range.span();
+}
+
+void Axis::pan(double fromPixel, double toPixel, const PixelRect& dataRect) {
+    const double a = getCoordinate(fromPixel, dataRect), b = getCoordinate(toPixel, dataRect);
+    if (logScale) {
+        if (!(a > 0) || !(b > 0)) return;
+        // 對數空間平移 = 兩端乘上同一個倍數
+        const double ratio = a / b;
+        const CoordinateRange r = positiveRange(range);
+        range = {r.min * ratio, r.max * ratio};
+        return;
+    }
+    range.translate(a - b);
+}
+
+void Axis::zoom(double factor, double centerCoord) {
+    if (!(factor > 0)) return;
+    if (logScale) {
+        double lo, hi;
+        logBounds(range, lo, hi);
+        const double c = (centerCoord > 0) ? std::log10(centerCoord) : (lo + hi) / 2;
+        range = {std::pow(10.0, c + (lo - c) * factor), std::pow(10.0, c + (hi - c) * factor)};
+        return;
+    }
+    range.zoom(factor, std::isnan(centerCoord) ? range.center() : centerCoord);
+}
+
+CoordinateRange Axis::positiveRange(CoordinateRange r) {
+    if (!r.isValid() || !(r.max > 0)) return {1, 10};
+    if (!(r.min > 0)) r.min = r.max / 1000;
+    if (!(r.max > r.min)) {
+        // 只有一個值：上下各留半個十的次方
+        r = {r.min / std::sqrt(10.0), r.max * std::sqrt(10.0)};
+    }
+    return r;
+}
+
+void Axis::setColor(const QColor& color) {
+    frameLine.color = color;
+    majorTickLine.color = color;
+    minorTickLine.color = color;
+    majorTickMarker.fillColor = color;
+    majorTickMarker.outline.color = color;
+    tickFont.color = color;
+    label.font.color = color;
+}
+
+double Axis::outwardTickLength() const {
+    double out = 0;
+    switch (tickDirection) {
+    case TickDirection::Outside: out = majorTickLength; break;
+    case TickDirection::Inside:  out = 0; break;
+    case TickDirection::Cross:   out = majorTickLength / 2; break;
+    }
+    if (majorTickMarker.isVisible()) {
+        const double s = majorTickMarker.size;
+        out = std::max(out, tickDirection == TickDirection::Outside ? s : tickDirection == TickDirection::Cross ? s / 2 : 0.0);
+    }
+    return out;
 }
 
 double Axis::multiplierHeadroom() const {
@@ -428,7 +538,7 @@ double Axis::multiplierHeadroom() const {
 double Axis::measureThickness() const {
     if (!isVisible) return 0;
 
-    double thickness = majorTickLength + 2;
+    double thickness = outwardTickLength() + 2;
     if (showTickLabels) {
         QFontMetricsF fm(tickFont.font());
         const double rad = effectiveTickRotation() * kPi / 180.0;
@@ -437,7 +547,7 @@ double Axis::measureThickness() const {
 
         double widest = 0;
         for (const Tick& t : m_ticks) {
-            if (t.isMajor && !t.label.isEmpty())
+            if (!t.label.isEmpty())  // 對數軸的次刻度也可能有字
                 widest = std::max(widest, static_cast<double>(fm.horizontalAdvance(t.label)));
         }
 
@@ -496,33 +606,64 @@ void Axis::render(QPainter& painter, const PixelRect& dataRect0) const {
     QFontMetricsF fm(tickFont.font());
     double maxLabelExtent = 0;
 
+    // 一根刻度：base 是它在框線上的點，normal 是指向繪圖區外的單位向量。
+    // 鏡像刻度畫在對面那一邊，normal 反過來（一樣是「外」），所以 Inside 仍然是往繪圖區裡面。
+    auto drawTick = [&](QPointF base, QPointF normal, double len, const LineStyle& ls, bool major, const QColor& override) {
+        double out = len, in = 0;
+        if (tickDirection == TickDirection::Inside) { out = 0; in = len; }
+        if (tickDirection == TickDirection::Cross)  { out = in = len / 2; }
+        if (ls.isVisible() && len > 0) {
+            LineStyle s = ls;
+            if (override.isValid()) s.color = override;
+            painter.setPen(s.pen());
+            painter.drawLine(base + normal * out, base - normal * in);
+        }
+        if (major && majorTickMarker.isVisible()) {
+            MarkerStyle m = majorTickMarker;
+            if (override.isValid()) { m.fillColor = override; m.outline.color = override; }
+            const double half = m.size / 2;
+            const double shift = (tickDirection == TickDirection::Outside) ? half
+                                 : (tickDirection == TickDirection::Inside) ? -half : 0.0;
+            drawMarker(painter, base + normal * shift, m);
+        }
+    };
+    QPointF normal, mirrorNormal;
+    switch (m_edge) {
+    case Edge::Left:   normal = QPointF(-1, 0); break;
+    case Edge::Right:  normal = QPointF(1, 0); break;
+    case Edge::Bottom: normal = QPointF(0, 1); break;
+    case Edge::Top:    normal = QPointF(0, -1); break;
+    }
+    mirrorNormal = -normal;
+
     for (const Tick& t : m_ticks) {
         if (t.position < range.min || t.position > range.max) continue;
         const double p = getPixel(t.position, dataRect0);  // 換算一律用原本的繪圖區
-        const double len = t.isMajor ? majorTickLength : minorTickLength;
+        const double len = (t.length >= 0) ? t.length : (t.isMajor ? majorTickLength : minorTickLength);
         const LineStyle& ls = t.isMajor ? majorTickLine : minorTickLine;
 
-        if (ls.isVisible()) {
-            painter.setPen(ls.pen());
-            switch (m_edge) {
-            case Edge::Left:   painter.drawLine(QPointF(dataRect.left - len, p),
-                                                QPointF(dataRect.left, p)); break;
-            case Edge::Right:  painter.drawLine(QPointF(dataRect.right, p),
-                                                QPointF(dataRect.right + len, p)); break;
-            case Edge::Bottom: painter.drawLine(QPointF(p, dataRect.bottom),
-                                                QPointF(p, dataRect.bottom + len)); break;
-            case Edge::Top:    painter.drawLine(QPointF(p, dataRect.top - len),
-                                                QPointF(p, dataRect.top)); break;
-            }
+        QPointF base, mirrorBase;
+        switch (m_edge) {
+        case Edge::Left:   base = QPointF(dataRect.left, p);   mirrorBase = QPointF(dataRect0.right, p); break;
+        case Edge::Right:  base = QPointF(dataRect.right, p);  mirrorBase = QPointF(dataRect0.left, p); break;
+        case Edge::Bottom: base = QPointF(p, dataRect.bottom); mirrorBase = QPointF(p, dataRect0.top); break;
+        case Edge::Top:    base = QPointF(p, dataRect.top);    mirrorBase = QPointF(p, dataRect0.bottom); break;
         }
+        drawTick(base, normal, len, ls, t.isMajor, t.color);
+        if (mirrorTicks) drawTick(mirrorBase, mirrorNormal, len, ls, t.isMajor, t.color);
 
-        if (showTickLabels && t.isMajor && !t.label.isEmpty()) {
+        if (showTickLabels && !t.label.isEmpty()) {
             Label lb;
             lb.text = t.label;
             lb.font = tickFont;
+            if (t.color.isValid()) lb.font.color = t.color;
             const double tickRotation = effectiveTickRotation();
             lb.font.rotation = tickRotation;
-            const double gap = len + 3;
+            // 文字排在刻度外側的盡頭；刻度往內畫的話就貼著框線
+            double outward = outwardTickLength();
+            if (t.length >= 0 && tickDirection != TickDirection::Inside)
+                outward = std::max(outward, tickDirection == TickDirection::Cross ? t.length / 2 : t.length);
+            const double gap = outward + 3;
             const bool rotated = tickRotation != 0;
             const double labelWidth = fm.horizontalAdvance(t.label);
 
@@ -566,7 +707,7 @@ void Axis::render(QPainter& painter, const PixelRect& dataRect0) const {
             lb.font = tickFont;
             // 一律貼著繪圖區的內緣放。放到外緣去的話，圖的邊距只有十幾個像素，
             // 標示會被圖的邊界切掉。水平軸再往下讓一行，才不會壓到最後一個刻度數字。
-            const double gap = majorTickLength + 3;
+            const double gap = outwardTickLength() + 3;
             const double lineHeight = fm.height();
             switch (m_edge) {
             case Edge::Bottom:
@@ -593,7 +734,7 @@ void Axis::render(QPainter& painter, const PixelRect& dataRect0) const {
     // 標題是以中心對齊畫的，所以還要讓開它自己一半的厚度，
     // 否則垂直軸的標題會壓在刻度數字上。
     // outer：下一個東西（副標題）要從離繪圖區多遠的地方開始排
-    double outer = majorTickLength + 6 + maxLabelExtent;
+    double outer = outwardTickLength() + 6 + maxLabelExtent;
     const double midX = (dataRect.left + dataRect.right) / 2;
     const double midY = (dataRect.top + dataRect.bottom) / 2;
     if (!labelImage.isNull()) {
@@ -610,7 +751,7 @@ void Axis::render(QPainter& painter, const PixelRect& dataRect0) const {
     } else if (label.isVisible()) {
         const QSizeF labelSize = measureText(label);
         const double half = (isVertical() ? labelSize.width() : labelSize.height()) / 2;
-        const double gap = majorTickLength + 6 + maxLabelExtent + half;
+        const double gap = outwardTickLength() + 6 + maxLabelExtent + half;
         outer = gap + (isVertical() ? half : half * 2 + 0) + 2;
         switch (m_edge) {
         case Edge::Left:
@@ -660,7 +801,9 @@ void Axis::renderGridFill(QPainter& painter, const PixelRect& dataRect) const {
     }
     if (edges.size() < 2) return;
     std::sort(edges.begin(), edges.end());
-    const double spacing = edges[1] - edges[0];
+    // 對數軸的主刻度是等比的，判斷「第幾格」要在對數空間算
+    auto lin = [&](double v) { return logScale ? std::log10(std::max(v, 1e-300)) : v; };
+    const double spacing = lin(edges[1]) - lin(edges[0]);
     if (!(spacing > 0)) return;
 
     // 視野邊緣那兩段也要填，否則左右兩側會各缺一塊
@@ -672,7 +815,7 @@ void Axis::renderGridFill(QPainter& painter, const PixelRect& dataRect) const {
     for (qsizetype i = 0; i + 1 < edges.size(); ++i) {
         // 用中點落在第幾格來決定顏色，而不是用陣列索引 ——
         // 索引會隨著平移時「視野內有幾根刻度」而變，條帶會忽然整排換色
-        const double mid = (edges[i] + edges[i + 1]) / 2;
+        const double mid = (lin(edges[i]) + lin(edges[i + 1])) / 2;
         const long long k = static_cast<long long>(std::floor(mid / spacing));
         const QColor& c = ((k % 2 + 2) % 2 == 0) ? gridFillColor1 : gridFillColor2;
         if (!c.isValid() || c.alpha() == 0) continue;

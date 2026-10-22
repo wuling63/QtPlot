@@ -86,6 +86,27 @@ enum {
     QP_COLORMAP_BLUES, QP_COLORMAP_HOT, QP_COLORMAP_COOLWARM
 };
 
+/* 線型，數值與 qtplot::LinePattern 相同 */
+enum {
+    QP_LINE_SOLID = 0, QP_LINE_DASHED, QP_LINE_DENSELY_DASHED, QP_LINE_DOTTED,
+    QP_LINE_DASH_DOT, QP_LINE_DASH_DOT_DOT
+};
+
+/* 圖例放在哪裡 */
+enum { QP_LEGEND_INSIDE = 0, QP_LEGEND_OUTSIDE_RIGHT = 1, QP_LEGEND_OUTSIDE_BOTTOM = 2 };
+
+/* 刻度線的方向 */
+enum { QP_TICKS_OUTSIDE = 0, QP_TICKS_INSIDE = 1, QP_TICKS_CROSS = 2 };
+
+/* 對數刻度的文字：自動、一般數字（1000）、上標（10³）、e 記號（1e3） */
+enum { QP_LOG_LABEL_AUTO = 0, QP_LOG_LABEL_PLAIN, QP_LOG_LABEL_SUPERSCRIPT, QP_LOG_LABEL_E };
+
+/* 窗函數，數值與 qtplot::WindowFunction 相同 */
+enum {
+    QP_WINDOW_RECTANGULAR = 0, QP_WINDOW_HANN, QP_WINDOW_HAMMING, QP_WINDOW_BLACKMAN,
+    QP_WINDOW_BLACKMAN_HARRIS, QP_WINDOW_FLAT_TOP
+};
+
 /* ───────────── 基本 ───────────── */
 
 /* "0.1.0" 這樣的字串，指向靜態記憶體，不必釋放。 */
@@ -118,6 +139,31 @@ QP_API int QP_CALL qp_set_grid(QpPlot* plot, int visible);
 QP_API int QP_CALL qp_set_antialias(QpPlot* plot, int enabled);
 /* family 傳 NULL 或空字串代表不改；scale <= 0 代表不改。 */
 QP_API int QP_CALL qp_set_font(QpPlot* plot, const char* family, double scale);
+
+/* ───────────── 圖例樣式 ───────────── */
+
+/* 擺法：placement 是 QP_LEGEND_*；horizontal 非 0 時橫向排；columns <= 0 代表不改。 */
+QP_API int QP_CALL qp_set_legend_layout(QpPlot* plot, int placement, int horizontal, int columns);
+/* 外框。width <= 0 代表不畫外框；pattern 是 QP_LINE_*。 */
+QP_API int QP_CALL qp_set_legend_border(QpPlot* plot, uint32_t argb, double width, int pattern);
+/* 底色。argb = 0（完全透明）代表不塗滿。 */
+QP_API int QP_CALL qp_set_legend_background(QpPlot* plot, uint32_t argb);
+/* 色塊符號：filled 為 0 時只畫框；outlineWidth > 0 時另外加一圈 outlineArgb 的外框（argb = 0 用黑色）。 */
+QP_API int QP_CALL qp_set_legend_symbols(QpPlot* plot, int filled, uint32_t outlineArgb, double outlineWidth);
+/* 圖例的字。family 傳 NULL 或空字串、size <= 0、argb = 0、bold／italic 傳負值，都代表那一項不改。 */
+QP_API int QP_CALL qp_set_legend_font(QpPlot* plot, const char* family, double size, int bold, int italic, uint32_t argb);
+
+/* ───────────── 座標軸與刻度 ───────────── */
+
+/* 一次把整根軸（框線、刻度線、刻度數字、軸標題）換成同一個顏色。 */
+QP_API int QP_CALL qp_set_axis_color(QpPlot* plot, int axis, uint32_t argb);
+/* 刻度線：direction 是 QP_TICKS_*；長度傳負值代表不改；mirror 非 0 時繪圖區對面也畫一份。 */
+QP_API int QP_CALL qp_set_axis_ticks(QpPlot* plot, int axis, int direction, double majorLength, double minorLength, int mirror);
+/* 主刻度上的標記（QP_MARKER_*，QP_MARKER_NONE 代表不畫）。argb = 0 用軸的刻度線顏色。 */
+QP_API int QP_CALL qp_set_axis_tick_marker(QpPlot* plot, int axis, int shape, double size, uint32_t argb);
+/* 對數軸：資料用原始數值，軸以 log10 換算。labelFormat 是 QP_LOG_LABEL_*；labelMinor 非 0 時次刻度也印字。
+ * 開了之後要呼叫 qp_autoscale 重算範圍（自動範圍只看正的部分）。 */
+QP_API int QP_CALL qp_set_axis_log(QpPlot* plot, int axis, int enabled, int labelFormat, int labelMinor);
 
 /* ───────────── 視野 ───────────── */
 
@@ -156,6 +202,9 @@ QP_API QpItem* QP_CALL qp_add_text(QpPlot* plot, const char* text, double x, dou
 QP_API QpItem* QP_CALL qp_add_streamer(QpPlot* plot, int capacity, uint32_t argb);
 /* 即時資料：只增不減，視野自動跟著資料走。 */
 QP_API QpItem* QP_CALL qp_add_logger(QpPlot* plot, uint32_t argb);
+/* 即時 FFT 頻譜（頻譜分析儀）。樣本用 qp_item_append 餵（xs 傳 NULL），頻譜自己算，
+ * 每收到 fftSize/2 個新樣本更新一次。和 streamer 一樣可以從背景執行緒餵。 */
+QP_API QpItem* QP_CALL qp_add_live_spectrum(QpPlot* plot, int fftSize, double sampleRate, uint32_t argb);
 
 /* ───────────── 圖元屬性 ───────────── */
 
@@ -175,6 +224,28 @@ QP_API int QP_CALL qp_item_set_color_range(QpPlot* plot, QpItem* item, double mi
  * 這個函式可以從背景執行緒呼叫（擷取卡、相機的執行緒），和 UI 執行緒的畫圖之間有鎖保護；
  * 但同一時間 UI 執行緒不能在加入或移除圖元。UI 執行緒用 qp_data_version() 判斷要不要重畫。 */
 QP_API int QP_CALL qp_item_append(QpPlot* plot, QpItem* item, const double* xs, const double* ys, int count);
+/* 即時頻譜的分析設定：window 是 QP_WINDOW_*；averaging 是指數平均的權重 0～0.99（平均功率）；
+ * peakHold 非 0 時畫峰值保持，peakHoldDecayDb 是每次更新往下掉幾 dB（0 = 一直保持）。 */
+QP_API int QP_CALL qp_spectrum_set_analysis(QpPlot* plot, QpItem* item, int window, double averaging,
+                                            int peakHold, double peakHoldDecayDb);
+/* 即時頻譜的顯示：Y 軸 minDb～maxDb；peakLabels 是自動標出幾個峰（0 = 不標）；
+ * fillArgb 是曲線下方的填色（0 = 不填）。 */
+QP_API int QP_CALL qp_spectrum_set_display(QpPlot* plot, QpItem* item, double minDb, double maxDb,
+                                           int peakLabels, uint32_t fillArgb);
+
+/* ───────────── 頻譜計算（不需要 QpPlot） ───────────── */
+
+/* Welch 平均功率譜。segmentSize <= 0 或 >= count 時整段做一次 FFT。overlap 0～0.95。
+ * 回傳頻率格數；outFreq（Hz）與 outDb（20·log10 振幅）有給、而且 capacity 夠大時才寫入，
+ * 所以可以先傳 NULL 問要多大。失敗回傳負值。 */
+QP_API int QP_CALL qp_welch(const double* samples, int count, double sampleRate, int segmentSize, double overlap,
+                            int window, double* outFreq, double* outDb, int capacity);
+/* 找頻譜峰值（依高度由大到小）。freqs 必須等間距遞增。minProminenceDb 是比附近雜訊底高出多少才算；
+ * minSpacingHz 是兩個峰至少隔多遠；minFrequency 以下的不算。頻率經過拋物線內插，比格距準。
+ * 結果寫進 outFreq／outDb（至少 maxPeaks 格），回傳找到幾個。 */
+QP_API int QP_CALL qp_find_peaks(const double* freqs, const double* db, int count, int maxPeaks,
+                                 double minProminenceDb, double minSpacingHz, double minFrequency,
+                                 double* outFreq, double* outDb);
 
 /* ───────────── 輸出 ───────────── */
 

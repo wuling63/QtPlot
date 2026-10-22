@@ -325,3 +325,163 @@ QTPLOT_RECIPE("座標軸", "截斷", "截斷 X 軸（跳過空檔）",
     x->label.text = RT("時間 (min)");
     plot.title.text = RT("截斷 X 軸");
 }
+
+// ───────────────────── 刻度線的樣式 ─────────────────────
+
+QTPLOT_RECIPE_MULTI("座標軸", "調整刻度", "刻度線的方向與鏡像",
+                    "tickDirection 決定刻度往哪邊畫：Outside（預設）往外、Inside 往繪圖區裡面、"
+                    "Cross 穿過框線。Inside 時版面不替刻度留位置，數字會貼近框線，科學期刊常用。\n"
+                    "mirrorTicks 在繪圖區對面那一邊也畫一份（只有線，沒有數字），四邊都有刻度，"
+                    "讀右邊或上面的資料點時不必一路對回左軸。") {
+    mp.resize(1, 3);
+    mp.title.text = RT("刻度線的三種方向");
+    const QVector<double> xs = gen::consecutive(40);
+    gen::setSeed(8);
+    const QVector<double> ys = gen::randomWalk(40);
+
+    struct Panel { QString title; TickDirection dir; bool mirror; };
+    const QVector<Panel> panels{
+        {RT("朝外（預設）"), TickDirection::Outside, false},
+        {RT("朝內＋鏡像"), TickDirection::Inside, true},
+        {RT("穿過框線"), TickDirection::Cross, false},
+    };
+    for (int i = 0; i < panels.size(); ++i) {
+        Plot* p = mp.at(0, i);
+        auto* s = p->addScatter(xs, ys);
+        s->marker = MarkerStyle::none();
+        p->title.text = panels[i].title;
+        p->title.font.size = 11;
+        p->grid.isVisible = false;
+        for (Axis* a : {p->leftAxis(), p->bottomAxis()}) {
+            a->tickDirection = panels[i].dir;
+            a->mirrorTicks = panels[i].mirror;
+            a->majorTickLength = 8;
+            a->minorTickLength = 4;
+        }
+    }
+}
+
+QTPLOT_RECIPE("座標軸", "調整刻度", "刻度標記與個別刻度上色",
+              "majorTickMarker 在主刻度上畫一個標記；只要標記不要線的話，把 majorTickLine 設成 none。\n"
+              "tickStyler 在每次產生刻度之後對每一根呼叫一次，可以改它的 color、length 或文字。"
+              "這裡把超出規格（44～56）的刻度標成紅色並加長，規格內的是綠色 —— "
+              "縮放或平移之後刻度重新產生，顏色也跟著重新判斷。") {
+    gen::setSeed(21);
+    const QVector<double> ys = gen::randomNormal(60, 50, 3.2);
+    auto* s = plot.addScatter(gen::consecutive(60), ys, QColor(70, 70, 70));
+    s->line.width = 1;
+    const double lsl = 44, usl = 56;
+    for (double v : {lsl, usl}) {
+        auto* h = plot.addHorizontalLine(v, QColor(214, 39, 40));
+        h->line.pattern = LinePattern::Dashed;
+    }
+
+    Axis* left = plot.leftAxis();
+    left->majorTickLength = 7;
+    left->majorTickLine.width = 2;
+    left->tickStyler = [lsl, usl](Tick& t) {
+        if (!t.isMajor) return;
+        const bool out = t.position < lsl || t.position > usl;
+        t.color = out ? QColor(214, 39, 40) : QColor(44, 140, 60);
+        if (out) t.length = 12;
+    };
+
+    Axis* bottom = plot.bottomAxis();
+    bottom->majorTickLine = LineStyle::none();
+    bottom->majorTickMarker = MarkerStyle(MarkerShape::FilledTriangleUp, 8, QColor(45, 110, 185));
+    bottom->minorTickLine = LineStyle::none();
+
+    left->label.text = RT("量測值");
+    bottom->label.text = RT("樣本");
+    plot.title.text = RT("超出規格的刻度標成紅色");
+    plot.setAxisLimits(-2, 61, 38, 62);
+}
+
+QTPLOT_RECIPE("座標軸", "調整刻度", "一次換掉整根軸的顏色",
+              "setColor() 一次把框線、主次刻度線、刻度數字與軸標題換成同一個顏色。\n"
+              "兩根 Y 軸各自對應一條曲線時，軸的顏色和曲線一樣，讀者才知道哪根軸是誰的；"
+              "一項一項設的話，很容易漏掉次刻度或軸標題。") {
+    const QVector<double> xs = gen::consecutive(80);
+    const QColor blue(31, 119, 180), orange(230, 110, 20);
+    auto* temp = plot.addScatter(xs, gen::sin(80, 6, 1.5, 0, 25), blue);
+    temp->marker = MarkerStyle::none();
+    temp->line.width = 2;
+    auto* right = plot.addAxis(Edge::Right);
+    auto* hum = plot.addScatter(xs, gen::cos(80, 15, 1.2, 0, 60), orange);
+    hum->marker = MarkerStyle::none();
+    hum->line.width = 2;
+    hum->yAxis = right;
+
+    plot.leftAxis()->label.text = RT("溫度 (°C)");
+    plot.leftAxis()->setColor(blue);
+    right->label.text = RT("濕度 (%)");
+    right->setColor(orange);
+    plot.bottomAxis()->label.text = RT("時間 (h)");
+    plot.title.text = RT("軸的顏色對應曲線的顏色");
+    plot.grid.isVisible = false;
+}
+
+QTPLOT_RECIPE("座標軸", "標籤與刻度", "真正的對數軸（波德圖）",
+              "logScale = true：資料直接放原始數值，軸自己用 log10 換算，不必先把資料取 log。\n"
+              "平移與縮放都在對數空間做 —— 拖一格是乘上固定倍數；"
+              "滾輪縮放時游標底下的頻率不動。刻度自動落在 1、10、100…，次刻度補 2～9。\n"
+              "這是一階低通濾波器的頻率響應：轉折頻率 1 kHz 以上每十倍頻掉 20 dB，在對數軸上是一條直線。") {
+    QVector<double> fs, gain;
+    for (int i = 0; i <= 300; ++i) {
+        const double f = std::pow(10.0, i / 60.0);  // 1 Hz ～ 100 kHz
+        fs.append(f);
+        gain.append(-10 * std::log10(1 + std::pow(f / 1000.0, 2)));
+    }
+    auto* s = plot.addScatter(fs, gain, QColor(31, 119, 180));
+    s->marker = MarkerStyle::none();
+    s->line.width = 2;
+
+    auto* v = plot.addVerticalLine(1000, QColor(214, 39, 40));
+    v->line.pattern = LinePattern::Dashed;
+    v->text.text = RT("−3 dB @ 1 kHz");
+
+    plot.bottomAxis()->logScale = true;
+    plot.bottomAxis()->label.text = RT("頻率（Hz）");
+    plot.leftAxis()->label.text = RT("增益（dB）");
+    plot.grid.minorLine = LineStyle(QColor(0, 0, 0, 22), 1.0);
+    plot.title.text = RT("一階低通濾波器的波德圖");
+    plot.autoScale();
+}
+
+QTPLOT_RECIPE_MULTI("座標軸", "標籤與刻度", "對數刻度的文字格式",
+                    "LogTickGenerator::labelFormat 決定刻度怎麼寫：Auto（10⁻³～10³ 印一般數字，"
+                    "更大或更小印上標）、Superscript（一律 10ⁿ）、ENotation（1e5），或 Plain（一律一般數字）。\n"
+                    "labelMinorTicks 讓次刻度也印字；範圍不到兩個十的次方時就算沒開也會自動印，"
+                    "否則軸上只剩一兩個數字。四張圖的 Y 軸都是 logScale，資料是原始數值。") {
+    mp.resize(2, 2);
+    mp.title.text = RT("同一份資料，四種刻度寫法");
+
+    struct Panel { QString title; LogTickGenerator::LabelFormat format; bool minor; double top; };
+    const QVector<Panel> panels{
+        {QStringLiteral("Auto"), LogTickGenerator::LabelFormat::Auto, false, 18},
+        {QStringLiteral("Superscript"), LogTickGenerator::LabelFormat::Superscript, false, 18},
+        {QStringLiteral("ENotation"), LogTickGenerator::LabelFormat::ENotation, false, 18},
+        {RT("Plain＋次刻度文字"), LogTickGenerator::LabelFormat::Plain, true, 6},
+    };
+    for (int i = 0; i < panels.size(); ++i) {
+        Plot* p = mp.at(i / 2, i % 2);
+        QVector<double> xs, ys;
+        for (int k = 0; k <= 60; ++k) {
+            const double x = panels[i].top * k / 60;
+            xs.append(x);
+            ys.append(std::pow(10.0, x / 2 - 3) * (1 + 0.25 * std::sin(k * 0.7)));
+        }
+        auto* s = p->addScatter(xs, ys, QColor(45, 110, 185));
+        s->marker.size = 4;
+        auto lg = std::make_shared<LogTickGenerator>();
+        lg->labelFormat = panels[i].format;
+        lg->labelMinorTicks = panels[i].minor;
+        if (panels[i].minor) lg->minorMultipliers = {2, 5};
+        p->leftAxis()->tickGenerator = lg;
+        p->leftAxis()->logScale = true;
+        p->grid.minorLine = LineStyle(QColor(0, 0, 0, 20), 1.0);
+        p->title.text = panels[i].title;
+        p->title.font.size = 11;
+        p->autoScale();
+    }
+}

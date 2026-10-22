@@ -208,6 +208,18 @@
         <translation>스펙트로그램(스윕과 고조파)</translation>
     </message>
     <message>
+        <source>Welch 平均功率譜</source>
+        <translation>Welch 평균 파워 스펙트럼</translation>
+    </message>
+    <message>
+        <source>自動標出頻譜峰值</source>
+        <translation>스펙트럼 피크 자동 표시</translation>
+    </message>
+    <message>
+        <source>3D 瀑布頻譜</source>
+        <translation>3D 워터폴 스펙트럼</translation>
+    </message>
+    <message>
         <source>座標軸</source>
         <translation>좌표축</translation>
     </message>
@@ -338,6 +350,26 @@
     <message>
         <source>截斷 X 軸（跳過空檔）</source>
         <translation>X축 생략(빈 구간 건너뛰기)</translation>
+    </message>
+    <message>
+        <source>刻度線的方向與鏡像</source>
+        <translation>눈금선 방향과 미러링</translation>
+    </message>
+    <message>
+        <source>刻度標記與個別刻度上色</source>
+        <translation>눈금 마커와 개별 눈금 색</translation>
+    </message>
+    <message>
+        <source>一次換掉整根軸的顏色</source>
+        <translation>축 전체 색을 한 번에 바꾸기</translation>
+    </message>
+    <message>
+        <source>真正的對數軸（波德圖）</source>
+        <translation>진짜 로그 축(보드 선도)</translation>
+    </message>
+    <message>
+        <source>對數刻度的文字格式</source>
+        <translation>로그 눈금 표기 형식</translation>
     </message>
     <message>
         <source>裝飾</source>
@@ -634,6 +666,10 @@
     <message>
         <source>多軌波形</source>
         <translation>다중 트랙 파형</translation>
+    </message>
+    <message>
+        <source>即時 FFT 頻譜（峰值保持）</source>
+        <translation>실시간 FFT 스펙트럼(피크 홀드)</translation>
     </message>
     <message>
         <source>商務圖表</source>
@@ -1562,6 +1598,10 @@
     <message>
         <source>圖例放在下方並換行</source>
         <translation>아래쪽에 배치하고 줄바꿈하는 범례</translation>
+    </message>
+    <message>
+        <source>圖例外框、符號與字型</source>
+        <translation>범례 테두리, 기호, 글꼴</translation>
     </message>
     <message>
         <source>核密度的核函數</source>
@@ -2556,12 +2596,32 @@ TPR %2 / FPR %3</translation>
         <translation>스펙트로그램: 스윕, 2차 고조파와 중간의 휘슬</translation>
     </message>
     <message>
-        <source>訊號量測結果</source>
-        <translation>신호 측정 결과</translation>
+        <source>單一段（1024 點）</source>
+        <translation>단일 구간(1024 포인트)</translation>
+    </message>
+    <message>
+        <source>Welch（%1 段平均）</source>
+        <translation>Welch(%1 구간 평균)</translation>
+    </message>
+    <message>
+        <source>平均之後，藏在雜訊裡的小峰才看得見</source>
+        <translation>평균하면 잡음에 묻힌 작은 피크가 보인다</translation>
+    </message>
+    <message>
+        <source>轉速倍頻與軸承頻率</source>
+        <translation>회전 배수 성분과 베어링 주파수</translation>
     </message>
     <message>
         <source>時間（秒）</source>
         <translation>시간(초)</translation>
+    </message>
+    <message>
+        <source>升速過程的瀑布頻譜</source>
+        <translation>가속 과정의 워터폴 스펙트럼</translation>
+    </message>
+    <message>
+        <source>訊號量測結果</source>
+        <translation>신호 측정 결과</translation>
     </message>
     <message>
         <source>電壓（伏特）</source>
@@ -2716,6 +2776,62 @@ setRange로 설정한 축은 autoScale이 덮어쓰지 않지만, 드래그 확�
     <message>
         <source>截斷 X 軸</source>
         <translation>X축 생략</translation>
+    </message>
+    <message>
+        <source>刻度線的三種方向</source>
+        <translation>눈금선의 세 가지 방향</translation>
+    </message>
+    <message>
+        <source>朝外（預設）</source>
+        <translation>바깥쪽(기본값)</translation>
+    </message>
+    <message>
+        <source>朝內＋鏡像</source>
+        <translation>안쪽 + 미러링</translation>
+    </message>
+    <message>
+        <source>穿過框線</source>
+        <translation>테두리를 가로지름</translation>
+    </message>
+    <message>
+        <source>樣本</source>
+        <translation>샘플</translation>
+    </message>
+    <message>
+        <source>超出規格的刻度標成紅色</source>
+        <translation>규격을 벗어난 눈금을 빨간색으로</translation>
+    </message>
+    <message>
+        <source>溫度 (°C)</source>
+        <translation>온도 (°C)</translation>
+    </message>
+    <message>
+        <source>濕度 (%)</source>
+        <translation>습도 (%)</translation>
+    </message>
+    <message>
+        <source>時間 (h)</source>
+        <translation>시간 (h)</translation>
+    </message>
+    <message>
+        <source>軸的顏色對應曲線的顏色</source>
+        <translation>축 색을 곡선 색에 맞춤</translation>
+    </message>
+    <message>
+        <source>增益（dB）</source>
+        <translation>이득(dB)</translation>
+    </message>
+    <message>
+        <source>一階低通濾波器的波德圖</source>
+        <translation>1차 저역 통과 필터의 보드 선도</translation>
+    </message>
+    <message>
+        <source>同一份資料，四種刻度寫法</source>
+        <translation>같은 데이터, 네 가지 눈금 표기</translation>
+    </message>
+    <message>
+        <source>Plain＋次刻度文字</source>
+        <translation>Plain + 보조 눈금 표기</translation>
     </message>
     <message>
         <source>強度</source>
@@ -3152,10 +3268,6 @@ Egger 절편 %2(0에서 멀수록 비대칭)</translation>
         <translation>센서 측정값</translation>
     </message>
     <message>
-        <source>溫度 (°C)</source>
-        <translation>온도 (°C)</translation>
-    </message>
-    <message>
         <source>取樣點</source>
         <translation>샘플</translation>
     </message>
@@ -3182,6 +3294,14 @@ Egger 절편 %2(0에서 멀수록 비대칭)</translation>
     <message>
         <source>通道 3</source>
         <translation>채널 3</translation>
+    </message>
+    <message>
+        <source>平均頻譜</source>
+        <translation>평균 스펙트럼</translation>
+    </message>
+    <message>
+        <source>峰值保持</source>
+        <translation>피크 홀드</translation>
     </message>
     <message>
         <source>刮傷</source>
@@ -5172,10 +5292,6 @@ Egger 절편 %2(0에서 멀수록 비대칭)</translation>
         <translation>기압 (hPa)</translation>
     </message>
     <message>
-        <source>濕度 (%)</source>
-        <translation>습도 (%)</translation>
-    </message>
-    <message>
         <source>時間 (分鐘)</source>
         <translation>시간 (분)</translation>
     </message>
@@ -5282,6 +5398,10 @@ Egger 절편 %2(0에서 멀수록 비대칭)</translation>
     <message>
         <source>東部</source>
         <translation>동부</translation>
+    </message>
+    <message>
+        <source>各國營收佔比</source>
+        <translation>국가별 매출 비중</translation>
     </message>
     <message>
         <source>三角</source>

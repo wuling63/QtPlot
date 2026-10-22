@@ -456,6 +456,25 @@ QTPLOT_RECIPE("樣式", "格線與圖例", "圖例放在下方並換行",
     plot.legend.columns = 3;
 }
 
+QTPLOT_RECIPE("樣式", "格線與圖例", "圖例外框、符號與字型",
+              "border 是外框（顏色、粗細、線型），background 是底色（透明就不塗滿）；"
+              "symbolOutline 幫色塊加外框，fillSymbols = false 改成只畫框；font 換字型與斜體。"
+              "在圖上按右鍵選「圖例樣式…」可以直接調這些設定，改了馬上看得到。") {
+    auto* pie = plot.addPie({38, 27, 21, 14}, {RT("美國"), RT("印度"), RT("德國"), RT("英國")});
+    pie->labelMode = Pie::LabelMode::Percent;
+    plot.title.text = RT("各國營收佔比");
+    plot.legend.isVisible = true;
+    plot.legend.placement = Legend::Placement::OutsideBottom;
+    plot.legend.alignment = Qt::AlignHCenter | Qt::AlignTop;
+    plot.legend.horizontal = true;
+    plot.legend.border = LineStyle(QColor(40, 40, 40), 1.5);
+    plot.legend.background = FillStyle(QColor(255, 255, 255));
+    plot.legend.symbolOutline = LineStyle(QColor(40, 40, 40), 1);
+    plot.legend.font.family = QStringLiteral("Georgia");
+    plot.legend.font.italic = true;
+    plot.legend.font.size = 12;
+}
+
 // ───────────────────────────── 統計 ─────────────────────────────
 
 QTPLOT_RECIPE("統計", "箱型與分布", "核密度的核函數",

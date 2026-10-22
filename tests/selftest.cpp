@@ -38,6 +38,8 @@
 #include <cmath>
 #include <random>
 #include <atomic>
+#include <thread>
+#include <functional>
 
 using namespace qtplot;
 
@@ -427,6 +429,50 @@ void testPerformancePaths() {
     }
 }
 
+void testLegendSymbolStyle() {
+    out() << "圖例符號：塗滿與外框\n";
+    // 量一個長條圖圖例色塊上的兩點：正中央、靠左緣往內 1 像素
+    struct Probe { QColor center, edge; };
+    auto probe = [](const std::function<void(Legend&)>& setup) {
+        Plot plot;
+        plot.legend.isVisible = true;
+        plot.legend.background = FillStyle(QColor(255, 255, 255));
+        auto* bars = plot.addBars({1, 2}, QColor(200, 0, 0));
+        bars->legendText = QStringLiteral("A");
+        setup(plot.legend);
+        const QImage img = plot.renderToImage(400, 300, 1.0);
+        const QRectF row = plot.legendHitAreas().value(0).rect;
+        const double symLeft = row.left() + 2;  // 命中範圍比色塊左緣多留 2 像素
+        const double symRight = symLeft + plot.legend.symbolWidth - 6;
+        const int midY = int(row.center().y());
+        return Probe{img.pixelColor(int((symLeft + symRight) / 2), midY), img.pixelColor(int(symLeft + 1), midY)};
+    };
+    auto near = [](QColor a, QColor b) {
+        return std::abs(a.red() - b.red()) + std::abs(a.green() - b.green()) + std::abs(a.blue() - b.blue()) < 60;
+    };
+    const QColor red(200, 0, 0), white(255, 255, 255), blue(0, 0, 255);
+
+    const Probe filled = probe([](Legend&) {});
+    check(near(filled.center, red), "預設色塊塗滿", filled.center.name());
+
+    const Probe hollow = probe([](Legend& lg) { lg.fillSymbols = false; });
+    check(near(hollow.center, white), "fillSymbols = false：色塊中間透出底色", hollow.center.name());
+    // 1.5 像素的框經過反鋸齒，量到的是紅白混色：看紅色明顯壓過綠藍就好
+    check(hollow.edge.red() - hollow.edge.green() > 60 && hollow.edge.red() - hollow.edge.blue() > 60,
+          "只畫框時框用項目的顏色", hollow.edge.name());
+
+    const Probe outlined = probe([&](Legend& lg) { lg.symbolOutline = LineStyle(blue, 2); });
+    check(near(outlined.center, red) && near(outlined.edge, blue), "symbolOutline：塗滿再加指定顏色的框",
+          outlined.center.name() + " / " + outlined.edge.name());
+
+    const Probe hollowBlue = probe([&](Legend& lg) {
+        lg.fillSymbols = false;
+        lg.symbolOutline = LineStyle(blue, 2);
+    });
+    check(near(hollowBlue.center, white) && near(hollowBlue.edge, blue), "只畫框又指定外框時用指定的顏色",
+          hollowBlue.center.name() + " / " + hollowBlue.edge.name());
+}
+
 void testInspection() {
     out() << "視覺檢測（混淆矩陣、門檻統計、熱圖遮罩）\n";
     // 2 類：實際 A 有 8 筆（6 對 2 錯）、實際 B 有 4 筆（1 錯 3 對）
@@ -597,6 +643,158 @@ void testTriSurface() {
             if (px.saturation() > 80) ++colored;  // viridis 的顏色飽和度高，背景與座標盒是灰的
         }
     check(colored > 100, "曲面有畫出來（壞索引被跳過）", QString::number(colored));
+}
+
+void testTickStylesAndLogScale() {
+    out() << "刻度樣式與對數軸\n";
+
+    {
+        // 方向：Inside 時版面不替刻度留位置，Cross 留一半
+        Plot plot;
+        plot.addScatter({0, 1}, {0, 1});
+        plot.renderToImage(400, 300);
+        Axis* left = plot.leftAxis();
+        left->majorTickLength = 10;
+        const double outside = left->measureThickness();
+        left->tickDirection = TickDirection::Inside;
+        const double inside = left->measureThickness();
+        left->tickDirection = TickDirection::Cross;
+        const double cross = left->measureThickness();
+        checkClose(outside - inside, 10, 1e-9, "Inside 省下整根刻度的厚度");
+        checkClose(outside - cross, 5, 1e-9, "Cross 省下一半");
+        left->majorTickMarker = MarkerStyle(MarkerShape::FilledCircle, 16, QColor(0, 0, 0));
+        check(left->outwardTickLength() == 8, "Cross 的標記往外佔一半大小", QString::number(left->outwardTickLength()));
+    }
+
+    // 找繪圖區某一列上，靠近 x 的像素有沒有指定顏色
+    auto hasColorNear = [](const QImage& img, int x0, int x1, int y, QColor want) {
+        for (int x = std::max(0, x0); x <= std::min(img.width() - 1, x1); ++x)
+            for (int dy = -1; dy <= 1; ++dy) {
+                const QColor c = img.pixelColor(x, std::clamp(y + dy, 0, img.height() - 1));
+                if (std::abs(c.red() - want.red()) + std::abs(c.green() - want.green()) + std::abs(c.blue() - want.blue()) < 90)
+                    return true;
+            }
+        return false;
+    };
+
+    {
+        // 鏡像刻度往裡畫、tickStyler 把 y = 0 那根改成紅色
+        Plot plot;
+        plot.grid.isVisible = false;
+        plot.setAxisLimits(-1, 1, -1, 1);
+        Axis* left = plot.leftAxis();
+        left->tickDirection = TickDirection::Inside;
+        left->mirrorTicks = true;
+        left->majorTickLength = 10;
+        left->majorTickLine.width = 2;
+        left->tickStyler = [](Tick& t) {
+            if (t.isMajor && std::abs(t.position) < 1e-9) {
+                t.color = QColor(220, 0, 0);
+                t.length = 14;
+            }
+        };
+        const QImage img = plot.renderToImage(400, 300);
+        const PixelRect d = plot.lastDataRect();
+        const int y0 = int(std::lround(left->getPixel(0, d)));
+        check(hasColorNear(img, int(d.left) + 2, int(d.left) + 12, y0, QColor(220, 0, 0)), "tickStyler：y = 0 的刻度往內畫成紅色");
+        check(hasColorNear(img, int(d.right) - 12, int(d.right) - 2, y0, QColor(220, 0, 0)), "mirrorTicks：對面那一邊也有");
+        bool zeroLabelRed = false;
+        for (const Tick& t : left->ticks())
+            if (std::abs(t.position) < 1e-9 && t.color == QColor(220, 0, 0) && t.length == 14) zeroLabelRed = true;
+        check(zeroLabelRed, "tickStyler 改的是存下來的刻度");
+    }
+
+    {
+        Axis a(Edge::Left);
+        a.setColor(QColor(10, 120, 200));
+        check(a.frameLine.color == QColor(10, 120, 200) && a.majorTickLine.color == a.frameLine.color &&
+                  a.minorTickLine.color == a.frameLine.color && a.tickFont.color == a.frameLine.color &&
+                  a.label.font.color == a.frameLine.color,
+              "setColor 一次換掉框線、刻度、文字與軸標題");
+    }
+
+    {
+        // 對數刻度的文字格式
+        LogTickGenerator g;
+        check(g.formatLabel(1, 2) == QStringLiteral("100"), "Auto：小的次方印一般數字", g.formatLabel(1, 2));
+        check(g.formatLabel(1, 5) == QString::fromUtf8("10⁵"), "Auto：大的次方印上標", g.formatLabel(1, 5));
+        check(g.formatLabel(1, -4) == QString::fromUtf8("10⁻⁴"), "負的次方有上標減號", g.formatLabel(1, -4));
+        g.labelFormat = LogTickGenerator::LabelFormat::Plain;
+        check(g.formatLabel(1, 5) == QStringLiteral("100000"), "Plain", g.formatLabel(1, 5));
+        g.labelFormat = LogTickGenerator::LabelFormat::ENotation;
+        check(g.formatLabel(1, 5) == QStringLiteral("1e5") && g.formatLabel(2, -3) == QStringLiteral("2e-3"), "ENotation",
+              g.formatLabel(2, -3));
+        g.labelFormat = LogTickGenerator::LabelFormat::Superscript;
+        check(g.formatLabel(2, 3) == QString::fromUtf8("2×10³"), "次刻度的上標寫法", g.formatLabel(2, 3));
+        g.base = 2;
+        check(g.formatLabel(1, 5) == QString::fromUtf8("2⁵"), "底數 2", g.formatLabel(1, 5));
+
+        LogTickGenerator h;
+        int labeledMinor = 0;
+        for (const Tick& t : h.generate({0, 4}, 400, FontStyle(), true))
+            if (!t.isMajor && !t.label.isEmpty()) ++labeledMinor;
+        check(labeledMinor == 0, "範圍夠寬時次刻度不印字");
+        for (const Tick& t : h.generate({0.2, 0.9}, 400, FontStyle(), true))
+            if (!t.isMajor && !t.label.isEmpty()) ++labeledMinor;
+        check(labeledMinor > 3, "範圍不到一個十的次方時次刻度自動印字", QString::number(labeledMinor));
+    }
+
+    {
+        // 真正的對數軸
+        Plot plot;
+        QVector<double> xs, ys;
+        for (int i = 0; i <= 40; ++i) {
+            xs.append(i);
+            ys.append(std::pow(10.0, i / 10.0));  // 1 .. 10000
+        }
+        auto* sc = plot.addScatter(xs, ys);
+        Axis* left = plot.leftAxis();
+        left->logScale = true;
+        plot.autoScale();
+        check(left->range.min > 0 && left->range.min < 1 && left->range.max > 10000, "自動範圍在對數空間留邊界",
+              QStringLiteral("%1 ～ %2").arg(left->range.min).arg(left->range.max));
+        plot.renderToImage(400, 300);
+        const PixelRect d = plot.lastDataRect();
+        const double p1 = left->getPixel(1, d), p10 = left->getPixel(10, d), p100 = left->getPixel(100, d);
+        checkClose(p1 - p10, p10 - p100, 1e-6, "每個十的次方一樣長");
+        checkClose(left->getCoordinate(p10, d), 10, 1e-9, "getCoordinate 是 getPixel 的反函數");
+        const Transform t = plot.transformFor(nullptr, nullptr);
+        checkClose(t.py(100), p100, 1e-9, "資料（Transform）和刻度（Axis）用同一套換算");
+        checkClose(t.cy(p100), 100, 1e-9, "Transform 的反換算");
+        RenderPack rp;
+        rp.dataRect = d;
+        checkClose(sc->transform(rp).py(100), p100, 1e-9, "圖元自己的 transform() 也走對數換算");
+        bool decades = true;
+        int majors = 0;
+        for (const Tick& tk : left->ticks())
+            if (tk.isMajor) {
+                ++majors;
+                const double e = std::log10(tk.position);
+                if (std::abs(e - std::round(e)) > 1e-9) decades = false;
+            }
+        check(decades && majors >= 5, "主刻度落在 1、10、100…（原始數值）", QString::number(majors));
+        check(std::isfinite(t.py(0)) && t.py(0) > d.bottom, "0 與負值畫到繪圖區外面，不是 NaN");
+
+        // 平移：對數空間平移，兩端的比值不變
+        const double ratio = left->range.max / left->range.min;
+        left->pan(p10, p100, d);
+        checkClose(left->range.max / left->range.min, ratio, 1e-6, "平移之後兩端的比值不變");
+        // 縮放：定點的像素位置不動
+        plot.renderToImage(400, 300);
+        const double before = left->getPixel(50, d);
+        left->zoom(0.5, 50);
+        checkClose(left->getPixel(50, d), before, 1e-6, "縮放時定點不動");
+        checkClose(std::log10(left->range.max / left->range.min), std::log10(ratio) / 2, 1e-6, "zoom(0.5) 剩一半的十的次方");
+
+        // 資料含 0（長條圖從 0 開始）：自動範圍只看正的部分
+        Plot bars;
+        bars.addBars({0, 5, 50, 500});
+        bars.leftAxis()->logScale = true;
+        bars.autoScale();
+        check(bars.leftAxis()->range.min > 0, "資料含 0 時自動範圍仍然是正的", QString::number(bars.leftAxis()->range.min));
+        bars.renderToImage(400, 300);  // 不能當掉
+        check(Axis::positiveRange({-5, -1}) == CoordinateRange(1, 10), "全是負的時給 1～10");
+    }
 }
 
 void testAxisBreaks() {
@@ -2938,6 +3136,169 @@ void testForestPlot() {
 }
 
 /// FFT、窗函數、功率譜與頻譜圖。
+/// 雜訊用的固定亂數（每次跑結果一樣）。
+QVector<double> fixedNoise(int n, double sigma, unsigned seed) {
+    std::mt19937 rng(seed);
+    std::normal_distribution<double> nd(0, sigma);
+    QVector<double> v(n);
+    for (double& x : v) x = nd(rng);
+    return v;
+}
+
+double stddevOf(const QVector<double>& v, int from, int to) {
+    double mean = 0;
+    for (int i = from; i < to; ++i) mean += v[i] / (to - from);
+    double ss = 0;
+    for (int i = from; i < to; ++i) ss += (v[i] - mean) * (v[i] - mean);
+    return std::sqrt(ss / (to - from));
+}
+
+void testSpectralAnalysis() {
+    out() << "頻譜分析（Welch、找峰值、即時頻譜、瀑布）\n";
+    const double fs = 1000;
+
+    {
+        // Welch：一個剛好落在格上的正弦波加上強雜訊
+        const int n = 16384, seg = 512;
+        const double f0 = 51 * fs / seg;  // 99.609375 Hz，落在 512 點的第 51 格
+        QVector<double> sig = fixedNoise(n, 1.0, 7);
+        for (int i = 0; i < n; ++i) sig[i] += std::sin(2 * kPi * f0 * i / fs);
+        const Periodogram w = welch(sig, fs, seg, 0.5);
+        check(w.segments == (n - seg) / (seg / 2) + 1, "Welch 的段數 = (n − 段長) / hop + 1",
+              QString::number(w.segments));
+        check(w.frequencies.size() == seg / 2 + 1, "格數由段長決定");
+        checkClose(w.amplitude[51], 1.0, 0.12, "平均後正弦波的振幅還原成 1");
+        // 雜訊底的起伏：單段功率譜像草叢，平均 63 段之後要平很多
+        const Periodogram one = periodogram(sig.mid(0, seg), fs);
+        const double raw = stddevOf(one.decibels, 100, 220), avg = stddevOf(w.decibels, 100, 220);
+        check(avg < raw * 0.4, "平均之後雜訊底的起伏小很多",
+              QStringLiteral("%1 dB → %2 dB").arg(raw, 0, 'f', 2).arg(avg, 0, 'f', 2));
+        const Periodogram shortSig = welch(sig.mid(0, 300), fs, seg);
+        check(shortSig.segments == 1 && shortSig.frequencies.size() == 151, "訊號比段長短時退回整段做一次");
+    }
+
+    {
+        // 找峰值：100.7 Hz（不在格上）、振幅 1；230 Hz、−20 dB
+        const int n = 500;  // 格距 2 Hz
+        QVector<double> sig(n);
+        for (int i = 0; i < n; ++i)
+            sig[i] = std::sin(2 * kPi * 100.7 * i / fs) + 0.1 * std::sin(2 * kPi * 230 * i / fs);
+        const Periodogram pg = periodogram(sig, fs, WindowFunction::Hann);
+        const QVector<SpectralPeak> peaks = findSpectralPeaks(pg, 5, 10);
+        check(peaks.size() == 2, "找到兩個峰（裙邊不算）", QString::number(peaks.size()));
+        if (peaks.size() >= 2) {
+            checkClose(peaks[0].frequency, 100.7, 0.2, "內插後的頻率比格距（2 Hz）準得多");
+            checkClose(peaks[0].decibels, 0.0, 0.6, "內插後的峰值接近 0 dB");
+            checkClose(peaks[0].amplitude, 1.0, 0.07, "峰值換回振幅");
+            checkClose(peaks[1].frequency, 230.0, 0.2, "第二個峰在 230 Hz");
+            checkClose(peaks[1].decibels, -20.0, 0.6, "第二個峰約 −20 dB");
+            check(peaks[0].decibels > peaks[1].decibels && peaks[1].prominence > 40, "依高度由大到小排，顯著度以雜訊底為準");
+        }
+        check(findSpectralPeaks(pg, 1, 10).size() == 1, "maxPeaks 限制個數");
+        const QVector<SpectralPeak> high = findSpectralPeaks(pg, 5, 10, 0, 150);
+        check(!high.isEmpty() && std::abs(high[0].frequency - 230) < 1, "minFrequency 以下的不算");
+        check(findSpectralPeaks(pg, 5, 10, 200).size() == 1, "隔太近的只留比較高的");
+        const Periodogram noise = periodogram(fixedNoise(1024, 1.0, 3), fs);
+        check(findSpectralPeaks(noise, 5, 15).isEmpty(), "純雜訊在顯著度 15 dB 下找不到峰",
+              QString::number(findSpectralPeaks(noise, 1, 0).value(0).prominence));
+        check(findSpectralPeaks(Periodogram(), 5).isEmpty(), "空譜不會當掉");
+    }
+
+    {
+        // 即時頻譜：收滿 fftSize 才開始算，之後每 fftSize/2 個樣本算一次
+        LiveSpectrum ls(1024, fs);
+        const double f0 = 100 * fs / 1024;  // 落在第 100 格
+        auto tone = [&](int from, int count, double f, double amp) {
+            QVector<double> v(count);
+            for (int i = 0; i < count; ++i) v[i] = amp * std::sin(2 * kPi * f * (from + i) / fs);
+            return v;
+        };
+        ls.addRange(tone(0, 1000, f0, 1));
+        check(ls.frameCount() == 0 && ls.spectrum().frequencies.isEmpty(), "沒收滿之前不算頻譜");
+        ls.addRange(tone(1000, 24, f0, 1));
+        check(ls.frameCount() == 1, "收滿 1024 個樣本算第一次");
+        ls.addRange(tone(1024, 512, f0, 1));
+        check(ls.frameCount() == 2, "之後每 512 個樣本算一次");
+        const Periodogram sp = ls.spectrum();
+        checkClose(sp.peakFrequency(), f0, 1e-9, "峰值頻率正確");
+        checkClose(sp.amplitude[100], 1.0, 0.01, "振幅還原成 1");
+
+        // 峰值保持：換到另一個頻率之後，舊的峰在保持曲線上還在
+        ls.addRange(tone(1536, 4096, 3 * f0, 1));
+        const Periodogram after = ls.spectrum();
+        const QVector<double> hold = ls.peakHold();
+        check(hold.size() == after.decibels.size() && hold[100] > -1 && after.decibels[100] < -40,
+              "峰值保持留住已經消失的峰", QStringLiteral("%1 / %2 dB").arg(hold.value(100)).arg(after.decibels.value(100)));
+        ls.resetPeakHold();
+        check(ls.peakHold().isEmpty(), "resetPeakHold 清掉保持");
+        ls.setFftSize(256);
+        check(ls.frameCount() == 0 && ls.fftSize() == 256, "改 FFT 長度會重來");
+
+        // 平均：同一串雜訊，開平均的雜訊底比較平
+        auto floorJitter = [&](double a) {
+            LiveSpectrum s(512, fs);
+            s.averaging = a;
+            s.addRange(fixedNoise(512 * 40, 1.0, 11));
+            return stddevOf(s.spectrum().decibels, 20, 230);
+        };
+        const double raw = floorJitter(0), avg = floorJitter(0.9);
+        check(avg < raw * 0.6, "averaging 讓雜訊底變平", QStringLiteral("%1 → %2 dB").arg(raw, 0, 'f', 2).arg(avg, 0, 'f', 2));
+
+        // 背景執行緒一直餵、主執行緒一直讀，不能當掉也不能讀到長度不一致的資料
+        LiveSpectrum shared(512, fs);
+        std::atomic<bool> done{false};
+        std::thread feeder([&] {
+            const QVector<double> chunk = fixedNoise(4096, 1.0, 5);
+            for (int r = 0; r < 60; ++r) shared.addRange(chunk);
+            done = true;
+        });
+        bool consistent = true;
+        while (!done) {
+            const Periodogram p = shared.spectrum();
+            if (p.frequencies.size() != p.decibels.size()) consistent = false;
+        }
+        feeder.join();
+        check(consistent && shared.frameCount() > 400, "背景執行緒餵資料時讀到的頻譜一致",
+              QString::number(shared.frameCount()));
+
+        Plot plot;
+        auto* live = plot.addLiveSpectrum(1024, fs);
+        live->peakLabels = 2;
+        live->showPeakHold = true;
+        live->addRange(tone(0, 4096, f0, 0.5));
+        plot.renderToImage(500, 300);
+        checkClose(plot.bottomAxis()->range.max, fs / 2, 1e-9, "autoAxes：X 軸是 0～Nyquist");
+        checkClose(plot.leftAxis()->range.min, live->minDb, 1e-9, "autoAxes：Y 軸是 minDb～maxDb");
+    }
+
+    {
+        // 瀑布：頻譜圖的每個時間格是一條曲線
+        const int n = 8000;
+        QVector<double> chirp(n);
+        for (int i = 0; i < n; ++i) {
+            const double t = i / fs;
+            chirp[i] = 0.1 * std::sin(2 * kPi * (50 * t + 25 * t * t));  // 峰值約 −20 dB
+        }
+        const Spectrogram sp = spectrogram(chirp, fs, 256, 64);
+        Waterfall3D w;
+        w.setSpectrogram(sp, 20);
+        check(w.zs.size() == 20 && w.ys.size() == 20, "最多取 maxCurves 條");
+        check(w.xs.size() == sp.rows && w.zs[0].size() == sp.rows, "每條曲線一個頻率格一點");
+        checkClose(w.ys.last(), double(sp.cols - 1) * sp.hopSize / fs, 1e-9, "最後一條是最新的時間格");
+        checkClose(w.floorZ, sp.valueRange().min, 1e-9, "地板設成頻譜圖的最小值");
+        CoordinateRange x, y, z;
+        w.limits(x, y, z);
+        check(z.max < -10, "Z 範圍不會被硬撐到 0（dB 全是負的）", QString::number(z.max));
+        Waterfall3D few;
+        few.setSpectrogram(sp, 1000);
+        check(few.zs.size() == sp.cols, "時間格比 maxCurves 少時全部都畫");
+        Waterfall3D band;
+        band.setSpectrogram(sp, 10, Colormap(Colormap::Viridis), 200);
+        check(!band.xs.isEmpty() && band.xs.last() <= 200 && band.xs.last() > 195 && band.zs[0].size() == band.xs.size(),
+              "maxFrequency 只取到指定的頻率", QString::number(band.xs.value(band.xs.size() - 1)));
+    }
+}
+
 void testSpectral() {
     out() << "頻譜\n";
 
@@ -4687,9 +5048,11 @@ int main(int argc, char* argv[]) {
     testSunburstAndPie();
     testInvertedAxis();
     testAxisBreaks();
+    testTickStylesAndLogScale();
     testTriSurface();
     testContour3DAndDepthShade();
     testInspection();
+    testLegendSymbolStyle();
     testPerformancePaths();
     testBubbleGanttVenn();
     testFlowCharts();
@@ -4710,6 +5073,7 @@ int main(int argc, char* argv[]) {
     testControlChart();
     testForestPlot();
     testSpectral();
+    testSpectralAnalysis();
     testFonts();
     testFishbone();
     testVectorExport();

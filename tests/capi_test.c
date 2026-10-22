@@ -160,6 +160,91 @@ int main(int argc, char** argv) {
         qp_plot_destroy(other);
     }
 
+    /* 圖例樣式、座標軸與刻度 */
+    {
+        QpItem* s2 = qp_add_scatter(p, xs, ys, N, QP_AUTO_COLOR);
+        qp_item_set_legend(p, s2, "sin");
+        qp_set_legend(p, 1, QP_CORNER_TOP_RIGHT);
+        check(qp_set_legend_layout(p, QP_LEGEND_OUTSIDE_BOTTOM, 1, 0) == QP_OK, "圖例放到下方、橫排");
+        check(qp_set_legend_layout(p, 9, 0, 0) == QP_ERR_ARG, "不認得的擺法回傳 ERR_ARG");
+        check(qp_set_legend_border(p, 0xFFC81E1Eu, 2.0, QP_LINE_DASHED) == QP_OK, "圖例外框：紅色虛線");
+        check(qp_set_legend_border(p, 0, 1.0, 42) == QP_ERR_ARG, "不認得的線型回傳 ERR_ARG");
+        check(qp_set_legend_background(p, 0) == QP_OK, "圖例底色：不塗");
+        check(qp_set_legend_symbols(p, 0, 0, 0) == QP_OK, "色塊只畫框");
+        check(qp_set_legend_font(p, "Georgia", 12, -1, 1, 0) == QP_OK, "圖例字型：Georgia 斜體");
+
+        check(qp_set_axis_color(p, QP_AXIS_LEFT, 0xFF1F77B4u) == QP_OK, "整根左軸換顏色");
+        check(qp_set_axis_color(p, 7, 0xFF000000u) == QP_ERR_ARG, "不認得的軸回傳 ERR_ARG");
+        check(qp_set_axis_ticks(p, QP_AXIS_BOTTOM, QP_TICKS_INSIDE, 8, -1, 1) == QP_OK, "下軸刻度朝內、鏡像");
+        check(qp_set_axis_ticks(p, QP_AXIS_BOTTOM, 5, 8, 4, 0) == QP_ERR_ARG, "不認得的方向回傳 ERR_ARG");
+        check(qp_set_axis_tick_marker(p, QP_AXIS_BOTTOM, QP_MARKER_FILLED_CIRCLE, 6, 0) == QP_OK, "主刻度畫圓點");
+
+        /* 對數軸：y = 10^(x/2)，自動範圍之後 1 和 10 在畫面上的距離 = 10 和 100 的距離 */
+        {
+            double lx[40], ly[40], p1, p10, p100, dummy;
+            int k;
+            QpItem* logItem;
+            qp_plot_clear(p);
+            for (k = 0; k < 40; ++k) {
+                lx[k] = k * 0.2;
+                ly[k] = pow(10.0, lx[k] / 2);
+            }
+            logItem = qp_add_scatter(p, lx, ly, 40, QP_AUTO_COLOR);
+            check(logItem != NULL, "加入對數資料");
+            check(qp_set_axis_log(p, QP_AXIS_LEFT, 1, QP_LOG_LABEL_SUPERSCRIPT, 0) == QP_OK, "左軸改成對數軸");
+            qp_autoscale(p, 0.05);
+            qp_get_limits(p, &x0, &x1, &y0, &y1);
+            check(y0 > 0 && y0 < 1 && y1 > 10000, "對數軸的自動範圍是正的");
+            qp_render_bgra(p, W, H, pixels, W * 4);
+            qp_coord_to_pixel(p, 0, 1, &dummy, &p1);
+            qp_coord_to_pixel(p, 0, 10, &dummy, &p10);
+            qp_coord_to_pixel(p, 0, 100, &dummy, &p100);
+            check(fabs((p1 - p10) - (p10 - p100)) < 1e-6, "每個十的次方一樣長");
+            qp_zoom(p, 0.5, W / 2.0, p10);
+            qp_get_limits(p, &nx0, &nx1, &ny0, &ny1);
+            check(fabs(log10(ny1 / ny0) - log10(y1 / y0) / 2) < 1e-6, "qp_zoom 在對數空間縮放");
+            check(qp_set_axis_log(p, QP_AXIS_LEFT, 0, QP_LOG_LABEL_AUTO, 0) == QP_OK, "關掉對數軸");
+        }
+        qp_plot_clear(p);
+    }
+
+    /* 頻譜：Welch、找峰值、即時頻譜 */
+    {
+        enum { M = 4096, SEG = 512 };
+        static double sig[M], freq[SEG / 2 + 1], db[SEG / 2 + 1];
+        double pf[4], pd[4];
+        int k, bins, found;
+        QpItem* live;
+        for (k = 0; k < M; ++k) /* 125 Hz（落在 512 點的第 64 格）與 −20 dB 的 312.5 Hz */
+            sig[k] = sin(2 * 3.14159265358979 * 125 * k / 1000.0) + 0.1 * sin(2 * 3.14159265358979 * 312.5 * k / 1000.0);
+
+        bins = qp_welch(sig, M, 1000, SEG, 0.5, QP_WINDOW_HANN, NULL, NULL, 0);
+        check(bins == SEG / 2 + 1, "qp_welch 先問要多大");
+        check(qp_welch(sig, M, 1000, SEG, 0.5, QP_WINDOW_HANN, freq, db, bins) == bins, "qp_welch 寫入結果");
+        check(nearly(freq[64], 125) && fabs(db[64]) < 0.1, "125 Hz 振幅 1（0 dB）");
+        check(qp_welch(sig, M, 0, SEG, 0.5, QP_WINDOW_HANN, NULL, NULL, 0) == QP_ERR_ARG, "取樣率 0 回傳 ERR_ARG");
+
+        found = qp_find_peaks(freq, db, bins, 4, 15, 5, 0, pf, pd);
+        check(found == 2, "找到兩個峰");
+        check(found >= 2 && fabs(pf[0] - 125) < 0.5 && fabs(pf[1] - 312.5) < 0.5 && fabs(pd[1] + 20) < 0.6,
+              "峰的頻率與高度正確");
+
+        live = qp_add_live_spectrum(p, 1024, 1000, QP_AUTO_COLOR);
+        check(live != NULL, "加入即時頻譜");
+        check(qp_add_live_spectrum(p, 4, 1000, 0) == NULL, "FFT 長度太小回傳 NULL");
+        check(qp_spectrum_set_analysis(p, live, QP_WINDOW_HANN, 0.5, 1, 0.3) == QP_OK, "即時頻譜：平均與峰值保持");
+        check(qp_spectrum_set_display(p, live, -100, 10, 2, 0x401F77B4u) == QP_OK, "即時頻譜：顯示範圍、標峰、填色");
+        check(qp_spectrum_set_display(p, live, 0, -10, 0, 0) == QP_ERR_ARG, "maxDb <= minDb 回傳 ERR_ARG");
+        {
+            uint64_t v0 = qp_data_version(p);
+            check(qp_item_append(p, live, NULL, sig, M) == QP_OK, "餵樣本給即時頻譜");
+            check(qp_data_version(p) != v0, "餵了之後資料版本變了");
+        }
+        check(qp_render_bgra(p, W, H, pixels, W * 4) == QP_OK, "畫出即時頻譜");
+        check(qp_spectrum_set_display(p, scatter, -100, 0, 0, 0) == QP_ERR_BAD_ITEM, "失效的 handle 回傳 BAD_ITEM");
+        qp_plot_clear(p);
+    }
+
     free(pixels);
     qp_plot_destroy(p);
     qp_plot_destroy(NULL); /* 傳 NULL 不會當掉 */

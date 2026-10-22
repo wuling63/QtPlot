@@ -335,6 +335,13 @@ void Plot::autoScale(double fraction, bool force) {
         // locked：使用者不想讓它動。rangeWasSet：使用者已經指定過視野。
         if (axis->locked || (!force && axis->rangeWasSet)) return;
         if (!r.isValid()) return;
+        if (axis->logScale) {
+            // 對數軸：只看正的部分，邊界在對數空間留（兩端各乘除同一個倍數）
+            r = Axis::positiveRange(r);
+            const double lo = std::log10(r.min), hi = std::log10(r.max), m = (hi - lo) * fraction;
+            axis->range = {std::pow(10.0, lo - m), std::pow(10.0, hi + m)};
+            return;
+        }
         r.ensureArea(1.0);
         if (axis->hasBreaks()) {
             // 截斷軸：邊界要照「畫得出來的長度」留。照整個範圍算的話，
@@ -376,6 +383,8 @@ Transform Plot::transformFor(const Axis* xAxis, const Axis* yAxis) const {
     t.yInverted = ay->inverted;
     t.xBreaks = ax->hasBreaks() ? &ax->breaks() : nullptr;
     t.yBreaks = ay->hasBreaks() ? &ay->breaks() : nullptr;
+    t.xLog = ax->logScale;
+    t.yLog = ay->logScale;
     return t;
 }
 
@@ -1318,6 +1327,13 @@ DataStreamer* Plot::addDataStreamer(int capacity, QColor color) {
     return d;
 }
 
+LiveSpectrum* Plot::addLiveSpectrum(int fftSize, double sampleRate, QColor color) {
+    const QColor c = orNext(color, *this);
+    auto* d = emplace<LiveSpectrum>(fftSize, sampleRate);
+    d->line = LineStyle(c, 1.2);
+    return d;
+}
+
 DataStreamerXY* Plot::addDataStreamerXY(int capacity, QColor color) {
     const QColor c = orNext(color, *this);
     auto* d = emplace<DataStreamerXY>(capacity);
@@ -1970,12 +1986,30 @@ void Plot::drawLegendBox(QPainter& painter, const Legend& lg, const QVector<Lege
             FillStyle f = it.fill;
             f.color = dim(f.color);
             const QRectF sym(symLeft, midY - rowHeight * 0.3, symRight - symLeft, rowHeight * 0.6);
-            painter.setPen(Qt::NoPen);
-            // 花紋的筆刷沒有底色：有底色就先鋪
-            if (f.hatch != HatchPattern::None && f.color.alpha() > 0 && !f.hasGradient())
-                painter.fillRect(sym, f.color);
-            painter.setBrush(f.brush());
-            painter.drawRect(sym);
+            if (lg.fillSymbols) {
+                painter.setPen(Qt::NoPen);
+                // 花紋的筆刷沒有底色：有底色就先鋪
+                if (f.hatch != HatchPattern::None && f.color.alpha() > 0 && !f.hasGradient())
+                    painter.fillRect(sym, f.color);
+                painter.setBrush(f.brush());
+                painter.drawRect(sym);
+            }
+            LineStyle outline = lg.symbolOutline;
+            if (!lg.fillSymbols && !outline.isVisible()) {
+                // 只畫框時借項目本身的顏色（漸層取第一個節點、只有花紋就取花紋色）
+                const QColor c = f.hasGradient() ? f.gradientStops.first()
+                                 : f.color.alpha() > 0 ? f.color
+                                                       : f.hatchColor;
+                outline = LineStyle(c, 1.5);
+            }
+            if (outline.isVisible()) {
+                outline.color = dim(outline.color);
+                // 框往內縮半個線寬，粗框才不會比填滿的色塊大一圈
+                const double inset = outline.width / 2;
+                painter.setBrush(Qt::NoBrush);
+                painter.setPen(outline.pen());
+                painter.drawRect(sym.adjusted(inset, inset, -inset, -inset));
+            }
         }
         if (it.line.isVisible() && !lg.overrideMarkerShape) {
             LineStyle ls = it.line;

@@ -60,6 +60,8 @@ struct Periodogram {
     QVector<double> amplitude;    ///< 還原過窗增益的振幅（和輸入同單位）
     QVector<double> power;        ///< 振幅的平方
     QVector<double> decibels;     ///< 20·log10(amplitude / reference)
+    /// 平均了幾段。periodogram() 是 1；welch() 是實際切出來的段數。
+    int segments = 1;
 
     /// 振幅最大的那一格的頻率。空譜回傳 NaN。
     double peakFrequency() const;
@@ -74,6 +76,45 @@ struct Periodogram {
 /// reference 是 dB 的 0 點。
 Periodogram periodogram(const QVector<double>& samples, double sampleRate,
                         WindowFunction w = WindowFunction::Hann, double reference = 1.0);
+
+/// Welch 平均功率譜。
+///
+/// 把訊號切成 segmentSize 長、彼此重疊 overlap（0～0.95）的段，每段開窗做一次功率譜，
+/// 再把「功率」平均起來。單一段的功率譜每一格都是一個隨機變數 —— 雜訊底看起來像草叢，
+/// 平均 K 段之後起伏大約縮成 1/√K，很小的峰才不會被草叢藏住。
+/// 代價是頻率格距變成 sampleRate / segmentSize（比整段做 FFT 粗）。
+///
+/// 振幅的換算和 periodogram() 一樣（正弦波的峰值振幅），兩者可以畫在同一張圖上比較。
+/// 訊號比 segmentSize 短時退回整段做一次 periodogram()。
+Periodogram welch(const QVector<double>& samples, double sampleRate, int segmentSize,
+                  double overlap = 0.5, WindowFunction w = WindowFunction::Hann, double reference = 1.0);
+
+// ───────────────────────── 找頻譜峰值 ─────────────────────────
+
+/// 頻譜上的一個峰。
+struct SpectralPeak {
+    double frequency = 0;   ///< Hz，用拋物線內插過（比格距準）
+    double decibels = 0;    ///< 內插後的峰值 dB
+    double amplitude = 0;   ///< 由 decibels 換回來的振幅（同 Periodogram::amplitude 的單位）
+    double prominence = 0;  ///< 比附近的雜訊底（鄰近格子的中位數）高出幾 dB
+    int bin = 0;            ///< 峰所在的頻率格
+};
+
+/// 找出頻譜上最明顯的幾個峰，依高度由大到小排。
+///
+/// - minProminenceDb：峰要比附近的雜訊底高出這麼多才算。雜訊底取峰兩側各約 2% 頻寬內
+///   格子的中位數（扣掉峰本身的主波）—— 中位數不怕旁邊有別的峰。
+///   不用地形學那種「比兩側谷底高多少」：雜訊譜的谷底常常深達 −30 dB，
+///   照那個算法，純雜訊裡最高的那一格永遠會被當成峰。
+///   純雜訊譜裡最高的格子大約比中位數高 8～10 dB，所以門檻低於 10 dB 時要有心理準備。
+/// - minSpacingHz：兩個峰至少隔這麼遠，太近的只留比較高的那個。
+/// - minFrequency：低於這個頻率的不算（直流與極低頻的漂移常常是最高的，卻不是想看的）。
+///
+/// 頻率用相鄰三格的 dB 做拋物線內插：開了窗的峰形接近高斯，在對數軸上近似拋物線，
+/// 內插後的誤差遠小於一格。不內插的話，100.7 Hz 在 2 Hz 格距下只會報 100 或 102。
+QVector<SpectralPeak> findSpectralPeaks(const Periodogram& spectrum, int maxPeaks = 5,
+                                        double minProminenceDb = 10, double minSpacingHz = 0,
+                                        double minFrequency = 0);
 
 // ───────────────────────── 頻譜圖（STFT） ─────────────────────────
 

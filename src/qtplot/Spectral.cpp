@@ -238,6 +238,102 @@ Periodogram periodogram(const QVector<double>& samples, double sampleRate, Windo
     return out;
 }
 
+Periodogram welch(const QVector<double>& samples, double sampleRate, int segmentSize, double overlap,
+                  WindowFunction w, double reference) {
+    const int n = static_cast<int>(samples.size());
+    if (segmentSize < 2 || n <= segmentSize) return periodogram(samples, sampleRate, w, reference);
+
+    overlap = std::clamp(overlap, 0.0, 0.95);
+    const int hop = std::max(1, static_cast<int>(std::lround(segmentSize * (1 - overlap))));
+    const int segments = (n - segmentSize) / hop + 1;
+
+    // 每段算一次功率譜再平均「功率」（不是平均 dB：dB 的平均會系統性地偏低）
+    Periodogram out;
+    QVector<double> sum;
+    for (int s = 0; s < segments; ++s) {
+        const Periodogram pg = periodogram(samples.mid(static_cast<qsizetype>(s) * hop, segmentSize), sampleRate, w, reference);
+        if (sum.isEmpty()) {
+            sum.fill(0.0, pg.power.size());
+            out.frequencies = pg.frequencies;
+        }
+        for (int k = 0; k < sum.size(); ++k) sum[k] += pg.power[k];
+    }
+
+    const double ref = (reference > 0) ? reference : 1.0;
+    out.segments = segments;
+    out.amplitude.reserve(sum.size());
+    out.power.reserve(sum.size());
+    out.decibels.reserve(sum.size());
+    for (double p : sum) {
+        const double power = p / segments;
+        const double mag = std::sqrt(power);
+        out.power.append(power);
+        out.amplitude.append(mag);
+        out.decibels.append(20 * std::log10(std::max(mag, 1e-300) / ref));
+    }
+    return out;
+}
+
+// ───────────────────────── 找頻譜峰值 ─────────────────────────
+
+QVector<SpectralPeak> findSpectralPeaks(const Periodogram& spectrum, int maxPeaks, double minProminenceDb,
+                                        double minSpacingHz, double minFrequency) {
+    QVector<SpectralPeak> found;
+    const QVector<double>& db = spectrum.decibels;
+    const int n = static_cast<int>(std::min(db.size(), spectrum.frequencies.size()));
+    if (n < 3 || maxPeaks <= 0) return found;
+    const double df = spectrum.frequencies[1] - spectrum.frequencies[0];
+    // 雜訊底的鄰域：兩側各 2% 的格數（至少 8 格），扣掉峰本身的主波（±3 格）
+    const int reach = std::max(8, n / 50);
+    const int lobe = 3;
+    QVector<double> around;
+    around.reserve(2 * reach);
+
+    for (int k = 1; k < n - 1; ++k) {
+        const double b = db[k];
+        // 平頂的峰（相鄰兩格一樣高）只算左邊那一格
+        if (!std::isfinite(b) || !(b > db[k - 1] && b >= db[k + 1])) continue;
+        if (spectrum.frequencies[k] < minFrequency) continue;
+
+        // 顯著度：比鄰近格子的中位數高多少
+        around.clear();
+        for (int i = std::max(0, k - reach); i <= std::min(n - 1, k + reach); ++i)
+            if (std::abs(i - k) > lobe && std::isfinite(db[i])) around.append(db[i]);
+        if (around.isEmpty()) continue;
+        auto mid = around.begin() + around.size() / 2;
+        std::nth_element(around.begin(), mid, around.end());
+        const double prominence = b - *mid;
+        if (prominence < minProminenceDb) continue;
+
+        // 拋物線內插：頂點在 k + delta，|delta| <= 0.5
+        const double a = db[k - 1], c = db[k + 1];
+        const double denom = a - 2 * b + c;
+        const double delta = (denom < 0) ? std::clamp(0.5 * (a - c) / denom, -0.5, 0.5) : 0.0;
+
+        SpectralPeak p;
+        p.bin = k;
+        p.frequency = spectrum.frequencies[k] + delta * df;
+        p.decibels = b - 0.25 * (a - c) * delta;
+        p.prominence = prominence;
+        // dB 的 0 點是 reference，這裡只知道比值：用原本那一格的振幅換算
+        const double amp = spectrum.amplitude.value(k, 0.0);
+        p.amplitude = amp * std::pow(10.0, (p.decibels - b) / 20);
+        found.append(p);
+    }
+
+    std::sort(found.begin(), found.end(),
+              [](const SpectralPeak& x, const SpectralPeak& y) { return x.decibels > y.decibels; });
+    QVector<SpectralPeak> out;
+    for (const SpectralPeak& p : found) {
+        if (out.size() >= maxPeaks) break;
+        const bool tooClose = std::any_of(out.begin(), out.end(), [&](const SpectralPeak& q) {
+            return std::abs(q.frequency - p.frequency) < minSpacingHz;
+        });
+        if (!tooClose) out.append(p);
+    }
+    return out;
+}
+
 // ───────────────────────── 頻譜圖 ─────────────────────────
 
 CoordinateRange Spectrogram::valueRange() const {

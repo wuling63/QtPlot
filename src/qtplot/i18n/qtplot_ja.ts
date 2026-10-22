@@ -99,6 +99,105 @@
     </message>
 </context>
 <context>
+    <name>qtplot::LegendStyleDialog</name>
+    <message>
+        <source>圖例樣式</source>
+        <translation>凡例のスタイル</translation>
+    </message>
+    <message>
+        <source>顯示外框</source>
+        <translation>枠線を表示</translation>
+    </message>
+    <message>
+        <source>實線</source>
+        <translation>実線</translation>
+    </message>
+    <message>
+        <source>虛線</source>
+        <translation>破線</translation>
+    </message>
+    <message>
+        <source>點線</source>
+        <translation>点線</translation>
+    </message>
+    <message>
+        <source>點虛線</source>
+        <translation>一点鎖線</translation>
+    </message>
+    <message>
+        <source>外框</source>
+        <translation>枠線</translation>
+    </message>
+    <message>
+        <source>顏色</source>
+        <translation>色</translation>
+    </message>
+    <message>
+        <source>粗細</source>
+        <translation>太さ</translation>
+    </message>
+    <message>
+        <source>線型</source>
+        <translation>線種</translation>
+    </message>
+    <message>
+        <source>塗滿底色</source>
+        <translation>背景を塗りつぶす</translation>
+    </message>
+    <message>
+        <source>底色</source>
+        <translation>背景</translation>
+    </message>
+    <message>
+        <source>色塊塗滿</source>
+        <translation>色見本を塗りつぶす</translation>
+    </message>
+    <message>
+        <source>色塊加外框</source>
+        <translation>色見本に枠線</translation>
+    </message>
+    <message>
+        <source>符號</source>
+        <translation>記号</translation>
+    </message>
+    <message>
+        <source>文字</source>
+        <translation>文字</translation>
+    </message>
+    <message>
+        <source>字型</source>
+        <translation>フォント</translation>
+    </message>
+    <message>
+        <source>還原預設</source>
+        <translation>既定に戻す</translation>
+    </message>
+    <message>
+        <source>外框顏色</source>
+        <translation>枠線の色</translation>
+    </message>
+    <message>
+        <source>色塊外框顏色</source>
+        <translation>色見本の枠線の色</translation>
+    </message>
+    <message>
+        <source>文字顏色</source>
+        <translation>文字の色</translation>
+    </message>
+    <message>
+        <source>粗體</source>
+        <translation>太字</translation>
+    </message>
+    <message>
+        <source>斜體</source>
+        <translation>斜体</translation>
+    </message>
+    <message>
+        <source>圖例字型</source>
+        <translation>凡例のフォント</translation>
+    </message>
+</context>
+<context>
     <name>qtplot::PlotWidget</name>
     <message>
         <source>%1 個圖元, %2 ms (%3 FPS)</source>
@@ -127,6 +226,10 @@
     <message>
         <source>顯示圖例(&amp;L)</source>
         <translation>凡例を表示(&amp;L)</translation>
+    </message>
+    <message>
+        <source>圖例樣式(&amp;Y)…</source>
+        <translation>凡例のスタイル(&amp;Y)…</translation>
     </message>
     <message>
         <source>語言(&amp;N)</source>

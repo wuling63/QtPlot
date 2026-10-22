@@ -99,6 +99,105 @@
     </message>
 </context>
 <context>
+    <name>qtplot::LegendStyleDialog</name>
+    <message>
+        <source>圖例樣式</source>
+        <translation>Style de la légende</translation>
+    </message>
+    <message>
+        <source>顯示外框</source>
+        <translation>Afficher la bordure</translation>
+    </message>
+    <message>
+        <source>實線</source>
+        <translation>Continu</translation>
+    </message>
+    <message>
+        <source>虛線</source>
+        <translation>Tirets</translation>
+    </message>
+    <message>
+        <source>點線</source>
+        <translation>Pointillés</translation>
+    </message>
+    <message>
+        <source>點虛線</source>
+        <translation>Tiret-point</translation>
+    </message>
+    <message>
+        <source>外框</source>
+        <translation>Bordure</translation>
+    </message>
+    <message>
+        <source>顏色</source>
+        <translation>Couleur</translation>
+    </message>
+    <message>
+        <source>粗細</source>
+        <translation>Épaisseur</translation>
+    </message>
+    <message>
+        <source>線型</source>
+        <translation>Type de trait</translation>
+    </message>
+    <message>
+        <source>塗滿底色</source>
+        <translation>Remplir le fond</translation>
+    </message>
+    <message>
+        <source>底色</source>
+        <translation>Fond</translation>
+    </message>
+    <message>
+        <source>色塊塗滿</source>
+        <translation>Remplir les pastilles</translation>
+    </message>
+    <message>
+        <source>色塊加外框</source>
+        <translation>Contour des pastilles</translation>
+    </message>
+    <message>
+        <source>符號</source>
+        <translation>Symboles</translation>
+    </message>
+    <message>
+        <source>文字</source>
+        <translation>Texte</translation>
+    </message>
+    <message>
+        <source>字型</source>
+        <translation>Police</translation>
+    </message>
+    <message>
+        <source>還原預設</source>
+        <translation>Valeurs par défaut</translation>
+    </message>
+    <message>
+        <source>外框顏色</source>
+        <translation>Couleur de la bordure</translation>
+    </message>
+    <message>
+        <source>色塊外框顏色</source>
+        <translation>Couleur du contour des pastilles</translation>
+    </message>
+    <message>
+        <source>文字顏色</source>
+        <translation>Couleur du texte</translation>
+    </message>
+    <message>
+        <source>粗體</source>
+        <translation>Gras</translation>
+    </message>
+    <message>
+        <source>斜體</source>
+        <translation>Italique</translation>
+    </message>
+    <message>
+        <source>圖例字型</source>
+        <translation>Police de la légende</translation>
+    </message>
+</context>
+<context>
     <name>qtplot::PlotWidget</name>
     <message>
         <source>%1 個圖元, %2 ms (%3 FPS)</source>
@@ -127,6 +226,10 @@
     <message>
         <source>顯示圖例(&amp;L)</source>
         <translation>Afficher la &amp;légende</translation>
+    </message>
+    <message>
+        <source>圖例樣式(&amp;Y)…</source>
+        <translation>St&amp;yle de la légende…</translation>
     </message>
     <message>
         <source>語言(&amp;N)</source>

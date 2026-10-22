@@ -181,6 +181,27 @@ struct AxisBreaks {
 };
 
 /// 資料座標與像素座標的雙向轉換。每次 render 由 Plot 依該圖元綁的軸建立。
+/// 對數軸的換算：把範圍的兩端取 log10。範圍不是正的時候給一個看得見的預設，
+/// 不讓 log10(0) = −∞ 一路傳下去把整張圖變成 NaN。
+inline void logBounds(const CoordinateRange& r, double& lo, double& hi) {
+    hi = (r.max > 0) ? std::log10(r.max) : 1.0;
+    lo = (r.min > 0) ? std::log10(r.min) : hi - 3.0;
+    if (!(hi > lo)) hi = lo + 1.0;
+}
+/// 對數軸上 v 落在範圍的哪個比例。非正值畫到繪圖區外很遠的地方（線會往下衝出去，不會消失）。
+inline double logFraction(double v, const CoordinateRange& r) {
+    double lo, hi;
+    logBounds(r, lo, hi);
+    if (!(v > 0)) return -10.0;
+    return (std::log10(v) - lo) / (hi - lo);
+}
+/// logFraction 的反函數。
+inline double logFromFraction(double f, const CoordinateRange& r) {
+    double lo, hi;
+    logBounds(r, lo, hi);
+    return std::pow(10.0, lo + f * (hi - lo));
+}
+
 struct Transform {
     PixelRect rect;      ///< 繪圖區（像素）
     CoordinateRange xr;  ///< 綁定的 X 軸範圍
@@ -196,13 +217,20 @@ struct Transform {
     /// 百萬點的 Signal 每一點都要換算，這裡多一個分支判斷就好，不能多走一段迴圈。
     const AxisBreaks* xBreaks = nullptr;
     const AxisBreaks* yBreaks = nullptr;
+    /// 對數軸（Axis::logScale）。對數軸不支援截斷，兩者都設時以對數為準。
+    bool xLog = false;
+    bool yLog = false;
 
     double px(double x) const {
-        const double f = xBreaks ? xBreaks->toFraction(x, xr, rect.width()) : (x - xr.min) / xr.span();
+        const double f = xLog      ? logFraction(x, xr)
+                         : xBreaks ? xBreaks->toFraction(x, xr, rect.width())
+                                   : (x - xr.min) / xr.span();
         return rect.left + (xInverted ? 1.0 - f : f) * rect.width();
     }
     double py(double y) const {
-        const double f = yBreaks ? yBreaks->toFraction(y, yr, rect.height()) : (y - yr.min) / yr.span();
+        const double f = yLog      ? logFraction(y, yr)
+                         : yBreaks ? yBreaks->toFraction(y, yr, rect.height())
+                                   : (y - yr.min) / yr.span();
         return rect.bottom - (yInverted ? 1.0 - f : f) * rect.height();
     }
     QPointF p(Coordinates c) const { return QPointF(px(c.x), py(c.y)); }
@@ -211,11 +239,13 @@ struct Transform {
     double cx(double pixelX) const {
         double f = (pixelX - rect.left) / rect.width();
         if (xInverted) f = 1.0 - f;
+        if (xLog) return logFromFraction(f, xr);
         return xBreaks ? xBreaks->fromFraction(f, xr, rect.width()) : xr.min + f * xr.span();
     }
     double cy(double pixelY) const {
         double f = (rect.bottom - pixelY) / rect.height();
         if (yInverted) f = 1.0 - f;
+        if (yLog) return logFromFraction(f, yr);
         return yBreaks ? yBreaks->fromFraction(f, yr, rect.height()) : yr.min + f * yr.span();
     }
     Coordinates c(QPointF pt) const { return {cx(pt.x()), cy(pt.y())}; }

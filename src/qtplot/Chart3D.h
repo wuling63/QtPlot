@@ -8,6 +8,7 @@
 #pragma once
 
 #include "Plottable.h"
+#include "Spectral.h"   // Waterfall3D::setSpectrogram
 #include "Specialty.h"  // Triangle、delaunay()
 
 #include <QObject>
@@ -168,6 +169,19 @@ public:
     bool fillToFloor = true;
     /// 每條曲線在圖例裡的名稱（空字串不進圖例）。
     QStringList curveNames;
+    /// 曲線填到哪個高度。NaN（預設）是 0；資料全是負的（dB）時要設成最低值，
+    /// 否則「填到 0」會從曲線往上填到盒子頂。
+    double floorZ = std::numeric_limits<double>::quiet_NaN();
+
+    /// 把頻譜圖（STFT）排成瀑布：X 是頻率、Y 是時間（秒）、Z 是強度，
+    /// 每一條曲線是某個時刻的頻譜。最多取 maxCurves 條（等間隔挑），
+    /// 顏色由 colormap 依時間由舊到新取，floorZ 設成頻譜圖的最小值。
+    /// maxFrequency > 0 時只取到這個頻率（感興趣的頻帶常常只佔 Nyquist 的一小段）。
+    ///
+    /// 頻譜圖的時間格通常有上百個，全畫會變成一堵牆：近的擋住遠的，
+    /// 30～50 條才看得出每條的形狀與峰的移動。
+    void setSpectrogram(const Spectrogram& sp, int maxCurves = 40,
+                        const Colormap& colormap = Colormap(Colormap::Viridis), double maxFrequency = 0);
 
     void limits(CoordinateRange& x, CoordinateRange& y, CoordinateRange& z) const override;
     QVector<LegendItem> legendItems() const override;

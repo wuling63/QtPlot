@@ -22,6 +22,10 @@ struct Tick {
     double position = 0;
     QString label;
     bool isMajor = true;
+    /// 這一根刻度自己的顏色（刻度線與文字）。無效色代表用軸的設定。
+    QColor color;
+    /// 這一根刻度自己的長度（像素）。負值代表用軸的 majorTickLength / minorTickLength。
+    double length = -1;
 };
 
 /// 刻度產生器介面。
@@ -74,11 +78,30 @@ public:
 };
 
 /// 對數軸（底數可調）。主刻度在 10^n，次刻度在 2..9 × 10^n。
+///
+/// 兩種用法：
+/// - Axis::logScale = true（建議）：資料直接用原始數值，軸自己換算，這個產生器只負責刻度。
+/// - 舊的做法：資料先自己取 log10 再畫，把這個產生器設給一般的軸。
 class LogTickGenerator : public TickGenerator {
 public:
     double base = 10.0;
     /// 每個十的次方之間要畫的次刻度倍數（預設 2..9）。只要 2、5 的話就給 {2, 5}；空的就不畫次刻度。
     QVector<double> minorMultipliers{2, 3, 4, 5, 6, 7, 8, 9};
+
+    /// 刻度文字的寫法。
+    enum class LabelFormat {
+        Auto,         ///< 10⁻³～10³ 印一般數字，更大或更小印上標
+        Plain,        ///< 一律印一般數字：0.001、1000、100000
+        Superscript,  ///< 一律印成次方：10⁻³、10³、10⁵
+        ENotation     ///< 程式常見的寫法：1e-3、1e3、1e5
+    };
+    LabelFormat labelFormat = LabelFormat::Auto;
+    /// 次刻度也印文字（2×10³、5×10³……）。範圍不到兩個十的次方時，
+    /// 主刻度只有一兩根，不印次刻度的話軸上幾乎沒有數字 —— 這時就算關著也會自動印。
+    bool labelMinorTicks = false;
+
+    /// 把 mantissa × base^exponent 照 labelFormat 寫成文字（mantissa = 1 就是主刻度）。
+    QString formatLabel(double mantissa, int exponent) const;
     QVector<Tick> generate(const CoordinateRange& range, double lengthPx,
                            const FontStyle& font, bool vertical) override;
 };
@@ -104,6 +127,13 @@ public:
 };
 
 enum class Edge { Left, Right, Bottom, Top };
+
+/// 刻度線往哪個方向畫。
+enum class TickDirection {
+    Outside,  ///< 往繪圖區外面（預設）
+    Inside,   ///< 往繪圖區裡面：軸可以貼得比較緊，科學期刊常見
+    Cross     ///< 穿過框線，裡外各一半
+};
 
 /// 一根座標軸：範圍、刻度、標籤，以及它在版面上要佔多厚。
 class Axis {
@@ -131,6 +161,21 @@ public:
     bool locked = false;
     /// 反向軸（值由大到小）。
     bool inverted = false;
+    /// 對數軸：資料直接用原始數值，軸以 log10 換算。刻度用 LogTickGenerator
+    /// （tickGenerator 不是 LogTickGenerator 時用內建的一個，要調格式就自己設一個 LogTickGenerator）。
+    ///
+    /// - 非正的值畫在繪圖區外很遠的地方；自動範圍只看正的部分（最小值不是正的時取最大值往下三個十的次方）。
+    /// - 平移與縮放都在對數空間做：往上拖一格是「乘上」固定倍數，不是加上固定量。
+    /// - 以資料單位畫寬度的圖元（長條寬、圓的半徑）在對數軸上會變形，這是對數軸本來的性質。
+    /// - 不支援截斷（兩者都設時忽略截斷）。
+    bool logScale = false;
+
+    /// 把 fromPixel 底下的資料點移到 toPixel（平移）。對數軸在對數空間平移。
+    void pan(double fromPixel, double toPixel, const PixelRect& dataRect);
+    /// 以 centerCoord 為定點縮放，factor < 1 放大。centerCoord 是 NaN 時以畫面中央為定點。
+    void zoom(double factor, double centerCoord = std::numeric_limits<double>::quiet_NaN());
+    /// 對數軸能用的範圍：只留正的部分，必要時往下補三個十的次方。
+    static CoordinateRange positiveRange(CoordinateRange r);
 
     // ── 截斷 ──
     /// 截掉 [from, to] 這一段：那段不佔長度，留一道空隙畫截斷記號。
@@ -165,6 +210,24 @@ public:
     LineStyle minorTickLine{QColor(0, 0, 0), 1.0};
     double majorTickLength = 5;
     double minorTickLength = 2;
+    /// 刻度線的方向。Inside 時版面不替刻度留位置，刻度文字會貼近框線。
+    TickDirection tickDirection = TickDirection::Outside;
+    /// 在繪圖區對面那一邊也畫一份同樣的刻度（只有線與標記，沒有文字）。
+    /// 上／右沒有另外開軸、又想要四邊都有刻度時用。
+    bool mirrorTicks = false;
+    /// 主刻度上畫一個標記（圓點、三角形……）。預設不畫。
+    /// 標記會依 tickDirection 放在框線的外側、內側或正中；只要標記不要線的話，
+    /// 把 majorTickLine 設成 LineStyle::none()。
+    MarkerStyle majorTickMarker;
+    /// 每次產生刻度之後，對每一根呼叫一次，可以改它的 color、length 或 label。
+    /// 例如把規格上限那一根標成紅色、把 0 那一根加長。
+    std::function<void(Tick&)> tickStyler;
+
+    /// 一次把整根軸換成同一個顏色：框線、主次刻度線、刻度標記、刻度文字、軸標題。
+    /// 多根 Y 軸各自對應一條曲線時，軸的顏色和曲線一樣，讀者才知道哪根軸是誰的。
+    void setColor(const QColor& color);
+    /// 刻度在框線外側佔了多少像素（版面與文字位置都照這個排）。
+    double outwardTickLength() const;
     bool showTickLabels = true;
     /// 刻度標籤旋轉幾度（順時針為正，和 FontStyle::rotation 同一個約定）。
     ///
@@ -184,6 +247,7 @@ public:
     /// 走過這根軸上的每一個字型設定（軸標題與刻度）。
     void visitFonts(const FontVisitor& visit) {
         visit(label.font);
+        visit(subLabel.font);
         visit(tickFont);
     }
     bool showFrame = true;
@@ -206,6 +270,8 @@ public:
 
     // ── 刻度 ──
     std::shared_ptr<TickGenerator> tickGenerator;
+    /// logScale 開著、但 tickGenerator 不是 LogTickGenerator 時，實際用來產生刻度的那一個。
+    LogTickGenerator& defaultLogTicks() const;
     /// 取得上一次 render/measure 時算出的刻度。
     const QVector<Tick>& ticks() const { return m_ticks; }
     /// 依目前範圍與長度重算刻度。版面計算與繪製都會呼叫。
@@ -243,8 +309,11 @@ public:
 
 private:
     Edge m_edge;
+    void regenerateTicksRaw(double lengthPx);
+
     QVector<Tick> m_ticks;
     AxisBreaks m_breaks;
+    mutable std::shared_ptr<LogTickGenerator> m_logTicks;
 };
 
 }  // namespace qtplot

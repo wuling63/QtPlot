@@ -23,6 +23,7 @@ ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'src', 'qt
 SKIP_CLASSES = {
     'FontStyle',   # 就是字型本身
     'Label',       # 由持有它的 class 交出去
+    'LegendStyleDialog',  # 對話框暫存的字型，按確定時才寫進 Legend.font（Legend 自己會交出去）
 }
 
 CLASS_RE = re.compile(r'^(?:class|struct)\s+(\w+)\s*(?::[^{]*)?\{', re.M)

@@ -208,6 +208,18 @@
         <translation>Spectrogramme (balayage et harmoniques)</translation>
     </message>
     <message>
+        <source>Welch 平均功率譜</source>
+        <translation>Densité spectrale moyennée (Welch)</translation>
+    </message>
+    <message>
+        <source>自動標出頻譜峰值</source>
+        <translation>Repérage automatique des pics du spectre</translation>
+    </message>
+    <message>
+        <source>3D 瀑布頻譜</source>
+        <translation>Spectre en cascade 3D</translation>
+    </message>
+    <message>
         <source>座標軸</source>
         <translation>Axes</translation>
     </message>
@@ -338,6 +350,26 @@
     <message>
         <source>截斷 X 軸（跳過空檔）</source>
         <translation>Axe X brisé (sauter les vides)</translation>
+    </message>
+    <message>
+        <source>刻度線的方向與鏡像</source>
+        <translation>Direction des graduations et graduations en miroir</translation>
+    </message>
+    <message>
+        <source>刻度標記與個別刻度上色</source>
+        <translation>Marqueurs de graduation et couleur par graduation</translation>
+    </message>
+    <message>
+        <source>一次換掉整根軸的顏色</source>
+        <translation>Colorer tout un axe d'un coup</translation>
+    </message>
+    <message>
+        <source>真正的對數軸（波德圖）</source>
+        <translation>Véritable axe logarithmique (diagramme de Bode)</translation>
+    </message>
+    <message>
+        <source>對數刻度的文字格式</source>
+        <translation>Formats des étiquettes logarithmiques</translation>
     </message>
     <message>
         <source>裝飾</source>
@@ -634,6 +666,10 @@
     <message>
         <source>多軌波形</source>
         <translation>Formes d'onde multipistes</translation>
+    </message>
+    <message>
+        <source>即時 FFT 頻譜（峰值保持）</source>
+        <translation>Spectre FFT en direct (maintien des crêtes)</translation>
     </message>
     <message>
         <source>商務圖表</source>
@@ -1562,6 +1598,10 @@
     <message>
         <source>圖例放在下方並換行</source>
         <translation>Légende en bas avec retour à la ligne</translation>
+    </message>
+    <message>
+        <source>圖例外框、符號與字型</source>
+        <translation>Bordure, symboles et police de la légende</translation>
     </message>
     <message>
         <source>核密度的核函數</source>
@@ -2556,12 +2596,32 @@ TPR %2 / FPR %3</translation>
         <translation>Spectrogramme : balayage, 2e harmonique et sifflement central</translation>
     </message>
     <message>
-        <source>訊號量測結果</source>
-        <translation>Mesures du signal</translation>
+        <source>單一段（1024 點）</source>
+        <translation>Segment unique (1024 points)</translation>
+    </message>
+    <message>
+        <source>Welch（%1 段平均）</source>
+        <translation>Welch (moyenne de %1 segments)</translation>
+    </message>
+    <message>
+        <source>平均之後，藏在雜訊裡的小峰才看得見</source>
+        <translation>La moyenne fait ressortir les petits pics cachés dans le bruit</translation>
+    </message>
+    <message>
+        <source>轉速倍頻與軸承頻率</source>
+        <translation>Harmoniques de rotation et fréquence de roulement</translation>
     </message>
     <message>
         <source>時間（秒）</source>
         <translation>Temps (s)</translation>
+    </message>
+    <message>
+        <source>升速過程的瀑布頻譜</source>
+        <translation>Spectre en cascade d'une montée en régime</translation>
+    </message>
+    <message>
+        <source>訊號量測結果</source>
+        <translation>Mesures du signal</translation>
     </message>
     <message>
         <source>電壓（伏特）</source>
@@ -2716,6 +2776,62 @@ Un axe fixé par setRange n'est pas écrasé par autoScale, mais reste zoomable 
     <message>
         <source>截斷 X 軸</source>
         <translation>Axe X brisé</translation>
+    </message>
+    <message>
+        <source>刻度線的三種方向</source>
+        <translation>Trois directions de graduation</translation>
+    </message>
+    <message>
+        <source>朝外（預設）</source>
+        <translation>Vers l'extérieur (défaut)</translation>
+    </message>
+    <message>
+        <source>朝內＋鏡像</source>
+        <translation>Vers l'intérieur + miroir</translation>
+    </message>
+    <message>
+        <source>穿過框線</source>
+        <translation>À cheval sur le cadre</translation>
+    </message>
+    <message>
+        <source>樣本</source>
+        <translation>Échantillon</translation>
+    </message>
+    <message>
+        <source>超出規格的刻度標成紅色</source>
+        <translation>Graduations hors spécification en rouge</translation>
+    </message>
+    <message>
+        <source>溫度 (°C)</source>
+        <translation>Température (°C)</translation>
+    </message>
+    <message>
+        <source>濕度 (%)</source>
+        <translation>Humidité (%)</translation>
+    </message>
+    <message>
+        <source>時間 (h)</source>
+        <translation>Temps (h)</translation>
+    </message>
+    <message>
+        <source>軸的顏色對應曲線的顏色</source>
+        <translation>Les couleurs des axes suivent les courbes</translation>
+    </message>
+    <message>
+        <source>增益（dB）</source>
+        <translation>Gain (dB)</translation>
+    </message>
+    <message>
+        <source>一階低通濾波器的波德圖</source>
+        <translation>Diagramme de Bode d'un filtre passe-bas du premier ordre</translation>
+    </message>
+    <message>
+        <source>同一份資料，四種刻度寫法</source>
+        <translation>Mêmes données, quatre façons d'écrire les graduations</translation>
+    </message>
+    <message>
+        <source>Plain＋次刻度文字</source>
+        <translation>Plain + étiquettes secondaires</translation>
     </message>
     <message>
         <source>強度</source>
@@ -3152,10 +3268,6 @@ Fausses alarmes %5 % (%6 / %7 pièces OK rejetées)</translation>
         <translation>Lectures du capteur</translation>
     </message>
     <message>
-        <source>溫度 (°C)</source>
-        <translation>Température (°C)</translation>
-    </message>
-    <message>
         <source>取樣點</source>
         <translation>Échantillons</translation>
     </message>
@@ -3182,6 +3294,14 @@ Fausses alarmes %5 % (%6 / %7 pièces OK rejetées)</translation>
     <message>
         <source>通道 3</source>
         <translation>Canal 3</translation>
+    </message>
+    <message>
+        <source>平均頻譜</source>
+        <translation>Spectre moyenné</translation>
+    </message>
+    <message>
+        <source>峰值保持</source>
+        <translation>Maintien des crêtes</translation>
     </message>
     <message>
         <source>刮傷</source>
@@ -5172,10 +5292,6 @@ Intégration numérique (jusqu'à |x| = 4) = %3</translation>
         <translation>Pression (hPa)</translation>
     </message>
     <message>
-        <source>濕度 (%)</source>
-        <translation>Humidité (%)</translation>
-    </message>
-    <message>
         <source>時間 (分鐘)</source>
         <translation>Temps (min)</translation>
     </message>
@@ -5282,6 +5398,10 @@ Intégration numérique (jusqu'à |x| = 4) = %3</translation>
     <message>
         <source>東部</source>
         <translation>Est</translation>
+    </message>
+    <message>
+        <source>各國營收佔比</source>
+        <translation>Part du chiffre d'affaires par pays</translation>
     </message>
     <message>
         <source>三角</source>

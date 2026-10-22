@@ -1,4 +1,4 @@
-// Live.h — 即時資料：持續累積的 DataLogger 與固定長度循環的 DataStreamer。
+// Live.h — 即時資料：持續累積的 DataLogger、固定長度循環的 DataStreamer 與即時頻譜 LiveSpectrum。
 //
 // 這兩個圖元和其他的不一樣：它們會「自己調整軸」。資料一直進來，視野要跟著走，
 // 這件事必須在版面計算「之前」做完 —— 否則刻度是用上一幀的範圍算的，
@@ -11,6 +11,7 @@
 #pragma once
 
 #include "Plottable.h"
+#include "Spectral.h"
 
 #include <QMutex>
 
@@ -185,6 +186,101 @@ private:
     QVector<double> m_xs;
     QVector<double> m_ys;
     qint64 m_count = 0;
+};
+
+/// 即時 FFT 頻譜（頻譜分析儀的畫面）。
+///
+/// 樣本從 add()／addRange() 餵進來（任何執行緒都可以，例如擷取卡的回呼）。
+/// 每收到 updateInterval 個新樣本，就拿最新的 fftSize 個樣本做一次頻譜，
+/// 再依 averaging 做指數平均、更新峰值保持。FFT 在 add 的那個執行緒裡算，
+/// 所以平均與峰值保持跟畫面多久重畫一次無關 —— 視窗被擋住、重畫變慢，量測結果也一樣。
+///
+/// 軸：autoAxes 開著時 X 固定是 0～Nyquist、Y 是 minDb～maxDb。
+/// 要讓使用者自己縮放就關掉，或把軸設成 locked。
+class LiveSpectrum : public IPlottable {
+public:
+    explicit LiveSpectrum(int fftSize = 1024, double sampleRate = 1000);
+
+    // ── 餵資料（任何執行緒） ──
+    void add(double sample);
+    void addRange(const QVector<double>& samples);
+    /// 清掉緩衝、平均與峰值保持。
+    void clear();
+    /// 只清掉峰值保持（換了待測物之後用）。
+    void resetPeakHold();
+
+    /// 改 FFT 長度（至少 8）。會清掉緩衝與平均。頻率格距 = sampleRate / fftSize。
+    void setFftSize(int n);
+    int fftSize() const;
+    /// 改取樣率（Hz）。會清掉緩衝與平均。
+    void setSampleRate(double fs);
+    double sampleRate() const;
+
+    // ── 讀結果（任何執行緒，回傳的是複本） ──
+    /// 平均後的頻譜。還沒收滿 fftSize 個樣本前是空的。segments 是至今算了幾次。
+    Periodogram spectrum() const;
+    /// 每一格看過的最高 dB（和 spectrum().frequencies 對齊）。
+    QVector<double> peakHold() const;
+    /// 至今算了幾次頻譜。
+    qint64 frameCount() const;
+
+    // ── 分析設定（只能在 GUI 執行緒改；改了從下一次更新開始生效） ──
+    WindowFunction window = WindowFunction::Hann;
+    /// dB 的 0 點（例如 1 V 就是 dBV）。
+    double reference = 1.0;
+    /// 指數平均的權重，0（不平均）～0.99。0.8 大約等於平均最近 10 次。
+    /// 平均的是功率，不是 dB。
+    double averaging = 0.0;
+    /// 每收到這麼多新樣本算一次。<= 0 時用 fftSize / 2（50% 重疊）。
+    int updateInterval = 0;
+    /// 峰值保持每次更新往下掉幾 dB。0 是一直保持，直到 resetPeakHold()。
+    double peakHoldDecayDb = 0;
+
+    // ── 外觀 ──
+    double minDb = -120;
+    double maxDb = 0;
+    bool autoAxes = true;
+    LineStyle line{QColor(31, 119, 180), 1.2};
+    /// 曲線下方的填色（預設不填）。
+    FillStyle fill;
+    bool showPeakHold = false;
+    LineStyle peakHoldLine{QColor(214, 39, 40, 170), 1.0, LinePattern::Dashed};
+    /// 峰值保持在圖例裡的名稱（空字串不進圖例）。
+    QString peakHoldLegendText;
+
+    /// 自動標出最高的幾個峰（0 代表不標）。條件見 findSpectralPeaks()。
+    int peakLabels = 0;
+    double peakMinProminenceDb = 10;
+    /// 兩個標記至少隔這麼遠（Hz）。<= 0 時用 Nyquist 的 2%，免得同一個峰的裙邊被標兩次。
+    double peakMinSpacingHz = 0;
+    /// 低於這個頻率的峰不標（避開直流與漂移）。
+    double peakMinFrequency = 0;
+    MarkerStyle peakMarker{MarkerShape::FilledTriangleDown, 8, QColor(214, 39, 40)};
+    FontStyle peakFont;
+
+    void beforeLayout() override;
+    AxisLimits axisLimits() const override;
+    void render(RenderPack& rp) override;
+    QVector<LegendItem> legendItems() const override;
+    quint64 dataVersion() const override { return m_version.load(std::memory_order_relaxed); }
+    void visitFonts(const FontVisitor& visit) override { visit(peakFont); }
+
+private:
+    void resetLocked();
+    void addLocked(double sample);
+    void computeLocked();
+
+    mutable QMutex m_mutex;
+    std::atomic<quint64> m_version{1};
+    int m_fftSize = 1024;
+    double m_sampleRate = 1000;
+    QVector<double> m_buffer;  ///< 循環緩衝，長度 = fftSize
+    qint64 m_count = 0;        ///< 總共收過幾個樣本
+    int m_sinceUpdate = 0;     ///< 上次算頻譜之後又收了幾個
+    qint64 m_frames = 0;
+    QVector<double> m_frequencies;
+    QVector<double> m_avgPower;
+    QVector<double> m_peakDb;
 };
 
 }  // namespace qtplot

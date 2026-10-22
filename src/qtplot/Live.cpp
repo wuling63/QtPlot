@@ -583,4 +583,203 @@ QVector<LegendItem> DataStreamerXY::legendItems() const {
     return {it};
 }
 
+// ───────────────────────── LiveSpectrum ─────────────────────────
+
+LiveSpectrum::LiveSpectrum(int fftSize, double sampleRate)
+    : m_fftSize(std::max(8, fftSize)), m_sampleRate(sampleRate > 0 ? sampleRate : 1.0) {
+    resetLocked();
+}
+
+void LiveSpectrum::resetLocked() {
+    m_buffer.fill(0.0, m_fftSize);
+    m_count = 0;
+    m_sinceUpdate = 0;
+    m_frames = 0;
+    m_frequencies.clear();
+    m_avgPower.clear();
+    m_peakDb.clear();
+    m_version.fetch_add(1, std::memory_order_relaxed);
+}
+
+void LiveSpectrum::setFftSize(int n) {
+    QMutexLocker lock(&m_mutex);
+    m_fftSize = std::max(8, n);
+    resetLocked();
+}
+
+int LiveSpectrum::fftSize() const {
+    QMutexLocker lock(&m_mutex);
+    return m_fftSize;
+}
+
+void LiveSpectrum::setSampleRate(double fs) {
+    QMutexLocker lock(&m_mutex);
+    if (fs > 0) m_sampleRate = fs;
+    resetLocked();
+}
+
+double LiveSpectrum::sampleRate() const {
+    QMutexLocker lock(&m_mutex);
+    return m_sampleRate;
+}
+
+void LiveSpectrum::clear() {
+    QMutexLocker lock(&m_mutex);
+    resetLocked();
+}
+
+void LiveSpectrum::resetPeakHold() {
+    QMutexLocker lock(&m_mutex);
+    m_peakDb.clear();
+    m_version.fetch_add(1, std::memory_order_relaxed);
+}
+
+void LiveSpectrum::addLocked(double sample) {
+    m_buffer[static_cast<qsizetype>(m_count % m_fftSize)] = std::isfinite(sample) ? sample : 0.0;
+    ++m_count;
+    ++m_sinceUpdate;
+    const int interval = (updateInterval > 0) ? updateInterval : std::max(1, m_fftSize / 2);
+    // 緩衝收滿之前不算：前面補零的頻譜會有一個假的低頻隆起
+    if (m_count >= m_fftSize && m_sinceUpdate >= interval) computeLocked();
+}
+
+void LiveSpectrum::add(double sample) {
+    QMutexLocker lock(&m_mutex);
+    addLocked(sample);
+}
+
+void LiveSpectrum::addRange(const QVector<double>& samples) {
+    QMutexLocker lock(&m_mutex);
+    for (double v : samples) addLocked(v);
+}
+
+void LiveSpectrum::computeLocked() {
+    m_sinceUpdate = 0;
+    // 由舊到新排好再做 FFT（循環緩衝的起點是下一個要寫的位置）
+    QVector<double> ordered(m_fftSize);
+    const qsizetype head = static_cast<qsizetype>(m_count % m_fftSize);
+    for (int i = 0; i < m_fftSize; ++i) ordered[i] = m_buffer[(head + i) % m_fftSize];
+
+    const Periodogram pg = periodogram(ordered, m_sampleRate, window, reference);
+    if (m_avgPower.size() != pg.power.size()) {
+        m_avgPower = pg.power;
+        m_frequencies = pg.frequencies;
+    } else {
+        // 平均功率，不是平均 dB：dB 的平均會讓雜訊底系統性地偏低
+        const double a = std::clamp(averaging, 0.0, 0.99);
+        for (int k = 0; k < m_avgPower.size(); ++k) m_avgPower[k] = a * m_avgPower[k] + (1 - a) * pg.power[k];
+    }
+
+    const double ref = (reference > 0) ? reference : 1.0;
+    if (m_peakDb.size() != m_avgPower.size())
+        m_peakDb.fill(-std::numeric_limits<double>::infinity(), m_avgPower.size());
+    for (int k = 0; k < m_avgPower.size(); ++k) {
+        const double db = 20 * std::log10(std::max(std::sqrt(m_avgPower[k]), 1e-300) / ref);
+        m_peakDb[k] = std::max(m_peakDb[k] - std::max(0.0, peakHoldDecayDb), db);
+    }
+    ++m_frames;
+    m_version.fetch_add(1, std::memory_order_relaxed);
+}
+
+Periodogram LiveSpectrum::spectrum() const {
+    QMutexLocker lock(&m_mutex);
+    Periodogram out;
+    out.frequencies = m_frequencies;
+    out.power = m_avgPower;
+    out.segments = static_cast<int>(std::min<qint64>(m_frames, std::numeric_limits<int>::max()));
+    const double ref = (reference > 0) ? reference : 1.0;
+    out.amplitude.reserve(m_avgPower.size());
+    out.decibels.reserve(m_avgPower.size());
+    for (double p : m_avgPower) {
+        const double mag = std::sqrt(p);
+        out.amplitude.append(mag);
+        out.decibels.append(20 * std::log10(std::max(mag, 1e-300) / ref));
+    }
+    return out;
+}
+
+QVector<double> LiveSpectrum::peakHold() const {
+    QMutexLocker lock(&m_mutex);
+    return m_peakDb;
+}
+
+qint64 LiveSpectrum::frameCount() const {
+    QMutexLocker lock(&m_mutex);
+    return m_frames;
+}
+
+void LiveSpectrum::beforeLayout() {
+    if (!autoAxes) return;
+    const double nyquist = sampleRate() / 2;
+    if (xAxis && !xAxis->locked) xAxis->range = {0, nyquist};
+    if (yAxis && !yAxis->locked && maxDb > minDb) yAxis->range = {minDb, maxDb};
+}
+
+AxisLimits LiveSpectrum::axisLimits() const {
+    AxisLimits lim;
+    lim.x = {0, sampleRate() / 2};
+    lim.y = {std::min(minDb, maxDb), std::max(minDb, maxDb)};
+    return lim;
+}
+
+void LiveSpectrum::render(RenderPack& rp) {
+    const Periodogram sp = spectrum();
+    const QVector<double> hold = showPeakHold ? peakHold() : QVector<double>();
+    const int n = static_cast<int>(sp.frequencies.size());
+    if (n < 2) return;
+
+    const Transform t = transform(rp);
+    QPainter& p = *rp.painter;
+    p.save();
+
+    // 填色：曲線往下填到繪圖區底邊（dB 沒有自然的 0）
+    if (fill.isVisible()) {
+        QPolygonF poly;
+        poly.reserve(n + 2);
+        poly << QPointF(t.px(sp.frequencies.first()), rp.dataRect.bottom);
+        for (int k = 0; k < n; ++k) poly << t.p(sp.frequencies[k], sp.decibels[k]);
+        poly << QPointF(t.px(sp.frequencies.last()), rp.dataRect.bottom);
+        p.setPen(Qt::NoPen);
+        p.setBrush(fill.brush(poly.boundingRect()));
+        p.drawPolygon(poly);
+    }
+
+    if (showPeakHold && hold.size() == n) drawDecimated(p, t, sp.frequencies, hold, 0, n, peakHoldLine, MarkerStyle());
+    drawDecimated(p, t, sp.frequencies, sp.decibels, 0, n, line, MarkerStyle());
+
+    if (peakLabels > 0) {
+        const double spacing = (peakMinSpacingHz > 0) ? peakMinSpacingHz : sp.frequencies.last() * 0.02;
+        const QVector<SpectralPeak> peaks =
+            findSpectralPeaks(sp, peakLabels, peakMinProminenceDb, spacing, peakMinFrequency);
+        for (const SpectralPeak& pk : peaks) {
+            const QPointF at = t.p(pk.frequency, pk.decibels);
+            const double lift = peakMarker.isVisible() ? peakMarker.size * 0.6 + 2 : 2;
+            if (peakMarker.isVisible()) drawMarker(p, at - QPointF(0, lift), peakMarker);
+            Label lb;
+            lb.font = peakFont;
+            lb.text = QStringLiteral("%1 Hz\n%2 dB").arg(pk.frequency, 0, 'f', 1).arg(pk.decibels, 0, 'f', 1);
+            drawText(p, at - QPointF(0, lift * 2 + 2), lb, Qt::AlignHCenter | Qt::AlignBottom);
+        }
+    }
+    p.restore();
+}
+
+QVector<LegendItem> LiveSpectrum::legendItems() const {
+    QVector<LegendItem> items;
+    if (!legendText.isEmpty()) {
+        LegendItem it;
+        it.text = legendText;
+        it.line = line;
+        it.fill = fill;
+        items.append(it);
+    }
+    if (showPeakHold && !peakHoldLegendText.isEmpty()) {
+        LegendItem it;
+        it.text = peakHoldLegendText;
+        it.line = peakHoldLine;
+        items.append(it);
+    }
+    return items;
+}
+
 }  // namespace qtplot

@@ -208,6 +208,18 @@
         <translation>スペクトログラム（スイープと高調波）</translation>
     </message>
     <message>
+        <source>Welch 平均功率譜</source>
+        <translation>Welch 法の平均パワースペクトル</translation>
+    </message>
+    <message>
+        <source>自動標出頻譜峰值</source>
+        <translation>スペクトルのピークを自動表示</translation>
+    </message>
+    <message>
+        <source>3D 瀑布頻譜</source>
+        <translation>3D ウォーターフォールスペクトル</translation>
+    </message>
+    <message>
         <source>座標軸</source>
         <translation>座標軸</translation>
     </message>
@@ -338,6 +350,26 @@
     <message>
         <source>截斷 X 軸（跳過空檔）</source>
         <translation>X 軸の切断（空白期間を飛ばす）</translation>
+    </message>
+    <message>
+        <source>刻度線的方向與鏡像</source>
+        <translation>目盛り線の向きとミラー</translation>
+    </message>
+    <message>
+        <source>刻度標記與個別刻度上色</source>
+        <translation>目盛りマーカーと個別の色</translation>
+    </message>
+    <message>
+        <source>一次換掉整根軸的顏色</source>
+        <translation>軸全体の色を一度に変える</translation>
+    </message>
+    <message>
+        <source>真正的對數軸（波德圖）</source>
+        <translation>本物の対数軸（ボード線図）</translation>
+    </message>
+    <message>
+        <source>對數刻度的文字格式</source>
+        <translation>対数目盛りの表記</translation>
     </message>
     <message>
         <source>裝飾</source>
@@ -634,6 +666,10 @@
     <message>
         <source>多軌波形</source>
         <translation>マルチトラック波形</translation>
+    </message>
+    <message>
+        <source>即時 FFT 頻譜（峰值保持）</source>
+        <translation>リアルタイム FFT スペクトル（ピークホールド）</translation>
     </message>
     <message>
         <source>商務圖表</source>
@@ -1562,6 +1598,10 @@
     <message>
         <source>圖例放在下方並換行</source>
         <translation>凡例を下に置いて折り返す</translation>
+    </message>
+    <message>
+        <source>圖例外框、符號與字型</source>
+        <translation>凡例の枠線・記号・フォント</translation>
     </message>
     <message>
         <source>核密度的核函數</source>
@@ -2556,12 +2596,32 @@ TPR %2 / FPR %3</translation>
         <translation>スペクトログラム：スイープ、2 次高調波と中盤のホイッスル</translation>
     </message>
     <message>
-        <source>訊號量測結果</source>
-        <translation>信号の測定結果</translation>
+        <source>單一段（1024 點）</source>
+        <translation>単一区間（1024 点）</translation>
+    </message>
+    <message>
+        <source>Welch（%1 段平均）</source>
+        <translation>Welch（%1 区間の平均）</translation>
+    </message>
+    <message>
+        <source>平均之後，藏在雜訊裡的小峰才看得見</source>
+        <translation>平均するとノイズに埋もれた小さなピークが見える</translation>
+    </message>
+    <message>
+        <source>轉速倍頻與軸承頻率</source>
+        <translation>回転次数成分と軸受周波数</translation>
     </message>
     <message>
         <source>時間（秒）</source>
         <translation>時間（秒）</translation>
+    </message>
+    <message>
+        <source>升速過程的瀑布頻譜</source>
+        <translation>昇速過程のウォーターフォールスペクトル</translation>
+    </message>
+    <message>
+        <source>訊號量測結果</source>
+        <translation>信号の測定結果</translation>
     </message>
     <message>
         <source>電壓（伏特）</source>
@@ -2716,6 +2776,62 @@ setRange で設定した軸は autoScale で上書きされないが、ドラッ
     <message>
         <source>截斷 X 軸</source>
         <translation>X 軸を切断</translation>
+    </message>
+    <message>
+        <source>刻度線的三種方向</source>
+        <translation>目盛り線の 3 つの向き</translation>
+    </message>
+    <message>
+        <source>朝外（預設）</source>
+        <translation>外向き（既定）</translation>
+    </message>
+    <message>
+        <source>朝內＋鏡像</source>
+        <translation>内向き＋ミラー</translation>
+    </message>
+    <message>
+        <source>穿過框線</source>
+        <translation>枠線をまたぐ</translation>
+    </message>
+    <message>
+        <source>樣本</source>
+        <translation>サンプル</translation>
+    </message>
+    <message>
+        <source>超出規格的刻度標成紅色</source>
+        <translation>規格外の目盛りを赤で表示</translation>
+    </message>
+    <message>
+        <source>溫度 (°C)</source>
+        <translation>温度 (°C)</translation>
+    </message>
+    <message>
+        <source>濕度 (%)</source>
+        <translation>湿度 (%)</translation>
+    </message>
+    <message>
+        <source>時間 (h)</source>
+        <translation>時間 (h)</translation>
+    </message>
+    <message>
+        <source>軸的顏色對應曲線的顏色</source>
+        <translation>軸の色を曲線の色に合わせる</translation>
+    </message>
+    <message>
+        <source>增益（dB）</source>
+        <translation>ゲイン（dB）</translation>
+    </message>
+    <message>
+        <source>一階低通濾波器的波德圖</source>
+        <translation>1 次ローパスフィルタのボード線図</translation>
+    </message>
+    <message>
+        <source>同一份資料，四種刻度寫法</source>
+        <translation>同じデータ、4 通りの目盛り表記</translation>
+    </message>
+    <message>
+        <source>Plain＋次刻度文字</source>
+        <translation>Plain＋補助目盛りの表記</translation>
     </message>
     <message>
         <source>強度</source>
@@ -3152,10 +3268,6 @@ Egger 切片 %2（0 から離れるほど非対称）</translation>
         <translation>センサー読み値</translation>
     </message>
     <message>
-        <source>溫度 (°C)</source>
-        <translation>温度 (°C)</translation>
-    </message>
-    <message>
         <source>取樣點</source>
         <translation>サンプル点</translation>
     </message>
@@ -3182,6 +3294,14 @@ Egger 切片 %2（0 から離れるほど非対称）</translation>
     <message>
         <source>通道 3</source>
         <translation>チャンネル 3</translation>
+    </message>
+    <message>
+        <source>平均頻譜</source>
+        <translation>平均スペクトル</translation>
+    </message>
+    <message>
+        <source>峰值保持</source>
+        <translation>ピークホールド</translation>
     </message>
     <message>
         <source>刮傷</source>
@@ -5172,10 +5292,6 @@ Egger 切片 %2（0 から離れるほど非対称）</translation>
         <translation>気圧 (hPa)</translation>
     </message>
     <message>
-        <source>濕度 (%)</source>
-        <translation>湿度 (%)</translation>
-    </message>
-    <message>
         <source>時間 (分鐘)</source>
         <translation>時間 (分)</translation>
     </message>
@@ -5282,6 +5398,10 @@ Egger 切片 %2（0 から離れるほど非対称）</translation>
     <message>
         <source>東部</source>
         <translation>東部</translation>
+    </message>
+    <message>
+        <source>各國營收佔比</source>
+        <translation>国別の売上構成比</translation>
     </message>
     <message>
         <source>三角</source>

@@ -99,6 +99,105 @@
     </message>
 </context>
 <context>
+    <name>qtplot::LegendStyleDialog</name>
+    <message>
+        <source>圖例樣式</source>
+        <translation>Legend Style</translation>
+    </message>
+    <message>
+        <source>顯示外框</source>
+        <translation>Show border</translation>
+    </message>
+    <message>
+        <source>實線</source>
+        <translation>Solid</translation>
+    </message>
+    <message>
+        <source>虛線</source>
+        <translation>Dashed</translation>
+    </message>
+    <message>
+        <source>點線</source>
+        <translation>Dotted</translation>
+    </message>
+    <message>
+        <source>點虛線</source>
+        <translation>Dash-dot</translation>
+    </message>
+    <message>
+        <source>外框</source>
+        <translation>Border</translation>
+    </message>
+    <message>
+        <source>顏色</source>
+        <translation>Color</translation>
+    </message>
+    <message>
+        <source>粗細</source>
+        <translation>Width</translation>
+    </message>
+    <message>
+        <source>線型</source>
+        <translation>Line style</translation>
+    </message>
+    <message>
+        <source>塗滿底色</source>
+        <translation>Fill background</translation>
+    </message>
+    <message>
+        <source>底色</source>
+        <translation>Background</translation>
+    </message>
+    <message>
+        <source>色塊塗滿</source>
+        <translation>Fill swatches</translation>
+    </message>
+    <message>
+        <source>色塊加外框</source>
+        <translation>Outline swatches</translation>
+    </message>
+    <message>
+        <source>符號</source>
+        <translation>Symbols</translation>
+    </message>
+    <message>
+        <source>文字</source>
+        <translation>Text</translation>
+    </message>
+    <message>
+        <source>字型</source>
+        <translation>Font</translation>
+    </message>
+    <message>
+        <source>還原預設</source>
+        <translation>Restore Defaults</translation>
+    </message>
+    <message>
+        <source>外框顏色</source>
+        <translation>Border Color</translation>
+    </message>
+    <message>
+        <source>色塊外框顏色</source>
+        <translation>Swatch Outline Color</translation>
+    </message>
+    <message>
+        <source>文字顏色</source>
+        <translation>Text Color</translation>
+    </message>
+    <message>
+        <source>粗體</source>
+        <translation>Bold</translation>
+    </message>
+    <message>
+        <source>斜體</source>
+        <translation>Italic</translation>
+    </message>
+    <message>
+        <source>圖例字型</source>
+        <translation>Legend Font</translation>
+    </message>
+</context>
+<context>
     <name>qtplot::PlotWidget</name>
     <message>
         <source>%1 個圖元, %2 ms (%3 FPS)</source>
@@ -127,6 +226,10 @@
     <message>
         <source>顯示圖例(&amp;L)</source>
         <translation>Show &amp;Legend</translation>
+    </message>
+    <message>
+        <source>圖例樣式(&amp;Y)…</source>
+        <translation>Legend St&amp;yle…</translation>
     </message>
     <message>
         <source>語言(&amp;N)</source>
